@@ -1,0 +1,44 @@
+<%- include("../layouts/boilerplate") %>
+
+<div class="row">
+  <div class="col-4 offset-4 mt-4">
+    <h3 class="offset-3 col-6">Enter event details</h3>
+
+    <!-- Dynamically set the form action to the club-specific route -->
+    <form
+      method="post"
+      action="/<%= club.ClubName %>/createpost"
+      novalidate
+      class="needs-validation"
+    >
+      <div class="mb-3">
+        <label for="eventName" class="form-label"><b>Event Name</b></label>
+        <input
+          type="text"
+          id="eventName"
+          name="eventName"
+          placeholder="Enter Event Name"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label"><b>Description</b></label>
+        <textarea
+          id="description"
+          name="eventDetails"
+          placeholder="Event details"
+          class="form-control"
+          required
+        ></textarea>
+      </div>
+
+      <div class="mb-4">
+        <button type="submit" class="btn btn-success add-btn mt-3">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

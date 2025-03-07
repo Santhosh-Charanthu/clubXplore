@@ -1,0 +1,60 @@
+<%- include("../layouts/boilerplate") %>
+
+<style>
+  .container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  .logo {
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    background-color: yellow;
+  }
+  .btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+</style>
+
+<div class="container">
+  <div class="logo"></div>
+  <span>Posts: <%= club.events.length %></span>
+  <span>Followers</span>
+</div>
+
+<hr />
+
+<!-- Create Post Button -->
+<div class="btn-container">
+  <a href="/<%= club.ClubName %>/createpost" class="btn btn-success"
+    >Create Event</a
+  >
+</div>
+
+<h2>Events for <%= club.ClubName %></h2>
+
+<!-- <ul>
+  <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
+  <li>
+    <h3><%= event.eventName %></h3>
+    <p><%= event.eventDetails %></p>
+  </li>
+  <% }) %> <% } else { %>
+  <p>No events created yet.</p>
+  <% } %>
+</ul> -->
+
+<% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
+<div class="card mb-4" style="width: 18rem">
+  <div class="card-body">
+    <h5 class="card-title"><%= event.eventName %></h5>
+    <p class="card-text"><%= event.eventDetails %></p>
+  </div>
+</div>
+<% }) %> <% } else { %>
+<p>No events created yet.</p>
+<% } %>

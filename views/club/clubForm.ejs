@@ -1,0 +1,39 @@
+<%- include("../layouts/boilerplate") %>
+
+    <div class="row">
+      <div class="col-4 offset-4 mt-4">
+        <h3 class="offset-3 col-6">Create a new club</h3>
+        <form method="post" action="/clubRegistration" novalidate class="needs-validation">
+          <div class="mb-3">
+            <label for="ClubName" class="form-label"><b>Club Name</b></label>
+            <input
+              type="text"
+              id="ClubName"
+              name="ClubName"
+              placeholder="Enter Club Name"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label"><b>Password</b></label>
+            <input
+              id="password"
+              name="password"
+              placeholder="Set Password"
+              class="form-control"
+              type="password"
+              required
+            ></input>
+          </div>
+          <div class="mb-4">
+            <button type="submit" class="btn btn-success add-btn mt-3">
+              Create
+            </button> 
+            &nbsp;&nbsp;&nbsp;
+            <a href="/clubRegistration/login">login</a>
+          </div>
+        </form>
+      </div>
+    </div>

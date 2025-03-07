@@ -11,12 +11,15 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const passportLocalMongoose = require("passport-local-mongoose");
-const { type } = require("os");
+let College = require("./models/college");
+let Club = require("./models/club");
+let Event = require("./models/Event");
+let Student = require("./models/student");
 
-app.engine("ejs", ejsMate); // Use ejs-mate for layouts
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "/public"))); // Serve static files like CSS
+app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
 
 const sessionOptions = {
@@ -30,79 +33,251 @@ const sessionOptions = {
   },
 };
 
-const collegeSchema = new Schema({
-  college: {
-    type: String,
-    required: true,
-    unique: true, // Ensure no duplicate colleges
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-});
-
-collegeSchema.plugin(passportLocalMongoose, { usernameField: "college" });
-let College = mongoose.model("College", collegeSchema);
-
 app.use(session(sessionOptions));
 app.use(flash());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(College.authenticate()));
+passport.use(
+  "college",
+  new LocalStrategy({ usernameField: "college" }, College.authenticate())
+);
 
-passport.serializeUser(College.serializeUser());
-passport.deserializeUser(College.deserializeUser());
+passport.use(
+  "club",
+  new LocalStrategy({ usernameField: "ClubName" }, Club.authenticate())
+);
+
+//Middleware
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
+
+passport.serializeUser((user, done) => {
+  done(null, {
+    id: user.id,
+    type: user instanceof College ? "College" : "Club",
+  });
+});
+
+passport.deserializeUser(async (obj, done) => {
+  try {
+    if (obj.type === "College") {
+      const college = await College.findById(obj.id);
+      done(null, college);
+    } else {
+      const club = await Club.findById(obj.id);
+      done(null, club);
+    }
+  } catch (err) {
+    done(err, null);
+  }
+});
 
 dbUrl = "mongodb+srv://santhosh:santhosh981@cluster0.whu02.mongodb.net/clubs";
 
-main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+mongoose
+  .connect(dbUrl)
+  .then(() => console.log("Connected to DB"))
+  .catch((err) => console.log("DB Connection Error:", err));
 
-async function main() {
-  await mongoose.connect(dbUrl);
-}
-
-// Render the home page with the boilerplate layout
-app.get("/", (req, res) => {
+app.get("/collegeRegistration/login", (req, res) => {
   res.render("users/login.ejs");
 });
 
-app.get("/signup", (req, res) => {
+app.post(
+  "/collegeRegistration/login",
+  passport.authenticate("college", {
+    failureRedirect: "/collegeRegistration/login", // Redirect to login page if authentication fails
+    failureFlash: true, // Show an error message
+  }),
+  async (req, res) => {
+    let redirectUrl = res.locals.redirectUrl || "/clubRegistration";
+    res.redirect(redirectUrl);
+  }
+);
+
+app.get("/collegeRegistration/signup", (req, res) => {
   res.render("users/signup.ejs");
 });
 
-app.post("/", async (req, res) => {
-  console.log(res.locals);
-  let redirectUrl = res.locals.redirectUrl || "/";
-  res.redirect(redirectUrl);
-  console.log(redirectUrl);
-});
-
-app.post("/signup", async (req, res) => {
+app.post("/collegeRegistration/signup", async (req, res) => {
   try {
     let { college, password, email } = req.body;
+    if (!college || !email || !password) {
+      req.flash("error", "All fields are required!");
+      return res.redirect("/signup");
+    }
+
     const newCollege = new College({ email, college });
     const registeredCollege = await College.register(newCollege, password);
+
     req.login(registeredCollege, (err) => {
-      if (err) {
-        next(err);
-      }
-      req.flash("success", "Welcome to Club Managements!");
-      res.redirect("/dashboard/dashboard.ejs");
+      if (err) return next(err);
+      req.flash("success", "Welcome to Club Management!");
+      res.redirect("/clubRegistration");
     });
   } catch (e) {
-    console.log("error: ", e);
+    console.log("Signup error:", e);
+    req.flash("error", "Signup failed. Try again.");
     res.redirect("/signup");
   }
 });
+
+app.get("/:clubName/profile", async (req, res) => {
+  try {
+    const { clubName } = req.params;
+    const club = await Club.findOne({ ClubName: clubName }).populate("events");
+
+    if (!club) {
+      req.flash("error", "Club not found!");
+      return res.redirect("/clubRegistration");
+    }
+
+    res.render("profile/profile.ejs", { club });
+  } catch (e) {
+    console.log("Error loading profile:", e);
+    req.flash("error", "Something went wrong!");
+    res.redirect("/");
+  }
+});
+
+app.get("/clubRegistration", (req, res) => {
+  res.render("club/clubform.ejs");
+});
+
+app.post("/clubRegistration", async (req, res) => {
+  try {
+    let { ClubName, password } = req.body;
+    if (!ClubName || !password) {
+      req.flash("error", "All fields are required!");
+      return res.redirect("/clubRegistration");
+    }
+
+    if (!req.user) {
+      req.flash(
+        "error",
+        "You must be logged in as a college to register a club."
+      );
+      return res.redirect("/signup");
+    }
+
+    const college = await College.findById(req.user._id);
+    if (!college) {
+      req.flash("error", "College not found!");
+      return res.redirect("/signup");
+    }
+
+    const newClub = new Club({ ClubName });
+    const registeredClub = await Club.register(newClub, password);
+
+    // Store the club reference in the college model
+    college.clubs.push(registeredClub._id);
+    await college.save();
+
+    req.flash("success", "Club registered successfully!");
+    res.redirect(`/${ClubName}/profile`);
+  } catch (e) {
+    console.log("Registration error:", e);
+    req.flash("error", "Failed to register club");
+    res.redirect("/clubRegistration");
+  }
+});
+
+app.get("/clubRegistration/login", (req, res) => {
+  res.render("club/clubformLogin.ejs");
+});
+
+app.post(
+  "/clubRegistration/login",
+  passport.authenticate("club", {
+    failureRedirect: "/clubRegistration/login", // Redirect to login page if authentication fails
+    failureFlash: true, // Show an error message
+  }),
+  async (req, res) => {
+    let { ClubName } = req.body;
+    let redirectUrl = res.locals.redirectUrl || `/${ClubName}/profile`;
+    res.redirect(redirectUrl);
+  }
+);
+
+app.get("/:clubName/createpost", async (req, res) => {
+  try {
+    const { clubName } = req.params;
+    const club = await Club.findOne({ ClubName: clubName });
+
+    if (!club) {
+      req.flash("error", "Club not found!");
+      return res.redirect("/clubRegistration");
+    }
+
+    res.render("profile/createpost", { club });
+  } catch (e) {
+    console.log("Error loading createpost page:", e);
+    req.flash("error", "Something went wrong!");
+    res.redirect("/");
+  }
+});
+
+app.post("/:clubName/createpost", async (req, res) => {
+  try {
+    const { clubName } = req.params;
+    const { eventName, eventDetails } = req.body;
+
+    let club = await Club.findOne({ ClubName: clubName });
+
+    if (!club) {
+      req.flash("error", "Club not found!");
+      return res.redirect("/clubRegistration");
+    }
+
+    let newEvent = new Event({
+      eventName,
+      eventDetails,
+      author: club._id,
+    });
+
+    await newEvent.save();
+    club.events.push(newEvent);
+    await club.save();
+
+    req.flash("success", "Event created successfully!");
+    res.redirect(`/${clubName}/profile`);
+  } catch (e) {
+    console.log("Error creating event:", e);
+    req.flash("error", "Failed to create event.");
+    res.redirect("/");
+  }
+});
+
+app.get("/studentRegistration/signup", (req, res) => {
+  res.render("student/signup");
+});
+
+app.post("/studentRegistration/signup", async (req, res) => {
+  try {
+    let { studentName, college, email, regNo, password } = req.body;
+    const newStudent = new Student({ studentName, college, email, regNo });
+    const registeredStudent = await Student.register(newStudent, password);
+    req.login(registeredStudent, (err) => {
+      if (err) return next(err);
+      req.flash("success", "Welcome to Club Management!");
+      res.redirect("/clubRegistration");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+app.get("/studentRegistration/login", (req, res) => {
+  res.render("student/login");
+});
+
+app.post("/studentRegistration/login", async (req, res) => {});
 
 app.listen(8080, () => {
   console.log("Listening on port 8080");

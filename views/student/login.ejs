@@ -1,10 +1,13 @@
 <%- include("../layouts/boilerplate") %>
 
-<form class="form" action="/collegeRegistration/signup" method="post">
-  <p class="form-title">Sign up</p>
+<form class="form" action="/studentRegistration/login" method="post">
+  <p class="form-title">Sign in to your account</p>
   <div class="input-container">
-    <input placeholder="Register your college" name="college" type="text" />
-
+    <input
+      placeholder="Enter your Registration Number"
+      name="regNo"
+      type="text"
+    />
     <span>
       <svg
         stroke="currentColor"
@@ -22,10 +25,7 @@
     </span>
   </div>
   <div class="input-container">
-    <input placeholder="Enter your Email" name="email" type="email" />
-  </div>
-  <div class="input-container">
-    <input placeholder="Set password" name="password" type="password" />
+    <input placeholder="Enter password" name="password" type="password" />
 
     <span>
       <svg
@@ -49,5 +49,10 @@
       </svg>
     </span>
   </div>
-  <button class="submit">Sign up</button>
+  <button class="submit" type="submit">Sign in</button>
+
+  <p class="signup-link">
+    No account?
+    <a href="/studentRegistration/signup">Sign up</a>
+  </p>
 </form>
