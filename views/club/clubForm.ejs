@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-4 offset-4 mt-4">
         <h3 class="offset-3 col-6">Create a new club</h3>
-        <form method="post" action="/clubRegistration" novalidate class="needs-validation">
+        <form method="post" action="/clubRegistration" novalidate class="needs-validation" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="ClubName" class="form-label"><b>Club Name</b></label>
             <input
@@ -24,6 +24,16 @@
               placeholder="Set Password"
               class="form-control"
               type="password"
+              required
+            ></input>
+          </div>
+          <div class="mb-3">
+            <label for="ClubLogo" class="form-label"><b>Upload logo</b></label>
+            <input
+              id="ClubLogo"
+              name="ClubLogo"
+              class="form-control"
+              type="file"
               required
             ></input>
           </div>

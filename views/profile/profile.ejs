@@ -6,55 +6,79 @@
     justify-content: space-evenly;
     align-items: center;
   }
-  .logo {
-    height: 200px;
-    width: 200px;
-    border-radius: 50%;
-    background-color: yellow;
-  }
+
   .btn-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     margin-top: 20px;
+  }
+
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 70px;
+    margin-top: 20px;
+    margin-left: 60px;
+    padding: 10px;
+  }
+
+  .card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .card:hover {
+    transform: scale(1.05);
+  }
+
+  .card img {
+    border-radius: 10px 10px 0 0;
+    object-fit: cover;
+    height: 200px;
   }
 </style>
 
 <div class="container">
-  <div class="logo"></div>
+  <div class="logo">
+    <img
+      src="<%= club.ClubLogo.url %>"
+      alt="Club Logo"
+      style="
+        width: 250px;
+        height: 250px;
+        border: 1px solid pink;
+        border-radius: 50%;
+      "
+    />
+  </div>
   <span>Posts: <%= club.events.length %></span>
-  <span>Followers</span>
+  <span
+    ><div class="btn-container success">
+      <a href="/<%= club.ClubName %>/createpost" class="btn btn-success"
+        >Create Event</a
+      >
+    </div></span
+  >
 </div>
 
 <hr />
 
-<!-- Create Post Button -->
-<div class="btn-container">
-  <a href="/<%= club.ClubName %>/createpost" class="btn btn-success"
-    >Create Event</a
-  >
-</div>
+<h2 style="margin-left: 600px">Events for <%= club.ClubName %></h2>
 
-<h2>Events for <%= club.ClubName %></h2>
-
-<!-- <ul>
+<div class="card-container">
   <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
-  <li>
-    <h3><%= event.eventName %></h3>
-    <p><%= event.eventDetails %></p>
-  </li>
+  <div class="card" style="width: 18rem">
+    <img
+      src="<%= event.image.url %>"
+      class="card-img-top"
+      alt="Event Image"
+      style="width: 286px; height: 250px"
+    />
+    <div class="card-body">
+      <p class="card-text"><%= event.eventDetails %></p>
+    </div>
+  </div>
   <% }) %> <% } else { %>
   <p>No events created yet.</p>
   <% } %>
-</ul> -->
-
-<% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
-<div class="card mb-4" style="width: 18rem">
-  <div class="card-body">
-    <h5 class="card-title"><%= event.eventName %></h5>
-    <p class="card-text"><%= event.eventDetails %></p>
-  </div>
 </div>
-<% }) %> <% } else { %>
-<p>No events created yet.</p>
-<% } %>
