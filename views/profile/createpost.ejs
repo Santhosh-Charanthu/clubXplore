@@ -10,6 +10,7 @@
       action="/<%= club.ClubName %>/createpost"
       novalidate
       class="needs-validation"
+      enctype="multipart/form-data"
     >
       <div class="mb-3">
         <label for="eventName" class="form-label"><b>Event Name</b></label>
@@ -32,6 +33,11 @@
           class="form-control"
           required
         ></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="image" class="form-label"><b>Upload Image</b></label>
+        <input type="file" id="image" name="image" class="form-control" />
       </div>
 
       <div class="mb-4">

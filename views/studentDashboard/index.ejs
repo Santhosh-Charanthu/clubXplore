@@ -1,0 +1,30 @@
+<%- include("../layouts/boilerplate") %>
+
+<h1 class="col-6">College: <%= college.college %></h1>
+
+<!-- Display Clubs -->
+<div class="row">
+  <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
+  <div class="col-md-6">
+    <div
+      class="card mb-4"
+      style="width: 300px; margin-left: 60px; margin-top: 50px; gap: 50px"
+    >
+      <!-- Display Club Logo -->
+      <img
+        src="<%= club.ClubLogo.url %>"
+        class="card-img-top"
+        alt="<%= club.ClubName %>"
+        style="height: 200px; object-fit: cover"
+      />
+
+      <div class="card-body">
+        <h3 class="card-title"><%= club.ClubName %></h3>
+        <p><strong>Total Events:</strong> <%= club.events.length %></p>
+      </div>
+    </div>
+    <% }) %> <% } else { %>
+    <p>No clubs available.</p>
+    <% } %>
+  </div>
+</div>

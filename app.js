@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -15,6 +19,10 @@ let College = require("./models/college");
 let Club = require("./models/club");
 let Event = require("./models/Event");
 let Student = require("./models/student");
+const cloudinary = require("cloudinary").v2;
+const multer = require("multer");
+const { storage } = require("./cloudconfig.js");
+const upload = multer({ storage: storage });
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -49,6 +57,10 @@ passport.use(
   "club",
   new LocalStrategy({ usernameField: "ClubName" }, Club.authenticate())
 );
+passport.use(
+  "student",
+  new LocalStrategy({ usernameField: "regNo" }, Student.authenticate())
+);
 
 //Middleware
 app.use((req, res, next) => {
@@ -58,10 +70,12 @@ app.use((req, res, next) => {
 });
 
 passport.serializeUser((user, done) => {
-  done(null, {
-    id: user.id,
-    type: user instanceof College ? "College" : "Club",
-  });
+  let userType = "";
+  if (user instanceof College) userType = "College";
+  else if (user instanceof Club) userType = "Club";
+  else if (user instanceof Student) userType = "Student";
+
+  done(null, { id: user.id, type: userType });
 });
 
 passport.deserializeUser(async (obj, done) => {
@@ -69,9 +83,14 @@ passport.deserializeUser(async (obj, done) => {
     if (obj.type === "College") {
       const college = await College.findById(obj.id);
       done(null, college);
-    } else {
+    } else if (obj.type === "Club") {
       const club = await Club.findById(obj.id);
       done(null, club);
+    } else if (obj.type === "Student") {
+      const student = await Student.findById(obj.id);
+      done(null, student);
+    } else {
+      done(new Error("Invalid user type"), null);
     }
   } catch (err) {
     done(err, null);
@@ -104,6 +123,8 @@ app.post(
 app.get("/collegeRegistration/signup", (req, res) => {
   res.render("users/signup.ejs");
 });
+
+// app.js
 
 app.post("/collegeRegistration/signup", async (req, res) => {
   try {
@@ -149,15 +170,16 @@ app.get("/:clubName/profile", async (req, res) => {
 app.get("/clubRegistration", (req, res) => {
   res.render("club/clubform.ejs");
 });
-
-app.post("/clubRegistration", async (req, res) => {
+///
+///
+app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
   try {
     let { ClubName, password } = req.body;
+
     if (!ClubName || !password) {
       req.flash("error", "All fields are required!");
       return res.redirect("/clubRegistration");
     }
-
     if (!req.user) {
       req.flash(
         "error",
@@ -165,29 +187,42 @@ app.post("/clubRegistration", async (req, res) => {
       );
       return res.redirect("/signup");
     }
-
     const college = await College.findById(req.user._id);
     if (!college) {
       req.flash("error", "College not found!");
       return res.redirect("/signup");
     }
 
-    const newClub = new Club({ ClubName });
+    if (!req.file) {
+      req.flash("error", "Please upload a logo.");
+      return res.redirect("/clubRegistration");
+    }
+
+    const url = req.file.path;
+    const fileName = req.file.filename;
+
+    const newClub = new Club({
+      ClubName,
+      ClubLogo: {
+        url: url,
+        filename: fileName,
+      },
+      author: college._id,
+    });
+
     const registeredClub = await Club.register(newClub, password);
 
-    // Store the club reference in the college model
     college.clubs.push(registeredClub._id);
     await college.save();
 
     req.flash("success", "Club registered successfully!");
     res.redirect(`/${ClubName}/profile`);
   } catch (e) {
-    console.log("Registration error:", e);
-    req.flash("error", "Failed to register club");
+    console.log("Error during club registration:", e);
+    req.flash("error", "Failed to register club.");
     res.redirect("/clubRegistration");
   }
 });
-
 app.get("/clubRegistration/login", (req, res) => {
   res.render("club/clubformLogin.ejs");
 });
@@ -195,8 +230,8 @@ app.get("/clubRegistration/login", (req, res) => {
 app.post(
   "/clubRegistration/login",
   passport.authenticate("club", {
-    failureRedirect: "/clubRegistration/login", // Redirect to login page if authentication fails
-    failureFlash: true, // Show an error message
+    failureRedirect: "/clubRegistration/login",
+    failureFlash: true,
   }),
   async (req, res) => {
     let { ClubName } = req.body;
@@ -222,8 +257,11 @@ app.get("/:clubName/createpost", async (req, res) => {
     res.redirect("/");
   }
 });
+//
+//
+//
 
-app.post("/:clubName/createpost", async (req, res) => {
+app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
     const { clubName } = req.params;
     const { eventName, eventDetails } = req.body;
@@ -235,9 +273,20 @@ app.post("/:clubName/createpost", async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
+    if (!req.file) {
+      req.flash("error", "Please upload a image.");
+      return res.redirect("/:clubName/profile");
+    }
+
+    const url = req.file.path;
+    const fileName = req.file.filename;
     let newEvent = new Event({
       eventName,
       eventDetails,
+      image: {
+        url: url,
+        filename: fileName,
+      },
       author: club._id,
     });
 
@@ -250,7 +299,7 @@ app.post("/:clubName/createpost", async (req, res) => {
   } catch (e) {
     console.log("Error creating event:", e);
     req.flash("error", "Failed to create event.");
-    res.redirect("/");
+    res.redirect("/collegeRegistration/login");
   }
 });
 
@@ -266,7 +315,7 @@ app.post("/studentRegistration/signup", async (req, res) => {
     req.login(registeredStudent, (err) => {
       if (err) return next(err);
       req.flash("success", "Welcome to Club Management!");
-      res.redirect("/clubRegistration");
+      res.redirect("/index");
     });
   } catch (e) {
     console.log(e);
@@ -277,7 +326,32 @@ app.get("/studentRegistration/login", (req, res) => {
   res.render("student/login");
 });
 
-app.post("/studentRegistration/login", async (req, res) => {});
+app.get("/index", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/studentRegistration/login");
+  }
+
+  let user = req.user;
+  let college = await College.findOne({ college: user.college }).populate({
+    path: "clubs",
+    populate: { path: "events" }, // Populate events inside each club
+  });
+
+  res.render("studentDashboard/index", { college });
+});
+
+app.post(
+  "/studentRegistration/login",
+  passport.authenticate("student", {
+    failureRedirect: "/studentRegistration/login",
+    failureFlash: true,
+  }),
+  async (req, res) => {
+    let redirectUrl = res.locals.redirectUrl || "/index";
+    res.redirect(redirectUrl);
+    console.log(redirectUrl);
+  }
+);
 
 app.listen(8080, () => {
   console.log("Listening on port 8080");
