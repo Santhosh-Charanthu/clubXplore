@@ -125,9 +125,7 @@ app.get("/collegeRegistration/signup", (req, res) => {
   res.render("users/signup.ejs");
 });
 
-// app.js
-/////
-///
+
 app.post(
   "/collegeRegistration/signup",
   upload.single("collegeLogo"),
@@ -142,6 +140,7 @@ app.post(
         req.flash("error", "Please upload a logo.");
         return res.redirect("/collegeRegistration/signup");
       }
+
       const url = req.file.path;
       const fileName = req.file.filename;
 
@@ -187,8 +186,7 @@ app.get("/:clubName/profile", async (req, res) => {
 app.get("/clubRegistration", (req, res) => {
   res.render("club/clubform.ejs");
 });
-///
-///
+
 app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
   try {
     let { ClubName, password } = req.body;
@@ -202,12 +200,12 @@ app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
         "error",
         "You must be logged in as a college to register a club."
       );
-      return res.redirect("/signup");
+      return res.redirect("/collegeRegistration/signup");
     }
     const college = await College.findById(req.user._id);
     if (!college) {
       req.flash("error", "College not found!");
-      return res.redirect("/signup");
+      return res.redirect("/collegeRegistration/signup");
     }
 
     if (!req.file) {
@@ -274,8 +272,7 @@ app.get("/:clubName/createpost", async (req, res) => {
     res.redirect("/");
   }
 });
-//
-//
+
 
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
@@ -351,7 +348,6 @@ app.get("/index", async (req, res) => {
   if (!req.user) {
     return res.redirect("/studentRegistration/login");
   }
-
   let user = req.user;
   let college = await College.findOne({ college: user.college }).populate({
     path: "clubs",
