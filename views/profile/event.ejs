@@ -1,0 +1,110 @@
+<%- include("../layouts/boilerplate") %>
+
+<h1 class="event-title"><%= event.eventName %></h1>
+
+<div class="event-image-container">
+  <img
+    src="<%= event.image.url %>"
+    class="event-image"
+    alt="<%= event.eventName %>"
+  />
+</div>
+
+<div class="event-description-container">
+  <p class="event-details"><%= event.eventDetails %></p>
+</div>
+
+<div class="back-button-container">
+  <a href="<%= event.eventLink %> " class="btn btn-secondary back-btn"
+    >Register</a
+  >
+</div>
+
+<style>
+  .event-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 30px;
+    color: #4b6cb7;
+  }
+
+  /* Event Image Styling */
+  .event-image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .event-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 400px;
+  }
+
+  /* Event Name Styling */
+  .event-name-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .event-name {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  /* Event Description Styling */
+  .event-description-container {
+    margin-top: 20px;
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .event-details {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  /* Back Button Styling */
+  .back-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .back-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #4b6cb7;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .back-btn:hover {
+    background-color: #3a4f7a;
+    transform: scale(1.05);
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  /* Responsive styling */
+  @media (max-width: 768px) {
+    .event-image {
+      max-height: 300px;
+    }
+
+    .event-name {
+      font-size: 1.5rem;
+    }
+
+    .event-details {
+      font-size: 1rem;
+    }
+  }
+</style>

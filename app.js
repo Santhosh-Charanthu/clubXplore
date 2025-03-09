@@ -23,6 +23,7 @@ const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
+const Joi = require("joi");
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -124,7 +125,6 @@ app.get("/collegeRegistration/signup", (req, res) => {
   res.render("users/signup.ejs");
 });
 
-// app.js
 
 app.post(
   "/collegeRegistration/signup",
@@ -273,10 +273,11 @@ app.get("/:clubName/createpost", async (req, res) => {
   }
 });
 
+
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
     const { clubName } = req.params;
-    const { eventName, eventDetails } = req.body;
+    const { eventName, eventDetails, eventLink } = req.body;
 
     let club = await Club.findOne({ ClubName: clubName });
 
@@ -286,8 +287,13 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
     }
 
     if (!req.file) {
-      req.flash("error", "Please upload a image.");
+      req.flash("error", "Please upload an image.");
       return res.redirect("/:clubName/profile");
+    }
+
+    if (!eventLink) {
+      req.flash("error", "Event link is required.");
+      return res.redirect(`/${clubName}/createpost`);
     }
 
     const url = req.file.path;
@@ -295,13 +301,13 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
     let newEvent = new Event({
       eventName,
       eventDetails,
+      eventLink,
       image: {
         url: url,
         filename: fileName,
       },
       author: club._id,
     });
-
     await newEvent.save();
     club.events.push(newEvent);
     await club.save();
@@ -345,7 +351,7 @@ app.get("/index", async (req, res) => {
   let user = req.user;
   let college = await College.findOne({ college: user.college }).populate({
     path: "clubs",
-    populate: { path: "events" }, // Populate events inside each club
+    populate: { path: "events" },
   });
 
   res.render("studentDashboard/index", { college });
@@ -363,6 +369,32 @@ app.post(
     console.log(redirectUrl);
   }
 );
+
+app.get("/:clubName/:eventName/eventdetails", async (req, res) => {
+  let { ClubName, eventName } = req.params;
+  try {
+    const club = await Club.findOne({ ClubName: req.params.clubName })
+      .populate("events")
+      .exec();
+
+    if (!club) {
+      return res.status(404).send("Club not found");
+    }
+
+    const event = club.events.find(
+      (event) => event.eventName === req.params.eventName
+    );
+
+    if (!event) {
+      return res.status(404).send("Event not found");
+    }
+
+    res.render("profile/event", { event });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
 
 app.listen(8080, () => {
   console.log("Listening on port 8080");
