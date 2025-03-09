@@ -38,6 +38,18 @@
   }
 </style>
 
+<form class="d-flex" action="/search" method="get">
+  <input
+    class="form-control me-2"
+    type="search"
+    placeholder="Search events..."
+    aria-label="Search"
+    name="query"
+    required
+  />
+  <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
 <div class="container">
   <div class="logo">
     <img
@@ -52,13 +64,13 @@
     />
   </div>
   <span>Posts: <%= club.events.length %></span>
-  <span
-    ><div class="btn-container success">
+  <span>
+    <div class="btn-container success">
       <a href="/<%= club.ClubName %>/createpost" class="btn btn-success"
         >Create Event</a
       >
-    </div></span
-  >
+    </div>
+  </span>
 </div>
 
 <hr />
@@ -67,17 +79,23 @@
 
 <div class="card-container">
   <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
-  <div class="card" style="width: 18rem">
-    <img
-      src="<%= event.image.url %>"
-      class="card-img-top"
-      alt="Event Image"
-      style="width: 286px; height: 250px"
-    />
-    <div class="card-body">
-      <p class="card-text"><%= event.eventDetails %></p>
+  <a
+    href="/<%= club.ClubName %>/<%= event.eventName %>/eventdetails"
+    style="text-decoration: none; color: inherit"
+  >
+    <div class="card" style="width: 18rem">
+      <img
+        src="<%= event.image.url %>"
+        class="card-img-top"
+        alt="Event Image"
+        style="width: 286px; height: 250px"
+      />
+      <div class="card-body">
+        <h5 class="card-title"><%= event.eventName %></h5>
+        <p class="card-text"><%= event.eventDetails %></p>
+      </div>
     </div>
-  </div>
+  </a>
   <% }) %> <% } else { %>
   <p>No events created yet.</p>
   <% } %>

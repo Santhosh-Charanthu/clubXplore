@@ -4,7 +4,6 @@
   <div class="col-4 offset-4 mt-4">
     <h3 class="offset-3 col-6">Enter event details</h3>
 
-    <!-- Dynamically set the form action to the club-specific route -->
     <form
       method="post"
       action="/<%= club.ClubName %>/createpost"
@@ -33,6 +32,16 @@
           class="form-control"
           required
         ></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="eventLink" class="form-label"><b>Registration Url</b></label>
+        <input
+          id="eventLink"
+          name="eventLink"
+          class="form-control"
+          type="text"
+          required
+        ></input>
       </div>
 
       <div class="mb-3">

@@ -11,6 +11,10 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
+  eventLink: {
+    type: String,
+    required: true,
+  },
   image: {
     url: String,
     filename: String,

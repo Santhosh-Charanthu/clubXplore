@@ -1,5 +1,6 @@
 const { required, string } = require("joi");
 const mongoose = require("mongoose");
+const { type } = require("os");
 const Schema = mongoose.Schema;
 const passportLocalMongoose = require("passport-local-mongoose");
 
@@ -13,6 +14,7 @@ const clubSchema = new Schema({
     url: String,
     filename: String,
   },
+
   author: {
     type: Schema.Types.ObjectId,
     ref: "College",

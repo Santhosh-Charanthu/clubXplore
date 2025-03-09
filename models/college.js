@@ -13,6 +13,10 @@ const collegeSchema = new Schema({
     required: true,
     unique: true,
   },
+  collegeLogo: {
+    url: String,
+    filename: String,
+  },
   clubs: [
     {
       type: Schema.Types.ObjectId,
