@@ -126,28 +126,44 @@ app.get("/collegeRegistration/signup", (req, res) => {
 
 // app.js
 
-app.post("/collegeRegistration/signup", async (req, res) => {
-  try {
-    let { college, password, email } = req.body;
-    if (!college || !email || !password) {
-      req.flash("error", "All fields are required!");
-      return res.redirect("/signup");
+app.post(
+  "/collegeRegistration/signup",
+  upload.single("collegeLogo"),
+  async (req, res, next) => {
+    try {
+      let { college, password, email } = req.body;
+      if (!college || !email || !password) {
+        req.flash("error", "All fields are required!");
+        return res.redirect("/signup");
+      }
+      if (!req.file) {
+        req.flash("error", "Please upload a logo.");
+        return res.redirect("/collegeRegistration/signup");
+      }
+
+      const url = req.file.path;
+      const fileName = req.file.filename;
+
+      const newCollege = new College({
+        email,
+        college,
+        collegeLogo: { url, filename: fileName },
+      });
+
+      const registeredCollege = await College.register(newCollege, password);
+
+      req.login(registeredCollege, (err) => {
+        if (err) return next(err);
+        req.flash("success", "Welcome to Club Management!");
+        res.redirect("/clubRegistration");
+      });
+    } catch (e) {
+      console.error("Signup error:", e);
+      req.flash("error", "Signup failed. Try again.");
+      res.redirect("/collegeRegistration/signup");
     }
-
-    const newCollege = new College({ email, college });
-    const registeredCollege = await College.register(newCollege, password);
-
-    req.login(registeredCollege, (err) => {
-      if (err) return next(err);
-      req.flash("success", "Welcome to Club Management!");
-      res.redirect("/clubRegistration");
-    });
-  } catch (e) {
-    console.log("Signup error:", e);
-    req.flash("error", "Signup failed. Try again.");
-    res.redirect("/signup");
   }
-});
+);
 
 app.get("/:clubName/profile", async (req, res) => {
   try {
@@ -170,8 +186,7 @@ app.get("/:clubName/profile", async (req, res) => {
 app.get("/clubRegistration", (req, res) => {
   res.render("club/clubform.ejs");
 });
-///
-///
+
 app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
   try {
     let { ClubName, password } = req.body;
@@ -185,12 +200,12 @@ app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
         "error",
         "You must be logged in as a college to register a club."
       );
-      return res.redirect("/signup");
+      return res.redirect("/collegeRegistration/signup");
     }
     const college = await College.findById(req.user._id);
     if (!college) {
       req.flash("error", "College not found!");
-      return res.redirect("/signup");
+      return res.redirect("/collegeRegistration/signup");
     }
 
     if (!req.file) {
@@ -257,9 +272,6 @@ app.get("/:clubName/createpost", async (req, res) => {
     res.redirect("/");
   }
 });
-//
-//
-//
 
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
@@ -330,7 +342,6 @@ app.get("/index", async (req, res) => {
   if (!req.user) {
     return res.redirect("/studentRegistration/login");
   }
-
   let user = req.user;
   let college = await College.findOne({ college: user.college }).populate({
     path: "clubs",

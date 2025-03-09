@@ -1,6 +1,6 @@
 <%- include("../layouts/boilerplate") %>
 
-<form class="form" action="/collegeRegistration/signup" method="post">
+<form class="form" action="/collegeRegistration/signup" method="post" enctype="multipart/form-data">
   <p class="form-title">Sign up</p>
   <div class="input-container">
     <input placeholder="Register your college" name="college" type="text" />
@@ -23,6 +23,15 @@
   </div>
   <div class="input-container">
     <input placeholder="Enter your Email" name="email" type="email" />
+  </div>
+  <div class="input-container">
+    <input
+      id="collegeLogo"
+      name="collegeLogo"
+      class="form-control"
+      type="file"
+      required
+    ></input>
   </div>
   <div class="input-container">
     <input placeholder="Set password" name="password" type="password" />

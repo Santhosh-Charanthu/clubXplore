@@ -1,30 +1,81 @@
 <%- include("../layouts/boilerplate") %>
 
-<h1 class="col-6">College: <%= college.college %></h1>
+<style>
+  .club-container {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(300px, 1fr)
+    ); /* Max 4 per row */
+    gap: 20px; /* Space between cards */
+    padding: 40px; /* Adjust padding around container */
+    justify-content: center;
+  }
+
+  .club-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .club-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    padding: 0;
+    margin: 0;
+  }
+
+  .club-card:hover {
+    transform: translateY(-5px); /* Slight hover effect */
+  }
+
+  .card-img-top {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .card-body {
+    padding: 15px;
+    text-align: center;
+  }
+
+  .card-title {
+    margin-bottom: 10px;
+  }
+</style>
+
+<img
+  src="<%= college.collegeLogo.url %>"
+  alt="College Logo"
+  style="
+    height: 100px;
+    width: 100px;
+    border: 1px solid pink;
+    border-radius: 50%;
+  "
+/>
+<h1 class="col-6"><%= college.college %></h1>
 
 <!-- Display Clubs -->
-<div class="row">
+<div class="club-container">
   <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
-  <div class="col-md-6">
-    <div
-      class="card mb-4"
-      style="width: 300px; margin-left: 60px; margin-top: 50px; gap: 50px"
-    >
-      <!-- Display Club Logo -->
+  <a href="/<%= club.ClubName %>/profile" class="club-link">
+    <div class="club-card">
       <img
         src="<%= club.ClubLogo.url %>"
         class="card-img-top"
         alt="<%= club.ClubName %>"
-        style="height: 200px; object-fit: cover"
       />
-
       <div class="card-body">
         <h3 class="card-title"><%= club.ClubName %></h3>
         <p><strong>Total Events:</strong> <%= club.events.length %></p>
       </div>
     </div>
-    <% }) %> <% } else { %>
-    <p>No clubs available.</p>
-    <% } %>
-  </div>
+  </a>
+  <% }) %> <% } else { %>
+  <p>No clubs available.</p>
+  <% } %>
 </div>
