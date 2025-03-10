@@ -125,7 +125,6 @@ app.get("/collegeRegistration/signup", (req, res) => {
   res.render("users/signup.ejs");
 });
 
-
 app.post(
   "/collegeRegistration/signup",
   upload.single("collegeLogo"),
@@ -189,7 +188,7 @@ app.get("/clubRegistration", (req, res) => {
 
 app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
   try {
-    let { ClubName, password } = req.body;
+    let { ClubName, password, branchName } = req.body;
 
     if (!ClubName || !password) {
       req.flash("error", "All fields are required!");
@@ -218,6 +217,7 @@ app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
 
     const newClub = new Club({
       ClubName,
+      branchName,
       ClubLogo: {
         url: url,
         filename: fileName,
@@ -272,7 +272,6 @@ app.get("/:clubName/createpost", async (req, res) => {
     res.redirect("/");
   }
 });
-
 
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
@@ -345,14 +344,23 @@ app.get("/studentRegistration/login", (req, res) => {
 });
 
 app.get("/index", async (req, res) => {
+  let { searchedCollege } = req.query;
   if (!req.user) {
     return res.redirect("/studentRegistration/login");
   }
-  let user = req.user;
-  let college = await College.findOne({ college: user.college }).populate({
-    path: "clubs",
-    populate: { path: "events" },
-  });
+  let college;
+  if (searchedCollege) {
+    college = await College.findOne({ college: searchedCollege }).populate({
+      path: "clubs",
+      populate: { path: "events" },
+    });
+  } else {
+    let user = req.user;
+    college = await College.findOne({ college: user.college }).populate({
+      path: "clubs",
+      populate: { path: "events" },
+    });
+  }
 
   res.render("studentDashboard/index", { college });
 });

@@ -10,6 +10,10 @@ const clubSchema = new Schema({
     required: true,
     unique: true,
   },
+  branchName: {
+    type: String,
+    required: true,
+  },
   ClubLogo: {
     url: String,
     filename: String,

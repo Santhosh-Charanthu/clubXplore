@@ -2,33 +2,31 @@
 
 <style>
   .club-container {
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fit,
-      minmax(300px, 1fr)
-    ); /* Max 4 per row */
-    gap: 20px; /* Space between cards */
-    padding: 40px; /* Adjust padding around container */
-    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Centers content */
+    gap: 70px; /* Space between cards */
+    padding: 40px;
   }
 
-  .club-link {
+  .club-container a {
     text-decoration: none;
-    color: inherit;
+    color: black;
   }
 
   .club-card {
+    width: 25%; /* Each card takes up 25% of the row */
+    min-width: 300px; /* Prevents cards from shrinking too much */
+    max-width: 300px; /* Keeps them evenly sized */
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease;
-    padding: 0;
-    margin: 0;
   }
 
   .club-card:hover {
-    transform: translateY(-5px); /* Slight hover effect */
+    transform: translateY(-5px);
   }
 
   .card-img-top {
@@ -46,7 +44,26 @@
     margin-bottom: 10px;
   }
 
-  /* From Uiverse.io by vinodjangid07 */
+  /* Responsive Fixes */
+  @media (max-width: 1200px) {
+    .club-card {
+      width: 33.33%; /* 3 per row on medium screens */
+    }
+  }
+
+  @media (max-width: 900px) {
+    .club-card {
+      width: 50%; /* 2 per row on small screens */
+    }
+  }
+
+  @media (max-width: 600px) {
+    .club-card {
+      width: 100%; /* 1 per row on very small screens */
+    }
+  }
+
+  /* Search Bar Styles */
   .InputContainer {
     width: 420px;
     height: 50px;
@@ -77,31 +94,35 @@
     color: rgb(19, 19, 19);
     font-size: 13.4px;
   }
+
   .btn-search {
     background-color: violet;
     color: #fff;
     border-radius: 25px;
-    padding: 0 1rem 0 1rem;
+    padding: 0 1rem;
   }
+
   .btn-search:hover {
     background-color: #fe424d;
     color: #fff;
   }
+
   .btn-search i {
     display: inline;
     margin-right: 0.5rem;
   }
 </style>
+
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand">Navbar</a>
     <form class="d-flex col-4" style="margin-right: 500px" role="search">
       <div class="InputContainer">
         <input
-          placeholder="Search.."
-          id="input"
+          placeholder="Search for a college.."
+          id="searchedCollege"
           class="input"
-          name="text"
+          name="searchedCollege"
           type="text"
         />
       </div>
@@ -112,10 +133,8 @@
   </div>
 </nav>
 
-</style>
-
 <img
-  src="<%= college.collegeLogo.url %>"
+  src="<%= college.collegeLogo.url%>"
   alt="College Logo"
   style="
     height: 100px;
