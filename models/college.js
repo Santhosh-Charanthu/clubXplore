@@ -23,6 +23,10 @@ const collegeSchema = new Schema({
       ref: "club", // Ensure the reference matches the actual model name
     },
   ],
+  role: {
+    type: String,
+    required: true,
+  },
 });
 
 collegeSchema.plugin(passportLocalMongoose, { usernameField: "college" });

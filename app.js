@@ -67,6 +67,7 @@ passport.use(
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
   next();
 });
 
@@ -111,6 +112,7 @@ app.get("/collegeRegistration/login", (req, res) => {
 
 app.post(
   "/collegeRegistration/login",
+
   passport.authenticate("college", {
     failureRedirect: "/collegeRegistration/login", // Redirect to login page if authentication fails
     failureFlash: true, // Show an error message
@@ -147,6 +149,7 @@ app.post(
         email,
         college,
         collegeLogo: { url, filename: fileName },
+        role: "college",
       });
 
       const registeredCollege = await College.register(newCollege, password);
@@ -327,7 +330,13 @@ app.get("/studentRegistration/signup", (req, res) => {
 app.post("/studentRegistration/signup", async (req, res) => {
   try {
     let { studentName, college, email, regNo, password } = req.body;
-    const newStudent = new Student({ studentName, college, email, regNo });
+    const newStudent = new Student({
+      studentName,
+      college,
+      email,
+      regNo,
+      role: "student",
+    });
     const registeredStudent = await Student.register(newStudent, password);
     req.login(registeredStudent, (err) => {
       if (err) return next(err);
@@ -342,6 +351,19 @@ app.post("/studentRegistration/signup", async (req, res) => {
 app.get("/studentRegistration/login", (req, res) => {
   res.render("student/login");
 });
+
+app.post(
+  "/studentRegistration/login",
+
+  passport.authenticate("student", {
+    failureRedirect: "/studentRegistration/login",
+    failureFlash: true,
+  }),
+  async (req, res) => {
+    let redirectUrl = res.locals.redirectUrl || "/index";
+    res.redirect(redirectUrl);
+  }
+);
 
 app.get("/index", async (req, res) => {
   let { searchedCollege } = req.query;
@@ -365,43 +387,165 @@ app.get("/index", async (req, res) => {
   res.render("studentDashboard/index", { college });
 });
 
-app.post(
-  "/studentRegistration/login",
-  passport.authenticate("student", {
-    failureRedirect: "/studentRegistration/login",
-    failureFlash: true,
-  }),
+app.get("/:clubName/:eventName/eventdetails", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/studentRegistration/login");
+  }
+  let { clubName, eventName } = req.params;
+
+  const club = await Club.findOne({ ClubName: clubName })
+    .populate({
+      path: "events",
+      populate: {
+        path: "author",
+        select: "ClubName",
+      },
+    })
+    .exec();
+
+  if (!club) {
+    return res.status(404).send("Club not found");
+  }
+
+  const event = club.events.find(
+    (event) => event.eventName === req.params.eventName
+  );
+
+  if (!event) {
+    return res.status(404).send("Event not found");
+  }
+
+  let user = req.user;
+  console.log(user);
+
+  res.render("profile/event", { event, user });
+});
+
+app.post("/:clubName/:eventName/eventdetails", async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).send("You must be logged in to register.");
+    }
+
+    const { clubName, eventName } = req.params;
+
+    // Find the club
+    const club = await Club.findOne({ ClubName: clubName }).populate("events");
+    if (!club) {
+      return res.status(404).send("Club not found.");
+    }
+
+    // Find the event within the club's events array
+    const event = club.events.find((e) => e.eventName === eventName);
+    if (!event) {
+      return res.status(404).send("Event not found.");
+    }
+
+    // Check if the user is already registered
+    if (event.registeredStudents.includes(req.user._id)) {
+      return res.status(400).send("You are already registered for this event.");
+    }
+
+    // Register the user
+    event.registeredStudents.push(req.user._id);
+    await event.save();
+
+    res.send("Successfully registered for the event!");
+  } catch (error) {
+    console.error("Error registering student:", error);
+    res.status(500).send("Server error.");
+  }
+});
+
+app.get("/:clubName/:eventName/register", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/studentRegistration/login");
+    // return res.status(401).send("You must be logged in to register.");
+  }
+
+  let { clubName, eventName } = req.params; // ✅ Fix: Use req.params instead of req.query
+  console.log(clubName, eventName);
+  console.log(req.session);
+
+  const club = await Club.findOne({ ClubName: clubName })
+    .populate({
+      path: "events",
+      populate: {
+        path: "registeredStudents", // ✅ Ensure this matches your schema
+        model: "Student",
+      },
+    })
+    .exec();
+
+  if (!club) {
+    return res.status(404).send("Club not found");
+  }
+
+  const event = club.events.find((event) => event.eventName === eventName);
+
+  if (!event) {
+    return res.status(404).send("Event not found");
+  }
+
+  let user = req.user;
+  console.log(user);
+
+  if (user.role === "student") {
+    if (!event.registeredStudents) {
+      event.registeredStudents = []; // ✅ Fix: Ensure the array is initialized
+    }
+    event.registeredStudents.push(user._id);
+    await event.save();
+    await club.save(); // ✅ Fix: Save the parent document
+  }
+
+  console.log(event);
+
+  res.render("profile/event", { event });
+});
+
+app.get(
+  "/:clubName/:eventName/eventdetails/viewRegistration",
   async (req, res) => {
-    let redirectUrl = res.locals.redirectUrl || "/index";
-    res.redirect(redirectUrl);
-    console.log(redirectUrl);
+    try {
+      const { clubName, eventName } = req.params;
+
+      // Find the club and populate events
+      const club = await Club.findOne({ ClubName: clubName })
+        .populate({
+          path: "events",
+          populate: {
+            path: "registeredStudents", // Ensure this is correctly referenced in your schema
+            model: "Student",
+          },
+        })
+        .exec();
+
+      if (!club) {
+        req.flash("error", "Club not found!");
+        return res.redirect("/clubRegistration");
+      }
+
+      const event = club.events.find((event) => event.eventName === eventName);
+
+      if (!event) {
+        req.flash("error", "Event not found!");
+        return res.redirect(`/${clubName}/profile`);
+      }
+
+      res.render("profile/viewRegistrations", {
+        registeredStudents: event.registeredStudents,
+      });
+    } catch (error) {
+      console.error("Error fetching registered students:", error);
+      req.flash("error", "Something went wrong!");
+      res.redirect("/");
+    }
   }
 );
 
-app.get("/:clubName/:eventName/eventdetails", async (req, res) => {
-  let { ClubName, eventName } = req.params;
-  try {
-    const club = await Club.findOne({ ClubName: req.params.clubName })
-      .populate("events")
-      .exec();
-
-    if (!club) {
-      return res.status(404).send("Club not found");
-    }
-
-    const event = club.events.find(
-      (event) => event.eventName === req.params.eventName
-    );
-
-    if (!event) {
-      return res.status(404).send("Event not found");
-    }
-
-    res.render("profile/event", { event });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
-  }
+app.post("/:clubName/:eventName/eventdetails/viewRegistration", (req, res) => {
+  console.log(req.user);
 });
 
 app.listen(8080, () => {

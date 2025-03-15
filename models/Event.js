@@ -23,6 +23,12 @@ const eventSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "club",
   },
+  registeredStudents: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Student",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Event", eventSchema);
