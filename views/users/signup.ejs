@@ -1,9 +1,11 @@
 <%- include("../layouts/boilerplate") %>
 
+<h1>College Registration</h1>
+<div class="col-signup-container">
 <form class="form" action="/collegeRegistration/signup" method="post" enctype="multipart/form-data">
   <p class="form-title">Sign up</p>
   <div class="input-container">
-    <label for="college" class="form-label"><b>College</b></label>
+    
     <input placeholder="Register your college" name="college" type="text" />
 
     <span>
@@ -23,12 +25,11 @@
     </span>
   </div>
   <div class="input-container">
-    <label for="email" class="form-label"><b>Email</b></label>
     <input placeholder="Enter your Email" name="email" type="email" />
   </div>
 
   <div class="input-container">
-    <label for="collegeLogo" class="form-label"><b>Logo</b></label>
+    
     <input
       id="collegeLogo"
       name="collegeLogo"
@@ -38,7 +39,7 @@
     ></input>
   </div>
   <div class="input-container">
-    <label for="password" class="form-label"><b>Password</b></label>
+    
     <input placeholder="Set password" name="password" type="password" />
 
     <span>
@@ -65,4 +66,9 @@
   </div>
 
   <button class="submit">Sign up</button>
+  <p class="signup-link">
+    Already registered!
+    <a href="/collegeRegistration/login">Sign in</a>
+  </p>
 </form>
+</div>

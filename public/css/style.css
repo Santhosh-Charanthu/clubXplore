@@ -1,3 +1,49 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.col-signup-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.stu-login-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.stu-signup-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .form {
   background-color: #fff;
   display: block;
@@ -53,7 +99,7 @@
   color: #9ca3af;
   width: 1rem;
   height: 1rem;
-  margin-right: 10px;
+  margin-right: 0;
 }
 
 .submit {
@@ -81,4 +127,9 @@
 
 .signup-link a {
   text-decoration: underline;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 50px;
 }
