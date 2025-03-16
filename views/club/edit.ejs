@@ -1,0 +1,61 @@
+<%- include("../layouts/boilerplate") %>
+
+<div class="row mt-3">
+  <div class="col-4 offset-3">
+    <h3>Edit the Club <%= clubDetails.ClubName %></h3>
+
+    <form
+      method="post"
+      action="/<%=clubDetails.ClubName %>/edit?_method=PUT"
+      novalidate
+      class="needs-validation"
+      enctype="multipart/form-data"
+    >
+      <!-- Club Name -->
+      <div>
+        <label for="ClubName" class="form-label">Club Name</label>
+        <input
+          type="text"
+          name="ClubName"
+          value="<%= clubDetails.ClubName %>"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Club Name is required.</div>
+      </div>
+
+      <!-- Branch Name -->
+      <div>
+        <label for="branchName" class="form-label">Branch Name</label>
+        <input
+          type="text"
+          name="branchName"
+          value="<%= clubDetails.branchName %>"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Branch Name is required.</div>
+      </div>
+
+      <!-- Club Logo Upload -->
+      <div>
+        <label for="ClubLogo" class="form-label">New ClubLogo</label>
+        <br />
+
+        <input type="file" name="ClubLogo" class="form-control" />
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required />
+        <div class="invalid-feedback">Password is required.</div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-dark add-btn mt-3">
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Selection</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: url("https://t4.ftcdn.net/jpg/06/34/14/27/360_F_634142702_krpVzitHatLALEzzwN5TXBJGr8JeOr1C.jpg")
+          no-repeat center center/cover;
+      }
+
+      /* Dark overlay to enhance visibility */
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+      }
+
+      /* Image wrapper */
+      .image-wrapper {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        gap: 40px;
+      }
+
+      /* Individual login option */
+      .login-box {
+        width: 350px;
+        height: 500px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        text-align: center;
+        border-radius: 15px;
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        position: relative;
+        transition: transform 0.3s ease-in-out;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+      }
+
+      /* Background images for the cards */
+      .student {
+        background: url("https://img.freepik.com/premium-photo/university-students-friends-reading-study-book-project-education-sharing-information-together-campus-group-college-people-with-textbook-learning-knowledge-scholarship_590464-138776.jpg")
+          no-repeat center center/cover;
+      }
+
+      .college {
+        background: url("https://public.sturents.com/photos/7059209.jpg")
+          no-repeat center center/cover;
+      }
+
+      /* Dark overlay effect */
+      .login-box::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        transition: background 0.5s ease-in-out;
+      }
+
+      /* Hover effect */
+      .login-box:hover::before {
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      /* Title text */
+      .login-box h2 {
+        position: relative;
+        z-index: 2;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.5);
+        width: 100%;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .image-wrapper {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .login-box {
+          width: 90%;
+          height: 400px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="image-wrapper">
+      <!-- Student Login -->
+      <a href="studentRegistration/login" class="login-box student">
+        <h2>Student Login</h2>
+      </a>
+
+      <!-- College Login -->
+      <a href="collegeRegistration/login" class="login-box college">
+        <h2>College Login</h2>
+      </a>
+    </div>
+  </body>
+</html>

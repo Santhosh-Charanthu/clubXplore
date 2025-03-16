@@ -25,6 +25,7 @@ const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
 const Joi = require("joi");
+const { isLoggedIn } = require("./middleware.js");
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -106,6 +107,10 @@ mongoose
   .connect(dbUrl)
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.log("DB Connection Error:", err));
+
+app.get("/interface", async (req, res) => {
+  res.render("profile/interface");
+});
 
 app.get("/collegeRegistration/login", (req, res) => {
   res.render("users/login.ejs");
@@ -337,6 +342,87 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
     console.error("Error creating event:", error);
     req.flash("error", "Failed to create event.");
     res.redirect("/collegeRegistration/login");
+  }
+});
+
+app.get("/:clubName/edit", isLoggedIn, async (req, res) => {
+  try {
+    const clubDetails = await Club.findOne({ ClubName: req.params.clubName });
+    if (!clubDetails) {
+      return res.status(404).send("Club not found");
+    }
+    res.render("club/edit.ejs", { clubDetails });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+// Update Route
+app.put(
+  "/:clubName/edit",
+  upload.single("ClubLogo"),
+  isLoggedIn,
+  async (req, res) => {
+    try {
+      const { ClubName, branchName, password } = req.body;
+      const existingClub = await Club.findOne({
+        ClubName: req.params.clubName,
+      });
+
+      if (!existingClub) {
+        return res.status(404).send("Club not found");
+      }
+
+      existingClub.ClubName = ClubName;
+      existingClub.branchName = branchName;
+
+      if (password) {
+        await existingClub.setPassword(password);
+      }
+
+      if (req.file) {
+        existingClub.ClubLogo = {
+          url: req.file.path, // Cloudinary image URL
+          filename: req.file.filename,
+        };
+      }
+
+      await existingClub.save();
+      req.flash("success", "Club details updated successfully!");
+      res.redirect(`/${ClubName}/profile`);
+    } catch (error) {
+      console.error("Error updating club details:", error);
+      req.flash("error", "Failed to update club.");
+      res.redirect(`/${req.params.clubName}/edit`);
+    }
+  }
+);
+
+app.delete("/:ClubName/delete", async (req, res) => {
+  try {
+    const { ClubName } = req.params;
+
+    // Find the club document
+    const club = await Club.findOne({ ClubName: ClubName });
+    if (!club) {
+      req.flash("error", "Club not found.");
+      return res.redirect("/listings");
+    }
+
+    await College.updateOne(
+      { clubs: club._id },
+      { $pull: { clubs: club._id } }
+    );
+
+    await club.deleteOne();
+
+    req.flash("success", "Club and all its events deleted successfully.");
+    res.redirect("/clubRegistration");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Failed to delete club.");
+    res.redirect(`/clubs/${ClubName}/profile`);
   }
 });
 
