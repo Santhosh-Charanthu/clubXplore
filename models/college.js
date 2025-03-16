@@ -20,7 +20,7 @@ const collegeSchema = new Schema({
   clubs: [
     {
       type: Schema.Types.ObjectId,
-      ref: "club", // Ensure the reference matches the actual model name
+      ref: "Club", // Ensure the reference matches the actual model name
     },
   ],
   role: {

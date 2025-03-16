@@ -3,7 +3,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent scrolling */
+  overflow-x: hidden; /* Prevent scrolling */
   display: flex;
   flex-direction: column;
 }

@@ -19,6 +19,7 @@ let College = require("./models/college");
 let Club = require("./models/club");
 let Event = require("./models/Event");
 let Student = require("./models/student");
+let Registration = require("./models/registration");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
@@ -118,7 +119,7 @@ app.post(
     failureFlash: true, // Show an error message
   }),
   async (req, res) => {
-    let redirectUrl = res.locals.redirectUrl || "/clubRegistration";
+    let redirectUrl = res.locals.redirectUrl || "/clubRegistration/login";
     res.redirect(redirectUrl);
   }
 );
@@ -157,7 +158,7 @@ app.post(
       req.login(registeredCollege, (err) => {
         if (err) return next(err);
         req.flash("success", "Welcome to Club Management!");
-        res.redirect("/clubRegistration");
+        res.redirect("/clubRegistration/login");
       });
     } catch (e) {
       console.error("Signup error:", e);
@@ -276,13 +277,13 @@ app.get("/:clubName/createpost", async (req, res) => {
   }
 });
 
+// Replace the existing app.post("/:clubName/createpost") with this
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
     const { clubName } = req.params;
-    const { eventName, eventDetails, eventLink } = req.body;
+    const { eventName, eventDetails, formFields } = req.body;
 
     let club = await Club.findOne({ ClubName: clubName });
-
     if (!club) {
       req.flash("error", "Club not found!");
       return res.redirect("/clubRegistration");
@@ -290,34 +291,50 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
 
     if (!req.file) {
       req.flash("error", "Please upload an image.");
-      return res.redirect("/:clubName/profile");
-    }
-
-    if (!eventLink) {
-      req.flash("error", "Event link is required.");
       return res.redirect(`/${clubName}/createpost`);
     }
 
     const url = req.file.path;
     const fileName = req.file.filename;
+
+    // Parse formFields from the request
+    let parsedFormFields = [];
+    if (formFields && formFields.label) {
+      const labels = Array.isArray(formFields.label)
+        ? formFields.label
+        : [formFields.label];
+      const types = Array.isArray(formFields.type)
+        ? formFields.type
+        : [formFields.type];
+      const isRequireds = Array.isArray(formFields.isRequired)
+        ? formFields.isRequired
+        : [formFields.isRequired];
+
+      for (let i = 0; i < labels.length; i++) {
+        parsedFormFields.push({
+          label: labels[i],
+          type: types[i],
+          isRequired: isRequireds[i] === "true",
+        });
+      }
+    }
+
     let newEvent = new Event({
       eventName,
       eventDetails,
-      eventLink,
-      image: {
-        url: url,
-        filename: fileName,
-      },
+      image: { url, filename: fileName },
       author: club._id,
+      formFields: parsedFormFields,
     });
+
     await newEvent.save();
     club.events.push(newEvent);
     await club.save();
 
     req.flash("success", "Event created successfully!");
-    res.redirect(`/${clubName}/profile`);
-  } catch (e) {
-    console.log("Error creating event:", e);
+    return res.redirect(`/${clubName}/profile`);
+  } catch (error) {
+    console.error("Error creating event:", error);
     req.flash("error", "Failed to create event.");
     res.redirect("/collegeRegistration/login");
   }
@@ -502,6 +519,62 @@ app.get("/:clubName/:eventName/register", async (req, res) => {
   console.log(event);
 
   res.render("profile/event", { event });
+});
+
+// Replace app.get and app.post for "/:clubName/:eventName/register"
+app.post("/:clubName/:eventName/register", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/studentRegistration/login");
+  }
+
+  const { clubName, eventName } = req.params;
+
+  try {
+    const club = await Club.findOne({ ClubName: clubName }).populate("events");
+    if (!club) {
+      req.flash("error", "Club not found");
+      return res.redirect("/clubRegistration");
+    }
+
+    const event = club.events.find((e) => e.eventName === eventName);
+    if (!event) {
+      req.flash("error", "Event not found");
+      return res.redirect(`/${clubName}/profile`);
+    }
+
+    // Check if student is already registered
+    const existingRegistration = await Registration.findOne({
+      eventId: event._id,
+      studentId: req.user._id,
+    });
+    if (existingRegistration) {
+      req.flash("error", "You are already registered for this event");
+      return res.redirect(`/${clubName}/${eventName}/eventdetails`);
+    }
+
+    // Save registration with dynamic form data
+    const formData = new Map();
+    for (const field of event.formFields) {
+      formData.set(field.label, req.body[field.label] || "");
+    }
+
+    const registration = new Registration({
+      eventId: event._id,
+      studentId: req.user._id,
+      formData,
+    });
+    await registration.save();
+
+    event.registeredStudents.push(req.user._id);
+    await event.save();
+
+    req.flash("success", "Registered successfully!");
+    res.redirect(`/${clubName}/${eventName}/eventdetails`);
+  } catch (error) {
+    console.error("Error registering student:", error);
+    req.flash("error", "Failed to register");
+    res.redirect(`/${clubName}/${eventName}/eventdetails`);
+  }
 });
 
 app.get(

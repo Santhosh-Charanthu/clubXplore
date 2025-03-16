@@ -1,62 +1,130 @@
 <%- include("../layouts/boilerplate") %>
 
-    <div class="row">
-      <div class="col-4 offset-4 mt-4">
-        <h3 class="offset-3 col-6">Create a new club</h3>
-        <form method="post" action="/clubRegistration" novalidate class="needs-validation" enctype="multipart/form-data">
-          <div class="mb-3">
-            <label for="ClubName" class="form-label"><b>Club Name</b></label>
-            <input
-              type="text"
-              id="ClubName"
-              name="ClubName"
-              placeholder="Enter Club Name"
-              class="form-control"
-              required
-            />
-          </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <h3 class="text-center mb-4">Create a New Club</h3>
 
-          <div class="mb-3">
-            <label for="branchName" class="form-label"><b>Branch Name</b></label>
-            <input
-              type="text"
-              id="branchName"
-              name="branchName"
-              placeholder="Enter Branch Name"
-              class="form-control"
-              required
-            />
-          </div>
+      <form
+        method="post"
+        action="/clubRegistration"
+        novalidate
+        class="needs-validation event-form shadow p-4 rounded"
+        enctype="multipart/form-data"
+      >
+        <!-- Club Name -->
+        <div class="mb-4">
+          <label for="ClubName" class="form-label fw-bold">Club Name</label>
+          <input
+            type="text"
+            id="ClubName"
+            name="ClubName"
+            placeholder="Enter Club Name"
+            class="form-control form-control-lg"
+            required
+          />
+          <div class="invalid-feedback">Please enter a club name.</div>
+        </div>
 
-          <div class="mb-3">
-            <label for="description" class="form-label"><b>Password</b></label>
-            <input
-              id="password"
-              name="password"
-              placeholder="Set Password"
-              class="form-control"
-              type="password"
-              required
-            ></input>
-          </div>
-          <div class="mb-3">
-            <label for="ClubLogo" class="form-label"><b>Upload logo</b></label>
-            <input
-              id="ClubLogo"
-              name="ClubLogo"
-              class="form-control"
-              type="file"
-              required
-            ></input>
-          </div>
-       
-          <div class="mb-4">
-            <button type="submit" class="btn btn-success add-btn mt-3">
-              Create
-            </button> 
-            &nbsp;&nbsp;&nbsp;
-            <a href="/clubRegistration/login">login</a>
-          </div>
-        </form>
-      </div>
+        <!-- Branch Name -->
+        <div class="mb-4">
+          <label for="branchName" class="form-label fw-bold">Branch Name</label>
+          <input
+            type="text"
+            id="branchName"
+            name="branchName"
+            placeholder="Enter Branch Name"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please enter a branch name.</div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4">
+          <label for="password" class="form-label fw-bold">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Set Password"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please set a password.</div>
+        </div>
+
+        <!-- Club Logo -->
+        <div class="mb-4">
+          <label for="ClubLogo" class="form-label fw-bold">Upload Logo</label>
+          <input
+            type="file"
+            id="ClubLogo"
+            name="ClubLogo"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please upload a logo.</div>
+        </div>
+
+        <!-- Submit Button and Login Link -->
+        <div class="mb-4 text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
+            Create Club
+          </button>
+          <br />
+          <p>
+            Already registered?
+            <a href="/clubRegistration/login"> Login</a>
+          </p>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
+<style>
+  .event-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .event-form:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control:focus {
+    border-color: #4b6cb7;
+    box-shadow: 0 0 5px rgba(75, 108, 183, 0.5);
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .text-muted:hover {
+    color: #4b6cb7;
+  }
+
+  @media (max-width: 768px) {
+    .event-form {
+      padding: 15px;
+    }
+    .btn-lg {
+      padding: 10px;
+    }
+  }
+</style>

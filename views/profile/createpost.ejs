@@ -1,59 +1,230 @@
 <%- include("../layouts/boilerplate") %>
 
-<div class="row">
-  <div class="col-4 offset-4 mt-4">
-    <h3 class="offset-3 col-6">Enter event details</h3>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <h3 class="text-center mb-4">Create New Event</h3>
 
-    <form
-      method="post"
-      action="/<%= club.ClubName %>/createpost"
-      novalidate
-      class="needs-validation"
-      enctype="multipart/form-data"
-    >
-      <div class="mb-3">
-        <label for="eventName" class="form-label"><b>Event Name</b></label>
-        <input
-          type="text"
-          id="eventName"
-          name="eventName"
-          placeholder="Enter Event Name"
-          class="form-control"
-          required
-        />
-      </div>
+      <form
+        method="post"
+        action="/<%= club.ClubName %>/createpost"
+        novalidate
+        class="needs-validation event-form shadow p-4 rounded"
+        enctype="multipart/form-data"
+      >
+        <!-- Event Name -->
+        <div class="mb-4">
+          <label for="eventName" class="form-label fw-bold">Event Name</label>
+          <input
+            type="text"
+            id="eventName"
+            name="eventName"
+            placeholder="Enter Event Name"
+            class="form-control form-control-lg"
+            required
+          />
+          <div class="invalid-feedback">Please enter an event name.</div>
+        </div>
 
-      <div class="mb-3">
-        <label for="description" class="form-label"><b>Description</b></label>
-        <textarea
-          id="description"
-          name="eventDetails"
-          placeholder="Event details"
-          class="form-control"
-          required
-        ></textarea>
-      </div>
-      <div class="mb-3">
-        <label for="eventLink" class="form-label"><b>Registration Url</b></label>
-        <input
-          id="eventLink"
-          name="eventLink"
-          class="form-control"
-          type="text"
-          required
-        ></input>
-      </div>
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="form-label fw-bold"
+            >Description</label
+          >
+          <textarea
+            id="description"
+            name="eventDetails"
+            placeholder="Event details"
+            class="form-control"
+            rows="4"
+            required
+          ></textarea>
+          <div class="invalid-feedback">Please enter event details.</div>
+        </div>
 
-      <div class="mb-3">
-        <label for="image" class="form-label"><b>Upload Image</b></label>
-        <input type="file" id="image" name="image" class="form-control" />
-      </div>
+        <!-- Image Upload -->
+        <div class="mb-4">
+          <label for="image" class="form-label fw-bold">Upload Image</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please upload an image.</div>
+        </div>
 
-      <div class="mb-4">
-        <button type="submit" class="btn btn-success add-btn mt-3">
-          Submit
-        </button>
-      </div>
-    </form>
+        <!-- Dynamic Form Fields -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Custom Registration Fields</label>
+          <div
+            id="formFieldsContainer"
+            class="field-container p-3 rounded bg-light"
+          ></div>
+          <button
+            type="button"
+            id="addField"
+            class="btn btn-outline-primary mt-3 w-100"
+          >
+            <i class="fas fa-plus me-2"></i>Add Field
+          </button>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Submit Event
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
+
+<style>
+  .event-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .event-form:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control:focus {
+    border-color: #4b6cb7;
+    box-shadow: 0 0 5px rgba(75, 108, 183, 0.5);
+  }
+
+  .field-container {
+    border: 1px dashed #ccc;
+    min-height: 50px;
+  }
+
+  .field-item {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Increased gap for better spacing */
+    margin-bottom: 15px;
+    background: #f9f9f9;
+    padding: 12px; /* Slightly more padding */
+    border-radius: 5px;
+    transition: transform 0.2s ease;
+  }
+
+  .field-item:hover {
+    transform: scale(1.02);
+  }
+
+  .field-item input[type="text"],
+  .field-item select {
+    flex: 1; /* Allows inputs to take equal space */
+    min-width: 0; /* Prevents overflow */
+  }
+
+  .field-item .form-check-label {
+    margin-right: 10px; /* Space before the X */
+    white-space: nowrap; /* Prevents wrapping */
+  }
+
+  .btn-outline-primary {
+    border-color: #4b6cb7;
+    color: #4b6cb7;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #4b6cb7;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  .remove-x {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .remove-x:hover {
+    color: #c82333;
+    transform: scale(1.2);
+  }
+
+  @media (max-width: 768px) {
+    .event-form {
+      padding: 15px;
+    }
+    .btn-lg {
+      padding: 10px;
+    }
+    .field-item {
+      flex-wrap: wrap; /* Wraps content on small screens */
+      gap: 10px;
+    }
+    .field-item input[type="text"],
+    .field-item select {
+      width: 100%; /* Full width on small screens */
+    }
+  }
+</style>
+
+<script>
+  document.getElementById("addField").addEventListener("click", () => {
+    const fieldDiv = document.createElement("div");
+    fieldDiv.classList.add("field-item");
+    fieldDiv.innerHTML = `
+      <input type="text" name="formFields[label][]" placeholder="Field Name" class="form-control" required>
+      <select name="formFields[type][]" class="form-control" required>
+        <option value="text">Text</option>
+        <option value="email">Email</option>
+        <option value="number">Number</option>
+        <option value="checkbox">Checkbox</option>
+      </select>
+      <label class="form-check-label">
+        <input type="checkbox" name="formFields[isRequired][]" value="true" class="form-check-input"> Required
+      </label>
+      <button type="button" class="remove-x">&times;</button>
+    `;
+    document.getElementById("formFieldsContainer").appendChild(fieldDiv);
+
+    // Add remove functionality to the X button
+    fieldDiv.querySelector(".remove-x").addEventListener("click", () => {
+      fieldDiv.remove();
+    });
+  });
+</script>

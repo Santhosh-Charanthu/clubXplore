@@ -32,4 +32,4 @@ const clubSchema = new Schema({
 });
 
 clubSchema.plugin(passportLocalMongoose, { usernameField: "ClubName" });
-module.exports = mongoose.model("club", clubSchema);
+module.exports = mongoose.model("Club", clubSchema);
