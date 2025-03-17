@@ -25,13 +25,17 @@ const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
 const Joi = require("joi");
+const methodoverride = require("method-override");
 const { isLoggedIn } = require("./middleware.js");
+const fs = require("fs");
+const { console } = require("inspector");
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
+app.use(methodoverride("_method"));
 
 const sessionOptions = {
   secret: "supersecretpassword",
@@ -120,7 +124,7 @@ app.post(
   "/collegeRegistration/login",
 
   passport.authenticate("college", {
-    failureRedirect: "/collegeRegistration/login", // Redirect to login page if authentication fails
+    failureRedirect: "/collegeRegistration/login",
     failureFlash: true, // Show an error message
   }),
   async (req, res) => {
@@ -273,7 +277,6 @@ app.get("/:clubName/createpost", async (req, res) => {
       req.flash("error", "Club not found!");
       return res.redirect("/clubRegistration");
     }
-
     res.render("profile/createpost", { club });
   } catch (e) {
     console.log("Error loading createpost page:", e);
@@ -345,7 +348,7 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   }
 });
 
-app.get("/:clubName/edit", isLoggedIn, async (req, res) => {
+app.get("/:clubName/edit", async (req, res) => {
   try {
     const clubDetails = await Club.findOne({ ClubName: req.params.clubName });
     if (!clubDetails) {
@@ -362,7 +365,7 @@ app.get("/:clubName/edit", isLoggedIn, async (req, res) => {
 app.put(
   "/:clubName/edit",
   upload.single("ClubLogo"),
-  isLoggedIn,
+
   async (req, res) => {
     try {
       const { ClubName, branchName, password } = req.body;
@@ -566,7 +569,7 @@ app.get("/:clubName/:eventName/register", async (req, res) => {
     // return res.status(401).send("You must be logged in to register.");
   }
 
-  let { clubName, eventName } = req.params; // ✅ Fix: Use req.params instead of req.query
+  let { clubName, eventName } = req.params;
   console.log(clubName, eventName);
   console.log(req.session);
 
@@ -574,7 +577,7 @@ app.get("/:clubName/:eventName/register", async (req, res) => {
     .populate({
       path: "events",
       populate: {
-        path: "registeredStudents", // ✅ Ensure this matches your schema
+        path: "registeredStudents",
         model: "Student",
       },
     })
@@ -663,6 +666,203 @@ app.post("/:clubName/:eventName/register", async (req, res) => {
   }
 });
 
+app.get("/:clubName/:eventName/edit", async (req, res) => {
+  try {
+    const { clubName, eventName } = req.params;
+    const club = await Club.findOne({ ClubName: clubName }).populate("events");
+
+    if (!club) {
+      req.flash("error", "Club not found");
+      return res.redirect("/clubRegistration");
+    }
+
+    const event = club.events.find((e) => e.eventName === eventName);
+    if (!event) {
+      req.flash("error", "Event not found");
+      return res.redirect(`/${clubName}/profile`);
+    }
+
+    res.render("profile/eventedit", { club, event });
+  } catch (error) {
+    console.error("Error fetching event for editing:", error);
+    req.flash("error", "Failed to load edit page");
+    res.redirect(`/${clubName}/profile`);
+  }
+});
+app.put(
+  "/:clubName/:eventName/edit",
+  upload.single("eventImage"),
+  async (req, res) => {
+    try {
+      const eventName = decodeURIComponent(req.params.eventName);
+      const clubName = decodeURIComponent(req.params.clubName);
+
+      let event = await Event.findOne({ eventName });
+
+      if (!event) {
+        return res.status(404).send("Event not found");
+      }
+
+      console.log(" Request Body:", req.body);
+      console.log(" Uploaded File:", req.file); // Debug file upload
+
+      // Update event name if provided
+      if (req.body.eventName && req.body.eventName !== event.eventName) {
+        event.eventName = req.body.eventName;
+      }
+
+      // Update event details if provided
+      if (req.body.eventDetails) {
+        event.eventDetails = req.body.eventDetails;
+      }
+
+      // Update event image if a new file is uploaded
+      if (req.file) {
+        event.image = { url: req.file.path, filename: req.file.filename };
+      }
+
+      if (req.body.formFields) {
+        let { label, type, isRequired, originalLabel } = req.body.formFields;
+
+        // Ensure arrays
+        label = Array.isArray(label) ? label : [label].filter(Boolean);
+        type = Array.isArray(type) ? type : [type].filter(Boolean);
+        isRequired = Array.isArray(isRequired) ? isRequired : [];
+        originalLabel = Array.isArray(originalLabel)
+          ? originalLabel
+          : [originalLabel].filter(Boolean);
+
+        // Handle deletions
+        let deletedFields = req.body.deletedFields
+          ? req.body.deletedFields.split(",")
+          : [];
+
+        // Remove deleted fields
+        event.formFields = event.formFields.filter(
+          (field) => !deletedFields.includes(field.label)
+        );
+
+        // Create a map of existing fields indexed by their current position
+        const existingFieldsMap = new Map();
+        event.formFields.forEach((field, index) => {
+          existingFieldsMap.set(index, field);
+        });
+
+        // Process submitted fields
+        const updatedFieldsMap = new Map();
+
+        label.forEach((fieldLabel, index) => {
+          const origLabel = originalLabel[index] || "";
+          const fieldData = {
+            label: String(fieldLabel).trim(),
+            type: String(type[index] || "text").trim(),
+            isRequired:
+              isRequired.includes(String(index)) ||
+              isRequired[index] === "true" ||
+              isRequired[index] === "on",
+          };
+
+          // Check if this is an existing field by matching originalLabel
+          let matchedIndex = -1;
+          for (let [idx, field] of existingFieldsMap) {
+            if (field.label === origLabel) {
+              matchedIndex = idx;
+              break;
+            }
+          }
+
+          if (origLabel && matchedIndex !== -1) {
+            // Update existing field
+            updatedFieldsMap.set(matchedIndex, fieldData);
+          } else if (!event.formFields.some((f) => f.label === fieldLabel)) {
+            // Add as new field only if the new label doesn’t already exist
+            updatedFieldsMap.set(
+              event.formFields.length + updatedFieldsMap.size,
+              fieldData
+            );
+          }
+        });
+
+        // Rebuild formFields array
+        const newFormFields = [];
+        for (let i = 0; i < event.formFields.length; i++) {
+          if (updatedFieldsMap.has(i)) {
+            newFormFields.push(updatedFieldsMap.get(i)); // Updated field
+          } else if (!deletedFields.includes(event.formFields[i].label)) {
+            newFormFields.push(event.formFields[i]); // Unchanged field
+          }
+        }
+        // Add new fields
+        for (let [idx, field] of updatedFieldsMap) {
+          if (idx >= event.formFields.length) {
+            newFormFields.push(field);
+          }
+        }
+
+        event.formFields = newFormFields;
+      }
+
+      // Save the updated event
+      await event.save();
+
+      // Redirect using the new event name if it was updated
+      const redirectEventName = req.body.eventName || eventName;
+      res.redirect(`/${clubName}/${redirectEventName}/eventdetails`);
+    } catch (error) {
+      console.error("🔥 Server Error:", error);
+      res.status(500).send(`Server Error: ${error.message}`);
+    }
+  }
+);
+
+app.delete("/:clubName/:eventName/delete", async (req, res) => {
+  try {
+    const { clubName, eventName } = req.params;
+
+    // Step 1: Find and delete the event
+    const event = await Event.findOne({ eventName });
+    if (!event) {
+      return res.status(404).send("Event not found");
+    }
+
+    // Step 2: Remove the event reference from the associated club
+    const club = await Club.findOneAndUpdate(
+      { ClubName: clubName },
+      { $pull: { events: event._id } }, // Remove event ID from events array
+      { new: true } // Return the updated document
+    );
+
+    if (!club) {
+      return res.status(404).send("Club not found");
+    }
+
+    // Step 3: Optionally delete the image file from the server
+    if (event.image && event.image.filename) {
+      const imagePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        event.image.filename
+      ); // Adjust path based on your setup
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error(" Error deleting image file:", err);
+        } else {
+          console.log(" Image file deleted:", event.image.filename);
+        }
+      });
+    }
+
+    // Step 4: Delete the event from the database
+    await Event.deleteOne({ _id: event._id });
+
+    console.log(` Event "${eventName}" deleted successfully from ${clubName}`);
+    res.redirect(`/${clubName}/profile`);
+  } catch (error) {
+    console.error(" Server Error:", error);
+    res.status(500).send(`Server Error: ${error.message}`);
+  }
+});
 app.get(
   "/:clubName/:eventName/eventdetails/viewRegistration",
   async (req, res) => {
