@@ -48,6 +48,25 @@
 <% } else { %>
 <p>You are already registered for this event.</p>
 <% } %> <% } %> <% if(!user.role) { %>
+
+<div style="display: flex; align-content: space-around">
+  <form action="/<%= event.author.ClubName%>/<%=event.eventName%>/edit">
+    <button
+      type="submit"
+      class="btn btn-success add-btn"
+      style="margin-left: 43rem"
+    >
+      edit
+    </button>
+  </form>
+  &nbsp; &nbsp; &nbsp; &nbsp;
+  <form
+    action="/<%= event.author.ClubName%>/<%=event.eventName%>/delete?_method=DELETE"
+    method="post"
+  >
+    <button type="submit" class="btn btn-success add-btn">delete</button>
+  </form>
+</div>
 <form
   action="/<%= event.author.ClubName %>/<%= event.eventName %>/eventdetails/viewRegistration"
   method="get"

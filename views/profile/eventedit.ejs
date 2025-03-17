@@ -1,0 +1,236 @@
+<%- include("../layouts/boilerplate") %>
+
+<h1 class="event-title">Edit Event: <%= event.eventName %></h1>
+
+<form
+  action="/<%= club.ClubName %>/<%= event.eventName %>/edit?_method=PUT"
+  method="POST"
+  enctype="multipart/form-data"
+  class="container mt-4 registration-form-container"
+>
+  <div class="mb-3">
+    <label for="eventName" class="form-label"><b>Event Name</b></label>
+    <input
+      type="text"
+      id="eventName"
+      name="eventName"
+      class="form-control"
+      value="<%= event.eventName %>"
+      required
+    />
+    <div class="invalid-feedback">This field is required.</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="eventDetails" class="form-label"><b>Event Details</b></label>
+    <textarea
+      id="eventDetails"
+      name="eventDetails"
+      class="form-control"
+      rows="3"
+      required
+    ><%= event.eventDetails %></textarea>
+    <div class="invalid-feedback">This field is required.</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="eventImage" class="form-label"><b>Event Image</b></label>
+    <input type="file" name="eventImage" class="form-control" />
+    <% if (event.image && event.image.url) { %>
+    <div class="event-image-container mt-2">
+      <img
+        src="<%= event.image.url %>"
+        alt="Event Image"
+        class="event-image"
+      />
+    </div>
+    <% } %>
+  </div>
+
+  <hr />
+  <h3>Custom Form Fields</h3>
+  <div id="formFieldsContainer">
+    <% event.formFields.forEach((field, index) => { %>
+    <div class="form-field mb-3" data-label="<%= field.label %>">
+      <!-- Hidden input to track original label -->
+      <input type="hidden" name="formFields[originalLabel][]" value="<%= field.label %>">
+      <label class="form-label"><b>Field Label</b></label>
+      <input
+        type="text"
+        name="formFields[label][]"
+        class="form-control"
+        placeholder="Field Label"
+        value="<%= field.label %>"
+        required
+      />
+      <div class="invalid-feedback">This field is required.</div>
+      
+      <label class="form-label mt-2"><b>Field Type</b></label>
+      <select name="formFields[type][]" class="form-select">
+        <option value="text" <%= field.type === 'text' ? 'selected' : '' %>>Text</option>
+        <option value="email" <%= field.type === 'email' ? 'selected' : '' %>>Email</option>
+        <option value="number" <%= field.type === 'number' ? 'selected' : '' %>>Number</option>
+        <option value="checkbox" <%= field.type === 'checkbox' ? 'selected' : '' %>>Checkbox</option>
+      </select>
+
+      <div class="form-check mt-2">
+        <input
+          type="checkbox"
+          name="formFields[isRequired][]"
+          value="<%= index %>"
+          class="form-check-input"
+          <%= field.isRequired ? 'checked' : '' %>
+        />
+        <label class="form-check-label">Required</label>
+      </div>
+      <button type="button" class="btn btn-danger btn-sm mt-2 remove-field">Remove</button>
+    </div>
+    <% }) %>
+  </div>
+  <button type="button" class="btn btn-secondary mt-3" onclick="addFormField()">
+    Add Form Field
+  </button>
+
+  <!-- Hidden input to track deleted fields -->
+  <input type="hidden" name="deletedFields" id="deletedFields" value="">
+
+  <div class="back-button-container">
+    <button type="submit" class="btn btn-success add-btn mt-3">Update Event</button>
+  </div>
+</form>
+
+<!-- JavaScript for Adding & Removing Fields -->
+<script>
+  let deletedFields = [];
+
+  function addFormField() {
+    let container = document.getElementById("formFieldsContainer");
+    let newIndex = document.querySelectorAll(".form-field").length;
+
+    let fieldHTML = `
+      <div class="form-field mb-3" data-label="">
+        <!-- No originalLabel for new fields -->
+        <input type="hidden" name="formFields[originalLabel][]" value="">
+        <label class="form-label"><b>Field Label</b></label>
+        <input type="text" name="formFields[label][]" class="form-control" placeholder="Field Label" required />
+        <div class="invalid-feedback">This field is required.</div>
+        
+        <label class="form-label mt-2"><b>Field Type</b></label>
+        <select name="formFields[type][]" class="form-select">
+          <option value="text">Text</option>
+          <option value="email">Email</option>
+          <option value="number">Number</option>
+          <option value="checkbox">Checkbox</option>
+        </select>
+        
+        <div class="form-check mt-2">
+          <input type="checkbox" name="formFields[isRequired][]" value="${newIndex}" class="form-check-input" />
+          <label class="form-check-label">Required</label>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm mt-2 remove-field">Remove</button>
+      </div>
+    `;
+
+    container.insertAdjacentHTML("beforeend", fieldHTML);
+    attachRemoveFieldListeners();
+  }
+
+  function attachRemoveFieldListeners() {
+    document.querySelectorAll(".remove-field").forEach((button) => {
+      button.onclick = function () {
+        const fieldDiv = this.parentElement;
+        const originalLabel = fieldDiv.querySelector('input[name="formFields[originalLabel][]"]').value;
+        if (originalLabel) { // Only add to deletedFields if it was an existing field
+          deletedFields.push(originalLabel);
+          document.getElementById("deletedFields").value = deletedFields.join(",");
+        }
+        fieldDiv.remove();
+      };
+    });
+  }
+
+  attachRemoveFieldListeners();
+</script>
+
+<style>
+  .event-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 30px;
+    color: #4b6cb7;
+  }
+  .event-image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .event-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+  }
+  .registration-form-container {
+    max-width: 500px;
+    margin: 20px auto;
+  }
+  .form-label {
+    color: #555;
+    font-size: 1.1rem;
+  }
+  .form-control, .form-select {
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  .btn {
+    border-radius: 5px;
+    padding: 8px 20px;
+  }
+  .btn-success.add-btn {
+    background-color: #28a745;
+    border: none;
+  }
+  .btn-success.add-btn:hover {
+    background-color: #218838;
+  }
+  .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+  }
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+  .btn-danger {
+    background-color: #dc3545;
+    border: none;
+  }
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+  .back-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  hr {
+    margin: 30px 0;
+    border-color: #ddd;
+  }
+  h3 {
+    text-align: center;
+    color: #4b6cb7;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 768px) {
+    .event-title {
+      font-size: 1.5rem;
+    }
+    .event-image {
+      max-height: 150px;
+    }
+    .form-label {
+      font-size: 1rem;
+    }
+  }
+</style>
