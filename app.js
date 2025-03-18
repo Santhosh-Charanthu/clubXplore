@@ -535,6 +535,22 @@ app.get("/index", async (req, res) => {
   res.render("studentDashboard/index", { college });
 });
 
+app.get("/search-colleges", async (req, res) => {
+  try {
+    const query = req.query.q;
+    if (!query) return res.json([]);
+
+    const colleges = await College.find({
+      college: { $regex: query, $options: "i" }, // Case-insensitive search
+    }).limit(5);
+
+    res.json(colleges.map((college) => ({ name: college.college }))); // Send only names
+  } catch (error) {
+    console.error("Error fetching colleges:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.get("/:clubName/:eventName/eventdetails", async (req, res) => {
   if (!req.user) {
     return res.redirect("/interface");
@@ -731,6 +747,7 @@ app.get("/:clubName/:eventName/edit", async (req, res) => {
     res.redirect(`/${clubName}/profile`);
   }
 });
+
 app.put(
   "/:clubName/:eventName/edit",
   upload.single("eventImage"),
@@ -746,7 +763,7 @@ app.put(
       }
 
       console.log(" Request Body:", req.body);
-      console.log(" Uploaded File:", req.file); // Debug file upload
+      console.log(" Uploaded File:", req.file);
 
       // Update event name if provided
       if (req.body.eventName && req.body.eventName !== event.eventName) {
@@ -761,6 +778,11 @@ app.put(
       // Update event image if a new file is uploaded
       if (req.file) {
         event.image = { url: req.file.path, filename: req.file.filename };
+      }
+
+      // Update visibility field
+      if (req.body.visibility) {
+        event.visibility = req.body.visibility;
       }
 
       if (req.body.formFields) {
@@ -846,7 +868,8 @@ app.put(
 
       // Save the updated event
       await event.save();
-
+      console.log("Event updated successfully:", event);
+      req.flash("success", "Event updated successfully!");
       // Redirect using the new event name if it was updated
       const redirectEventName = req.body.eventName || eventName;
       res.redirect(`/${clubName}/${redirectEventName}/eventdetails`);
@@ -905,6 +928,7 @@ app.delete("/:clubName/:eventName/delete", async (req, res) => {
     res.status(500).send(`Server Error: ${error.message}`);
   }
 });
+
 app.get(
   "/:clubName/:eventName/eventdetails/viewRegistration",
   async (req, res) => {
@@ -915,10 +939,6 @@ app.get(
       const club = await Club.findOne({ ClubName: clubName })
         .populate({
           path: "events",
-          populate: {
-            path: "registeredStudents", // Ensure this is correctly referenced in your schema
-            model: "Student",
-          },
         })
         .exec();
 
@@ -934,11 +954,21 @@ app.get(
         return res.redirect(`/${clubName}/profile`);
       }
 
+      // Fetch registrations for this event and populate student details
+      const registrations = await Registration.find({ eventId: event._id })
+        .populate("studentId", "studentName") // Only fetch studentName for efficiency
+        .exec();
+
+      console.log("Event Data:", JSON.stringify(event, null, 2));
+      console.log("Registrations:", JSON.stringify(registrations, null, 2));
+      console.log("Form Fields:", JSON.stringify(event.formFields, null, 2));
+
       res.render("profile/viewRegistrations", {
-        registeredStudents: event.registeredStudents,
+        event,
+        registrations, // Pass registrations instead of registeredStudents
       });
     } catch (error) {
-      console.error("Error fetching registered students:", error);
+      console.error("Error fetching registrations:", error);
       req.flash("error", "Something went wrong!");
       res.redirect("/");
     }

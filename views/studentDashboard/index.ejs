@@ -66,50 +66,93 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
   }
+
   .search-box {
+    position: relative;
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 10px 30px;
     border: 2px solid #ccc;
     border-radius: 30px;
     background: white;
     transition: 0.3s;
+    width: 350px;
   }
+
   .search-box:hover {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
+
   .search-icon {
     color: #666;
     margin-right: 10px;
   }
+
   input {
     border: none;
     outline: none;
     font-size: 16px;
-    width: 200px;
+    width: 100%;
     background: transparent;
   }
+
   .search-button {
     display: flex;
     align-items: center;
-    justify-content: right;
+    justify-content: center;
     background: rgb(160, 237, 216);
     color: white;
     border: none;
     width: 45px;
     height: 45px;
-    padding-left: 10px;
     border-radius: 50%;
     cursor: pointer;
     transition: 0.3s;
+  }
+
+  /* Suggestions Dropdown */
+  .suggestions {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    list-style-type: none;
+    padding: 5px 0;
+    margin-top: 5px;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+  }
+
+  .suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: background 0.2s ease;
+  }
+
+  .suggestion-item:hover {
+    background-color: #f8f8f8;
+  }
+  .navbar {
+    margin-top: -20px;
   }
 </style>
 
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand"></a>
-    <form class="d-flex col-4" style="margin-right: 500px" role="search">
+    <form
+      class="d-flex col-4"
+      style="margin-right: 500px; position: relative"
+      role="search"
+    >
       <div class="search-container">
         <div class="search-box">
           <svg
@@ -133,8 +176,11 @@
             class="input"
             name="searchedCollege"
             type="text"
+            autocomplete="off"
           />
+          <ul id="suggestions" class="suggestions"></ul>
         </div>
+
         <button class="search-button" onclick="handleSubmit(event)">
           <svg
             class="search-icon"
@@ -174,9 +220,11 @@
     <%= college.college %>
   </h1>
 </div>
+
 <div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
-  <p>Events in this college are:</p>
+  <p>Clubs in this college are:</p>
 </div>
+
 <div class="club-container">
   <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
   <a href="/<%= club.ClubName %>/profile" class="club-link">
@@ -196,3 +244,54 @@
   <p>No clubs available.</p>
   <% } %>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchedCollege");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    searchInput.addEventListener("input", async function () {
+      const query = searchInput.value.trim();
+
+      if (query.length === 0) {
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+        return;
+      }
+
+      try {
+        const response = await fetch(`/search-colleges?q=${query}`);
+        const colleges = await response.json();
+
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "block";
+
+        colleges.forEach((college) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = college.name;
+          listItem.classList.add("suggestion-item");
+
+          listItem.addEventListener("click", function () {
+            searchInput.value = college.name;
+            suggestionsBox.innerHTML = "";
+            suggestionsBox.style.display = "none";
+          });
+
+          suggestionsBox.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
+    });
+
+    document.addEventListener("click", function (e) {
+      if (
+        !searchInput.contains(e.target) &&
+        !suggestionsBox.contains(e.target)
+      ) {
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+      }
+    });
+  });
+</script>

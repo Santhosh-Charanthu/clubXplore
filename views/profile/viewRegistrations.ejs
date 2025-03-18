@@ -2,7 +2,7 @@
 
 <style>
   table {
-    width: 70%;
+    width: 80%;
     border-collapse: collapse;
     margin: 20px auto;
   }
@@ -23,19 +23,26 @@
   <thead>
     <tr>
       <th>Student Name</th>
-      <th>College</th>
-      <th>Registration Number</th>
-      <th>Email</th>
+      <!-- Static header for student name -->
+      <% event.formFields.forEach(field => { %> <% if (field.label.toLowerCase()
+      !== "student name") { %>
+      <!-- Skip "Student Name" if it exists -->
+      <th><%= field.label %></th>
+      <% } %> <% }) %>
     </tr>
   </thead>
   <tbody>
-    <% registeredStudents.forEach(student => { %>
+    <% registrations.forEach(registration => { %> <% if (registration.studentId)
+    { %>
     <tr>
-      <td><%= student.studentName %></td>
-      <td><%= student.college %></td>
-      <td><%= student.regNo %></td>
-      <td><%= student.email %></td>
+      <td><%= registration.studentId.studentName || "N/A" %></td>
+      <% event.formFields.forEach(field => { %> <% if (field.label.toLowerCase()
+      !== "student name") { %>
+      <!-- Skip "Student Name" in data -->
+      <% const value = registration.formData.get(field.label); %>
+      <td><%= value || "N/A" %></td>
+      <% } %> <% }) %>
     </tr>
-    <% }) %>
+    <% } %> <% }) %>
   </tbody>
 </table>
