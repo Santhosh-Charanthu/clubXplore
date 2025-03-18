@@ -47,6 +47,36 @@
     <% } %>
   </div>
 
+  <div class="mb-3">
+    <label class="form-label"><b>Visibility</b></label>
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="visibility"
+        value="collegeExclusive"
+        id="collegeExclusive"
+        <%= event.visibility === 'collegeExclusive' ? 'checked' : '' %>
+        required
+      />
+      <label class="form-check-label" for="collegeExclusive">
+        College Exclusive
+      </label>
+    </div>
+    <div class="form-check mt-2">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="visibility"
+        value="openToAll"
+        id="openToAll"
+        <%= event.visibility === 'openToAll' ? 'checked' : '' %>
+      />
+      <label class="form-check-label" for="openToAll">Open to All</label>
+    </div>
+    <div class="invalid-feedback">Please select a visibility option.</div>
+  </div>
+
   <hr />
   <h3>Custom Form Fields</h3>
   <div id="formFieldsContainer">
@@ -150,6 +180,10 @@
   }
 
   attachRemoveFieldListeners();
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const formData = new FormData(this);
+    console.log('Form Data:', Object.fromEntries(formData));
+  });
 </script>
 
 <style>

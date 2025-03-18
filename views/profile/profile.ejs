@@ -25,16 +25,54 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
+    width: 20rem; /* Increased from 18rem to 20rem (320px) */
+    height: 350px; /* Reduced from 400px to 350px */
+    display: flex;
+    flex-direction: column;
   }
 
   .card:hover {
     transform: scale(1.05);
   }
 
-  .card img {
+  .card-img-top {
     border-radius: 10px 10px 0 0;
     object-fit: cover;
-    height: 200px;
+    width: 100%; /* Full width of card */
+    height: 200px; /* Reduced from 250px to 200px */
+  }
+
+  .card-body {
+    flex: 1; /* Takes remaining space (350px - 200px = 150px) */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distributes content evenly */
+    padding: 15px;
+    overflow: hidden; /* Prevents overflow */
+  }
+
+  .card-title {
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncates long titles */
+  }
+
+  .card-text {
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncates long text */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limits to 2 lines */
+    -webkit-box-orient: vertical;
+  }
+
+  .card-text small {
+    margin-top: auto; /* Pushes visibility text to bottom */
+  }
+
+  .post {
+    font-size: 20px;
   }
 </style>
 
@@ -50,17 +88,20 @@
         border-radius: 50%;
       "
     />
+    <% if(user.role !== "student") {%>
     <div class="mt-3" style="display: flex; margin-left: 40px">
       <a href="/<%=club.ClubName%>/edit"
         ><button class="btn btn-success">Edit</button></a
       >
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              
       <form method="post" action="/<%= club.ClubName %>/delete?_method=DELETE">
         <button class="btn btn-dark">Delete</button>
       </form>
     </div>
+    <% } %>
   </div>
-  <span>Posts: <%= club.events.length %></span>
+  <span class="post"><b>Posts: </b><%= club.events.length %> </span>
+  <% if(user.role !== "student") { %>
   <span>
     <div class="btn-container success">
       <a href="/<%= club.ClubName %>/createpost" class="btn btn-success"
@@ -68,6 +109,7 @@
       >
     </div>
   </span>
+  <% } %>
 </div>
 
 <hr />
@@ -80,16 +122,21 @@
     href="/<%= club.ClubName %>/<%= event.eventName %>/eventdetails"
     style="text-decoration: none; color: inherit"
   >
-    <div class="card" style="width: 18rem">
+    <div class="card">
       <img
         src="<%= event.image.url %>"
         class="card-img-top"
         alt="Event Image"
-        style="width: 286px; height: 250px"
       />
       <div class="card-body">
         <h5 class="card-title"><%= event.eventName %></h5>
         <p class="card-text"><%= event.eventDetails %></p>
+        <p class="card-text">
+          <small class="text-muted">
+            <%= event.visibility === 'collegeExclusive' ? 'College Exclusive' :
+            'Open to All' %>
+          </small>
+        </p>
       </div>
     </div>
   </a>

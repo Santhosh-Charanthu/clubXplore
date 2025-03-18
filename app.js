@@ -26,9 +26,6 @@ const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
 const Joi = require("joi");
 const methodoverride = require("method-override");
-const { isLoggedIn } = require("./middleware.js");
-const fs = require("fs");
-const { console } = require("inspector");
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -178,16 +175,43 @@ app.post(
 );
 
 app.get("/:clubName/profile", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/interface");
+  }
   try {
     const { clubName } = req.params;
-    const club = await Club.findOne({ ClubName: clubName }).populate("events");
+    const club = await Club.findOne({ ClubName: clubName })
+      .populate("author") // Populate the College reference to get the college field
+      .populate({
+        path: "events",
+        populate: { path: "author" }, // Populate Event.author (Club)
+      });
 
     if (!club) {
       req.flash("error", "Club not found!");
       return res.redirect("/clubRegistration");
     }
 
-    res.render("profile/profile.ejs", { club });
+    let user = req.user;
+    let filteredEvents = club.events;
+
+    // If user is a student
+    if (user.role === "student") {
+      filteredEvents = club.events.filter((event) => {
+        // Show event if it's open to all or if it's college exclusive and matches user's college
+        return (
+          event.visibility === "openToAll" ||
+          (event.visibility === "collegeExclusive" &&
+            user.college === club.author.college) // Corrected to club.author.college
+        );
+      });
+      // Replace club.events with filtered events
+      club.events = filteredEvents;
+    }
+
+    console.log("Filtered Events:", club.events);
+
+    res.render("profile/profile.ejs", { club, user });
   } catch (e) {
     console.log("Error loading profile:", e);
     req.flash("error", "Something went wrong!");
@@ -269,6 +293,10 @@ app.post(
 );
 
 app.get("/:clubName/createpost", async (req, res) => {
+  if (!req.user || req.user.role === "student") {
+    req.flash("error", "You are not authorized to create events.");
+    return res.redirect("/interface");
+  }
   try {
     const { clubName } = req.params;
     const club = await Club.findOne({ ClubName: clubName });
@@ -289,7 +317,9 @@ app.get("/:clubName/createpost", async (req, res) => {
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   try {
     const { clubName } = req.params;
-    const { eventName, eventDetails, formFields } = req.body;
+    const { eventName, eventDetails, visibility, formFields } = req.body;
+
+    console.log("Request Body:", req.body); // Debug visibility value
 
     let club = await Club.findOne({ ClubName: clubName });
     if (!club) {
@@ -305,7 +335,13 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
     const url = req.file.path;
     const fileName = req.file.filename;
 
-    // Parse formFields from the request
+    // Validate visibility
+    if (!["collegeExclusive", "openToAll"].includes(visibility)) {
+      req.flash("error", "Invalid visibility value.");
+      return res.redirect(`/${clubName}/createpost`);
+    }
+
+    // Parse formFields with safety checks
     let parsedFormFields = [];
     if (formFields && formFields.label) {
       const labels = Array.isArray(formFields.label)
@@ -316,13 +352,15 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
         : [formFields.type];
       const isRequireds = Array.isArray(formFields.isRequired)
         ? formFields.isRequired
-        : [formFields.isRequired];
+        : formFields.isRequired
+        ? [formFields.isRequired]
+        : [];
 
       for (let i = 0; i < labels.length; i++) {
         parsedFormFields.push({
           label: labels[i],
           type: types[i],
-          isRequired: isRequireds[i] === "true",
+          isRequired: isRequireds[i] === "true" || false, // Default to false if not provided
         });
       }
     }
@@ -330,10 +368,14 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
     let newEvent = new Event({
       eventName,
       eventDetails,
-      image: { url, filename: fileName },
+      image: { url, fileName },
+      visibility,
       author: club._id,
       formFields: parsedFormFields,
+      registeredStudents: [],
     });
+
+    console.log("New Event:", newEvent); // Debug the event before saving
 
     await newEvent.save();
     club.events.push(newEvent);
@@ -344,7 +386,7 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
   } catch (error) {
     console.error("Error creating event:", error);
     req.flash("error", "Failed to create event.");
-    res.redirect("/collegeRegistration/login");
+    res.redirect(`/${clubName}/createpost`); // Redirect back to form on error
   }
 });
 
@@ -495,7 +537,7 @@ app.get("/index", async (req, res) => {
 
 app.get("/:clubName/:eventName/eventdetails", async (req, res) => {
   if (!req.user) {
-    return res.redirect("/studentRegistration/login");
+    return res.redirect("/interface");
   }
   let { clubName, eventName } = req.params;
 

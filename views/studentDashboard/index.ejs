@@ -4,8 +4,8 @@
   .club-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start; /* Centers content */
-    gap: 70px; /* Space between cards */
+    justify-content: flex-start;
+    gap: 70px;
     padding: 40px;
   }
 
@@ -15,9 +15,9 @@
   }
 
   .club-card {
-    width: 25%; /* Each card takes up 25% of the row */
-    min-width: 300px; /* Prevents cards from shrinking too much */
-    max-width: 300px; /* Keeps them evenly sized */
+    width: 25%;
+    min-width: 300px;
+    max-width: 300px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -44,108 +44,139 @@
     margin-bottom: 10px;
   }
 
-  /* Responsive Fixes */
   @media (max-width: 1200px) {
     .club-card {
-      width: 33.33%; /* 3 per row on medium screens */
+      width: 33.33%;
     }
   }
 
   @media (max-width: 900px) {
     .club-card {
-      width: 50%; /* 2 per row on small screens */
+      width: 50%;
     }
   }
 
   @media (max-width: 600px) {
     .club-card {
-      width: 100%; /* 1 per row on very small screens */
+      width: 100%;
     }
   }
 
-  /* Search Bar Styles */
-  .InputContainer {
-    width: 420px;
-    height: 50px;
+  .search-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: linear-gradient(
-      to bottom,
-      rgb(227, 213, 255),
-      rgb(255, 231, 231)
-    );
-    border-radius: 30px;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.075);
+    gap: 10px;
   }
-
-  .input {
-    width: 410px;
-    height: 40px;
+  .search-box {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    background: white;
+    transition: 0.3s;
+  }
+  .search-box:hover {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .search-icon {
+    color: #666;
+    margin-right: 10px;
+  }
+  input {
     border: none;
     outline: none;
-    caret-color: rgb(255, 81, 0);
-    background-color: rgb(255, 255, 255);
-    border-radius: 30px;
-    padding-left: 15px;
-    letter-spacing: 0.8px;
-    color: rgb(19, 19, 19);
-    font-size: 13.4px;
+    font-size: 16px;
+    width: 200px;
+    background: transparent;
   }
-
-  .btn-search {
-    background-color: violet;
-    color: #fff;
-    border-radius: 25px;
-    padding: 0 1rem;
-  }
-
-  .btn-search:hover {
-    background-color: #fe424d;
-    color: #fff;
-  }
-
-  .btn-search i {
-    display: inline;
-    margin-right: 0.5rem;
+  .search-button {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    background: rgb(160, 237, 216);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    padding-left: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
   }
 </style>
 
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand">Navbar</a>
+    <a class="navbar-brand"></a>
     <form class="d-flex col-4" style="margin-right: 500px" role="search">
-      <div class="InputContainer">
-        <input
-          placeholder="Search for a college.."
-          id="searchedCollege"
-          class="input"
-          name="searchedCollege"
-          type="text"
-        />
+      <div class="search-container">
+        <div class="search-box">
+          <svg
+            class="search-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            placeholder="Search for a college.."
+            id="searchedCollege"
+            class="input"
+            name="searchedCollege"
+            type="text"
+          />
+        </div>
+        <button class="search-button" onclick="handleSubmit(event)">
+          <svg
+            class="search-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
       </div>
-      <button class="btn btn-search" type="submit">
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </button>
     </form>
   </div>
 </nav>
 
-<img
-  src="<%= college.collegeLogo.url%>"
-  alt="College Logo"
-  style="
-    height: 100px;
-    width: 100px;
-    border: 1px solid pink;
-    border-radius: 50%;
-  "
-/>
-<h1 class="col-6"><%= college.college %></h1>
-
-<!-- Display Clubs -->
+<div style="display: flex; flex-direction: row">
+  <img
+    src="<%= college.collegeLogo.url%>"
+    alt="College Logo"
+    style="
+      height: 140px;
+      width: 140px;
+      margin-top: 20px;
+      margin-left: 50px;
+      border: 1px solid rgb(0, 0, 0);
+      border-radius: 50%;
+    "
+  />
+  <h1 class="col-6" style="margin-top: 70px; margin-left: 0px">
+    <%= college.college %>
+  </h1>
+</div>
+<div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
+  <p>Events in this college are:</p>
+</div>
 <div class="club-container">
   <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
   <a href="/<%= club.ClubName %>/profile" class="club-link">
