@@ -1,5 +1,4 @@
 // Event.js
-const { required } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -10,6 +9,8 @@ const eventSchema = new Schema({
   visibility: {
     type: String,
     required: true,
+    enum: ["collegeExclusive", "openToAll"], // Restrict to valid values
+    default: "collegeExclusive", // Set a default value
   },
   author: { type: Schema.Types.ObjectId, ref: "Club" },
   registeredStudents: [{ type: Schema.Types.ObjectId, ref: "Student" }],
@@ -19,8 +20,8 @@ const eventSchema = new Schema({
       type: {
         type: String,
         required: true,
-        enum: ["text", "email", "number", "checkbox"],
-      }, // Restrict types
+        enum: ["text", "email", "number", "checkbox"], // Restrict types
+      },
       isRequired: { type: Boolean, default: false },
     },
   ],

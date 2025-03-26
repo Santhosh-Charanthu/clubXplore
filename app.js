@@ -15,12 +15,15 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const passportLocalMongoose = require("passport-local-mongoose");
+const ExpressError = require("./utils/ExpressError.js");
+const wrapAsync = require("./utils/wrapAsync.js");
 let College = require("./models/college");
 let Club = require("./models/club");
 let Event = require("./models/Event");
 let Student = require("./models/student");
 let Registration = require("./models/registration");
 const cloudinary = require("cloudinary").v2;
+const { validateClub } = require("./middleware.js");
 const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
@@ -223,58 +226,63 @@ app.get("/clubRegistration", (req, res) => {
   res.render("club/clubform.ejs");
 });
 
-app.post("/clubRegistration", upload.single("ClubLogo"), async (req, res) => {
-  try {
-    let { ClubName, password, branchName } = req.body;
+app.post(
+  "/clubRegistration",
+  validateClub,
+  upload.single("ClubLogo"),
+  async (req, res) => {
+    try {
+      let { ClubName, password, branchName } = req.body;
 
-    if (!ClubName || !password) {
-      req.flash("error", "All fields are required!");
-      return res.redirect("/clubRegistration");
+      if (!ClubName || !password) {
+        req.flash("error", "All fields are required!");
+        return res.redirect("/clubRegistration");
+      }
+      if (!req.user) {
+        req.flash(
+          "error",
+          "You must be logged in as a college to register a club."
+        );
+        return res.redirect("/collegeRegistration/signup");
+      }
+      const college = await College.findById(req.user._id);
+      if (!college) {
+        req.flash("error", "College not found!");
+        return res.redirect("/collegeRegistration/signup");
+      }
+
+      if (!req.file) {
+        req.flash("error", "Please upload a logo.");
+        return res.redirect("/clubRegistration");
+      }
+
+      const url = req.file.path;
+      const fileName = req.file.filename;
+
+      const newClub = new Club({
+        ClubName,
+        branchName,
+        ClubLogo: {
+          url: url,
+          filename: fileName,
+        },
+        author: college._id,
+      });
+
+      const registeredClub = await Club.register(newClub, password);
+
+      college.clubs.push(registeredClub._id);
+      await college.save();
+
+      req.flash("success", "Club registered successfully!");
+      res.redirect(`/${ClubName}/profile`);
+    } catch (e) {
+      console.log("Error during club registration:", e);
+      req.flash("error", "Failed to register club.");
+      res.redirect("/clubRegistration");
     }
-    if (!req.user) {
-      req.flash(
-        "error",
-        "You must be logged in as a college to register a club."
-      );
-      return res.redirect("/collegeRegistration/signup");
-    }
-    const college = await College.findById(req.user._id);
-    if (!college) {
-      req.flash("error", "College not found!");
-      return res.redirect("/collegeRegistration/signup");
-    }
-
-    if (!req.file) {
-      req.flash("error", "Please upload a logo.");
-      return res.redirect("/clubRegistration");
-    }
-
-    const url = req.file.path;
-    const fileName = req.file.filename;
-
-    const newClub = new Club({
-      ClubName,
-      branchName,
-      ClubLogo: {
-        url: url,
-        filename: fileName,
-      },
-      author: college._id,
-    });
-
-    const registeredClub = await Club.register(newClub, password);
-
-    college.clubs.push(registeredClub._id);
-    await college.save();
-
-    req.flash("success", "Club registered successfully!");
-    res.redirect(`/${ClubName}/profile`);
-  } catch (e) {
-    console.log("Error during club registration:", e);
-    req.flash("error", "Failed to register club.");
-    res.redirect("/clubRegistration");
   }
-});
+);
 app.get("/clubRegistration/login", (req, res) => {
   res.render("club/clubformLogin.ejs");
 });
@@ -747,7 +755,6 @@ app.get("/:clubName/:eventName/edit", async (req, res) => {
     res.redirect(`/${clubName}/profile`);
   }
 });
-
 app.put(
   "/:clubName/:eventName/edit",
   upload.single("eventImage"),
@@ -759,20 +766,21 @@ app.put(
       let event = await Event.findOne({ eventName });
 
       if (!event) {
-        return res.status(404).send("Event not found");
+        req.flash("error", "Event not found!");
+        return res.redirect(`/${clubName}/profile`);
       }
 
-      console.log(" Request Body:", req.body);
-      console.log(" Uploaded File:", req.file);
+      console.log("Request Body:", req.body);
+      console.log("Uploaded File:", req.file);
 
       // Update event name if provided
       if (req.body.eventName && req.body.eventName !== event.eventName) {
-        event.eventName = req.body.eventName;
+        event.eventName = req.body.eventName.trim();
       }
 
       // Update event details if provided
       if (req.body.eventDetails) {
-        event.eventDetails = req.body.eventDetails;
+        event.eventDetails = req.body.eventDetails.trim();
       }
 
       // Update event image if a new file is uploaded
@@ -780,15 +788,26 @@ app.put(
         event.image = { url: req.file.path, filename: req.file.filename };
       }
 
-      // Update visibility field
+      // Update visibility field with validation
       if (req.body.visibility) {
-        event.visibility = req.body.visibility;
+        const validVisibility = ["collegeExclusive", "openToAll"];
+        if (validVisibility.includes(req.body.visibility)) {
+          event.visibility = req.body.visibility;
+        } else {
+          throw new Error(
+            "Invalid visibility value. Must be 'collegeExclusive' or 'openToAll'."
+          );
+        }
+      } else {
+        // Since visibility is required in the schema, ensure it's always set
+        event.visibility = event.visibility || "collegeExclusive"; // Fallback to existing or default
       }
 
+      // Handle formFields with validation
       if (req.body.formFields) {
         let { label, type, isRequired, originalLabel } = req.body.formFields;
 
-        // Ensure arrays
+        // Ensure arrays and filter out empty values
         label = Array.isArray(label) ? label : [label].filter(Boolean);
         type = Array.isArray(type) ? type : [type].filter(Boolean);
         isRequired = Array.isArray(isRequired) ? isRequired : [];
@@ -798,7 +817,7 @@ app.put(
 
         // Handle deletions
         let deletedFields = req.body.deletedFields
-          ? req.body.deletedFields.split(",")
+          ? req.body.deletedFields.split(",").filter(Boolean)
           : [];
 
         // Remove deleted fields
@@ -806,20 +825,38 @@ app.put(
           (field) => !deletedFields.includes(field.label)
         );
 
-        // Create a map of existing fields indexed by their current position
+        // Create a map of existing fields
         const existingFieldsMap = new Map();
         event.formFields.forEach((field, index) => {
           existingFieldsMap.set(index, field);
         });
 
-        // Process submitted fields
+        // Validate and process submitted fields
         const updatedFieldsMap = new Map();
+        const validFieldTypes = ["text", "email", "number", "checkbox"]; // Match schema enum
 
-        label.forEach((fieldLabel, index) => {
+        for (let index = 0; index < label.length; index++) {
+          const fieldLabel = String(label[index]).trim();
+          const fieldType = String(type[index] || "text").trim();
           const origLabel = originalLabel[index] || "";
+
+          // Validate field type against schema enum
+          if (!validFieldTypes.includes(fieldType)) {
+            throw new Error(
+              `Invalid field type: ${fieldType}. Must be one of ${validFieldTypes.join(
+                ", "
+              )}.`
+            );
+          }
+
+          // Validate label (ensure it's not empty after trimming)
+          if (!fieldLabel) {
+            throw new Error("Field label cannot be empty.");
+          }
+
           const fieldData = {
-            label: String(fieldLabel).trim(),
-            type: String(type[index] || "text").trim(),
+            label: fieldLabel,
+            type: fieldType,
             isRequired:
               isRequired.includes(String(index)) ||
               isRequired[index] === "true" ||
@@ -839,13 +876,13 @@ app.put(
             // Update existing field
             updatedFieldsMap.set(matchedIndex, fieldData);
           } else if (!event.formFields.some((f) => f.label === fieldLabel)) {
-            // Add as new field only if the new label doesn’t already exist
+            // Add as new field only if the label doesn’t already exist
             updatedFieldsMap.set(
               event.formFields.length + updatedFieldsMap.size,
               fieldData
             );
           }
-        });
+        }
 
         // Rebuild formFields array
         const newFormFields = [];
@@ -870,12 +907,14 @@ app.put(
       await event.save();
       console.log("Event updated successfully:", event);
       req.flash("success", "Event updated successfully!");
-      // Redirect using the new event name if it was updated
-      const redirectEventName = req.body.eventName || eventName;
+      const redirectEventName = encodeURIComponent(
+        req.body.eventName || eventName
+      );
       res.redirect(`/${clubName}/${redirectEventName}/eventdetails`);
     } catch (error) {
       console.error("🔥 Server Error:", error);
-      res.status(500).send(`Server Error: ${error.message}`);
+      req.flash("error", `Failed to update event: ${error.message}`);
+      res.redirect(`/${clubName}/${eventName}/edit`);
     }
   }
 );
@@ -977,6 +1016,26 @@ app.get(
 
 app.post("/:clubName/:eventName/eventdetails/viewRegistration", (req, res) => {
   console.log(req.user);
+});
+
+app.use((req, res, next) => {
+  const err = new ExpressError(404, "Page Not Found"); // ✅ Correct order
+  next(err);
+});
+
+// General Error-Handling Middleware
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message = "Something went wrong" } = err;
+
+  // Flash the error message (if using flash)
+  req.flash("error", message);
+
+  // Render an error page or redirect with status
+  res.status(statusCode).render("error", {
+    statusCode,
+    message,
+    currUser: req.user, // Pass current user for template consistency
+  });
 });
 
 app.listen(8080, () => {
