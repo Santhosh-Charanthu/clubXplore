@@ -1,116 +1,5 @@
 <%- include("../layouts/boilerplate") %>
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <h3 class="text-center mb-4">Create New Event</h3>
-
-      <form
-        method="post"
-        action="/<%= club.ClubName %>/createpost"
-        novalidate
-        class="needs-validation event-form shadow p-4 rounded"
-        enctype="multipart/form-data"
-      >
-        <!-- Event Name -->
-        <div class="mb-4">
-          <label for="eventName" class="form-label fw-bold">Event Name</label>
-          <input
-            type="text"
-            id="eventName"
-            name="eventName"
-            placeholder="Enter Event Name"
-            class="form-control form-control-lg"
-            required
-          />
-          <div class="invalid-feedback">Please enter an event name.</div>
-        </div>
-
-        <!-- Description -->
-        <div class="mb-4">
-          <label for="description" class="form-label fw-bold"
-            >Description</label
-          >
-          <textarea
-            id="description"
-            name="eventDetails"
-            placeholder="Event details"
-            class="form-control"
-            rows="4"
-            required
-          ></textarea>
-          <div class="invalid-feedback">Please enter event details.</div>
-        </div>
-
-        <!-- Image Upload -->
-        <div class="mb-4">
-          <label for="image" class="form-label fw-bold">Upload Image</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Please upload an image.</div>
-        </div>
-
-        <!-- Visibility -->
-        <div class="mb-4">
-          <label class="form-label fw-bold">Visibility</label>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="visibility"
-              value="collegeExclusive"
-              id="collegeExclusive"
-              required
-            />
-            <label class="form-check-label" for="collegeExclusive">
-              College Exclusive
-            </label>
-          </div>
-          <div class="form-check mt-3">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="visibility"
-              value="openToAll"
-              id="openToAll"
-            />
-            <label class="form-check-label" for="openToAll">Open to All</label>
-          </div>
-          <div class="invalid-feedback">Please select a visibility option.</div>
-        </div>
-
-        <!-- Dynamic Form Fields -->
-        <div class="mb-4">
-          <label class="form-label fw-bold">Custom Registration Fields</label>
-          <div
-            id="formFieldsContainer"
-            class="field-container p-3 rounded bg-light"
-          ></div>
-          <button
-            type="button"
-            id="addField"
-            class="btn btn-outline-primary mt-3 w-100"
-          >
-            <i class="fas fa-plus me-2"></i>Add Field
-          </button>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-lg w-100">
-            Submit Event
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 <style>
   .event-form {
     background: #fff;
@@ -232,6 +121,357 @@
   }
 </style>
 
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <h3 class="text-center mb-4">Create New Event</h3>
+
+      <form
+        method="post"
+        action="/<%= club.ClubName %>/createpost"
+        novalidate
+        class="needs-validation event-form shadow p-4 rounded"
+        enctype="multipart/form-data"
+      >
+        <!-- Event Name -->
+        <div class="mb-4">
+          <label for="eventName" class="form-label fw-bold">Event Name</label>
+          <input
+            type="text"
+            id="eventName"
+            name="eventName"
+            placeholder="Enter Event Name"
+            class="form-control form-control-lg"
+            required
+          />
+          <div class="invalid-feedback">Please enter an event name.</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="form-label fw-bold"
+            >Description</label
+          >
+          <textarea
+            id="description"
+            name="eventDetails"
+            placeholder="Event details"
+            class="form-control"
+            rows="4"
+            required
+          ></textarea>
+          <div class="invalid-feedback">Please enter event details.</div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="mb-4">
+          <label for="image" class="form-label fw-bold">Upload Image</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please upload an image.</div>
+        </div>
+
+        <!-- Visibility -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Visibility</label>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="visibility"
+              value="collegeExclusive"
+              id="collegeExclusive"
+              required
+            />
+            <label class="form-check-label" for="collegeExclusive">
+              College Exclusive
+            </label>
+          </div>
+          <div class="form-check mt-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="visibility"
+              value="openToAll"
+              id="openToAll"
+            />
+            <label class="form-check-label" for="openToAll">Open to All</label>
+          </div>
+          <div class="invalid-feedback">Please select a visibility option.</div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-bold">Branch Visibility</label>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="branchVisibility"
+              value="branchExclusive"
+              id="branchExclusive"
+              required
+            />
+            <label class="form-check-label" for="branchExclusive">
+              Branch Exclusive
+            </label>
+          </div>
+          <div class="form-check mt-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="branchVisibility"
+              value="openToAllBranches"
+              id="openToAllBranches"
+            />
+            <label class="form-check-label" for="openToAllBranches"
+              >Open to All Branches</label
+            >
+          </div>
+          <div class="invalid-feedback">Please select a visibility option.</div>
+        </div>
+
+        <div class="mb-4">
+          <label for="branchName" class="form-label fw-bold"
+            >Branch Details (If selected Branch Exclusive)</label
+          >
+          <input
+            id="branchName"
+            name="branchName"
+            placeholder="Branch Name"
+            class="form-control"
+            rows="4"
+            required
+          ></input>
+          <div class="invalid-feedback">Please Enter Branch Name</div>
+        </div>
+
+        <!-- Event Dates -->
+        <div class="mb-3">
+          <label for="startDate" class="form-label fw-bold"
+            >Start Date & Time</label
+          >
+          <input
+            type="datetime-local"
+            id="startDate"
+            name="startDate"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="endDate" class="form-label fw-bold"
+            >End Date & Time</label
+          >
+          <input
+            type="datetime-local"
+            id="endDate"
+            name="endDate"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="registrationDeadline" class="form-label fw-bold"
+            >Registration Deadline</label
+          >
+          <input
+            type="datetime-local"
+            id="registrationDeadline"
+            name="registrationDeadline"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <!-- Mode -->
+        <div class="mb-3">
+          <label for="mode" class="form-label fw-bold">Event Mode</label>
+          <select name="mode" id="mode" class="form-select" required>
+            <option value="">Select Mode</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+            <option value="hybrid">Hybrid</option>
+          </select>
+        </div>
+
+        <!-- Venue & Meeting Link -->
+        <div class="mb-3">
+          <label for="venue" class="form-label fw-bold"
+            >Venue (if offline)</label
+          >
+          <input type="text" id="venue" name="venue" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+          <label for="meetingLink" class="form-label fw-bold"
+            >Meeting Link (if online)</label
+          >
+          <input
+            type="url"
+            id="meetingLink"
+            name="meetingLink"
+            class="form-control"
+          />
+        </div>
+
+        <!-- Coordinators -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Event Coordinators</label>
+          <div id="coordinatorContainer">
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  name="coordinators[0][name]"
+                  class="form-control"
+                  placeholder="Name"
+                />
+              </div>
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  name="coordinators[0][contact]"
+                  class="form-control"
+                  placeholder="Contact"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="addCoordinatorBtn"
+            class="btn btn-outline-secondary btn-sm mt-2"
+          >
+            + Add Coordinator
+          </button>
+        </div>
+
+        <!-- Registration Settings -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Registration Required?</label>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="registrationRequired"
+              id="registrationRequired"
+              checked
+            />
+            <label class="form-check-label" for="registrationRequired"
+              >Yes</label
+            >
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="participantLimit" class="form-label fw-bold"
+            >Participant Limit</label
+          >
+          <input
+            type="number"
+            id="participantLimit"
+            name="participantLimit"
+            class="form-control"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="eligibility" class="form-label fw-bold"
+            >Eligibility Criteria</label
+          >
+          <input
+            type="text"
+            id="eligibility"
+            name="eligibility"
+            class="form-control"
+            placeholder="e.g. Only 2nd Year CSE students"
+          />
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-md-6">
+            <label for="teamSizeMin" class="form-label fw-bold"
+              >Min Team Size</label
+            >
+            <input
+              type="number"
+              id="teamSizeMin"
+              name="teamSize[min]"
+              class="form-control"
+              value="1"
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="teamSizeMax" class="form-label fw-bold"
+              >Max Team Size</label
+            >
+            <input
+              type="number"
+              id="teamSizeMax"
+              name="teamSize[max]"
+              class="form-control"
+              value="1"
+            />
+          </div>
+        </div>
+
+        <!-- Rewards, Sponsors, Agenda -->
+        <div class="mb-3">
+          <label for="rewards" class="form-label fw-bold"
+            >Rewards / Prizes</label
+          >
+          <textarea
+            id="rewards"
+            name="rewards"
+            class="form-control"
+            rows="2"
+          ></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="agenda" class="form-label fw-bold">Event Agenda</label>
+          <textarea
+            id="agenda"
+            name="agenda"
+            class="form-control"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <!-- Dynamic Form Fields -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Custom Registration Fields</label>
+          <div
+            id="formFieldsContainer"
+            class="field-container p-3 rounded bg-light"
+          ></div>
+          <button
+            type="button"
+            id="addField"
+            class="btn btn-outline-primary mt-3 w-100"
+          >
+            <i class="fas fa-plus me-2"></i>Add Field
+          </button>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Submit Event
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   document.getElementById("addField").addEventListener("click", () => {
     const fieldDiv = document.createElement("div");
@@ -256,4 +496,37 @@
       fieldDiv.remove();
     });
   });
+
+  let coordinatorIndex = 1;
+
+  document
+    .getElementById("addCoordinatorBtn")
+    .addEventListener("click", function () {
+      const container = document.getElementById("coordinatorContainer");
+
+      const row = document.createElement("div");
+      row.className = "row g-2 mb-2 align-items-center coordinator-row";
+
+      row.innerHTML = `
+      <div class="col-md-5">
+        <input type="text" name="coordinators[${coordinatorIndex}][name]" class="form-control" placeholder="Name" required />
+      </div>
+      <div class="col-md-5">
+        <input type="text" name="coordinators[${coordinatorIndex}][contact]" class="form-control" placeholder="Contact" required />
+      </div>
+      <div class="col-md-2 text-end">
+        <button type="button" class="remove-x">×</button>
+      </div>
+    `;
+
+      container.appendChild(row);
+      coordinatorIndex++;
+
+      // Add remove functionality
+      row.querySelector(".remove-x").addEventListener("click", () => {
+        row.remove();
+      });
+    });
 </script>
+
+<!-- Update the post route -->

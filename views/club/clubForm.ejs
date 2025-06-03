@@ -6,6 +6,7 @@
       <h3 class="text-center mb-4">Create a New Club</h3>
 
       <form
+        id="clubRegistrationForm"
         method="post"
         action="/clubRegistration"
         novalidate
@@ -20,10 +21,10 @@
             id="ClubName"
             name="ClubName"
             placeholder="Enter Club Name"
-            class="form-control form-control-lg"
+            class="form-control"
             required
           />
-          <div class="invalid-feedback">Please enter a club name.</div>
+          <div class="error-message" id="ClubNameError"></div>
         </div>
 
         <!-- Branch Name -->
@@ -37,7 +38,7 @@
             class="form-control"
             required
           />
-          <div class="invalid-feedback">Please enter a branch name.</div>
+          <div class="error-message" id="branchNameError"></div>
         </div>
 
         <!-- Password -->
@@ -51,7 +52,7 @@
             class="form-control"
             required
           />
-          <div class="invalid-feedback">Please set a password.</div>
+          <div class="error-message" id="passwordError"></div>
         </div>
 
         <!-- Club Logo -->
@@ -64,10 +65,10 @@
             class="form-control"
             required
           />
-          <div class="invalid-feedback">Please upload a logo.</div>
+          <div class="error-message" id="ClubLogoError"></div>
         </div>
 
-        <!-- Submit Button and Login Link -->
+        <!-- Submit Button -->
         <div class="mb-4 text-center">
           <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
             Create Club
@@ -94,9 +95,21 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 
+  /* Red Border for Invalid Inputs */
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  /* Blue Border on Focus */
   .form-control:focus {
-    border-color: #4b6cb7;
-    box-shadow: 0 0 5px rgba(75, 108, 183, 0.5);
+    border-color: #007bff !important; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important; /* Blue glow */
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
   }
 
   .btn-success {
@@ -115,10 +128,6 @@
     text-decoration: none;
   }
 
-  .text-muted:hover {
-    color: #4b6cb7;
-  }
-
   @media (max-width: 768px) {
     .event-form {
       padding: 15px;
@@ -128,3 +137,84 @@
     }
   }
 </style>
+
+<script>
+  document
+    .getElementById("clubRegistrationForm")
+    .addEventListener("submit", function (event) {
+      let isValid = true;
+
+      // Get input fields
+      const clubNameInput = document.getElementById("ClubName");
+      const branchNameInput = document.getElementById("branchName");
+      const passwordInput = document.getElementById("password");
+      const clubLogoInput = document.getElementById("ClubLogo");
+
+      // Get error message elements
+      const clubNameError = document.getElementById("ClubNameError");
+      const branchNameError = document.getElementById("branchNameError");
+      const passwordError = document.getElementById("passwordError");
+      const clubLogoError = document.getElementById("ClubLogoError");
+
+      // Reset errors and styles
+      clubNameError.textContent = "";
+      branchNameError.textContent = "";
+      passwordError.textContent = "";
+      clubLogoError.textContent = "";
+      clubNameInput.classList.remove("error-border");
+      branchNameInput.classList.remove("error-border");
+      passwordInput.classList.remove("error-border");
+      clubLogoInput.classList.remove("error-border");
+
+      // Validate Club Name
+      if (clubNameInput.value.trim() === "") {
+        clubNameError.textContent = "Club name is required.";
+        clubNameInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Branch Name
+      if (branchNameInput.value.trim() === "") {
+        branchNameError.textContent = "Branch name is required.";
+        branchNameInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Password
+      if (passwordInput.value.trim() === "") {
+        passwordError.textContent = "Password is required.";
+        passwordInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Club Logo
+      if (clubLogoInput.files.length === 0) {
+        clubLogoError.textContent = "Please upload a logo.";
+        clubLogoInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.type === "file") {
+        // File input validation
+        if (this.files.length > 0) {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      } else {
+        // Text input validation
+        if (this.value.trim() !== "") {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      }
+    });
+  });
+</script>

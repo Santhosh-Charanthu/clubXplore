@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const { clubJoiSchema } = require("./schema.js");
+const clubJoiSchema = require("./schema.js");
+const ExpressError = require("./utils/ExpressError.js");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {

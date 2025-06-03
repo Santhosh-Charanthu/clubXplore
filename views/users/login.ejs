@@ -1,12 +1,26 @@
 <%- include("../layouts/boilerplate") %>
 
-<h1>College Registration</h1>
+<h1 class="text-center mt-4">College Registration</h1>
 
 <div class="login-container">
-  <form class="form" action="/collegeRegistration/login" method="post">
+  <form
+    class="form"
+    action="/collegeRegistration/login"
+    method="post"
+    id="loginForm"
+    novalidate
+  >
     <p class="form-title">Sign in to your college</p>
+
+    <!-- College Input -->
     <div class="input-container">
-      <input placeholder="Enter your college" name="college" type="text" />
+      <input
+        id="college"
+        name="college"
+        type="text"
+        placeholder="Enter your college"
+        required
+      />
       <span>
         <svg
           stroke="currentColor"
@@ -23,10 +37,17 @@
         </svg>
       </span>
     </div>
+    <p class="error-message" id="collegeError"></p>
 
+    <!-- Password Input -->
     <div class="input-container">
-      <input placeholder="Enter password" name="password" type="password" />
-
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Enter password"
+        required
+      />
       <span>
         <svg
           stroke="currentColor"
@@ -49,6 +70,8 @@
         </svg>
       </span>
     </div>
+    <p class="error-message" id="passwordError"></p>
+
     <button class="submit" type="submit">Sign in</button>
 
     <p class="signup-link">
@@ -57,3 +80,74 @@
     </p>
   </form>
 </div>
+
+<!-- JavaScript for Real-Time Validation -->
+<script>
+  document
+    .getElementById("loginForm")
+    .addEventListener("submit", function (event) {
+      let isValid = true;
+
+      const collegeInput = document.getElementById("college");
+      const passwordInput = document.getElementById("password");
+
+      const collegeError = document.getElementById("collegeError");
+      const passwordError = document.getElementById("passwordError");
+
+      // Reset errors and styles
+      collegeError.textContent = "";
+      passwordError.textContent = "";
+      collegeInput.classList.remove("error-border");
+      passwordInput.classList.remove("error-border");
+
+      // Validate College Name
+      if (collegeInput.value.trim() === "") {
+        collegeError.textContent = "College name is required.";
+        collegeInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Password
+      if (passwordInput.value.trim() === "") {
+        passwordError.textContent = "Password is required.";
+        passwordInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.value.trim() !== "") {
+        this.classList.remove("error-border"); // Remove red border
+        this.nextElementSibling?.classList.remove("error-message"); // Remove error text
+        this.parentElement.nextElementSibling.textContent = ""; // Clear error message
+      }
+    });
+  });
+</script>
+
+<!-- CSS for Real-Time Error Handling -->
+<style>
+  .error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+    text-align: left;
+  }
+
+  /* Red Border for Invalid Inputs */
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  /* Blue Border on Focus */
+  .input-container input:focus {
+    border-color: #4b6cb7 !important; /* Blue border */
+    box-shadow: 0 0 5px rgba(75, 108, 183, 0.5) !important;
+  }
+</style>

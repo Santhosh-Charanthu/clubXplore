@@ -13,40 +13,57 @@
     </div>
     <div class="event-details-card">
       <div class="event-description-container">
-        <p class="event-details"><%= event.eventDetails %></p>
+        <p class="event-description-container">
+          <b>Description:</b> <%= event.eventDetails %>
+        </p>
+        <p class="event-description-container">
+          <b>Mode:</b> <%= event.mode %>
+        </p>
+        <p class="event-description-container">
+          <b>Venue:</b> <%= event.venue %>
+        </p>
+        <p class="event-description-container"><b>Coordinators:</b></p>
+        <% event.coordinators.forEach(coordinator => { %>
+        <p class="event-description-container">
+          <%= coordinator.name %> (<%= coordinator.contact %>)
+        </p>
+        <% }) %> <% if(!event.branchName) {%>
+        <p class="event-description-container">
+          <b>Branch:</b> for <%= event.branchName %> Students only eligible for
+          participation
+        </p>
+        <% } %>
+        <p class="event-description-container">
+          <b>Eligibility:</b> <%= event.eligibility %>
+        </p>
+        <p class="event-description-container">
+          <b>Rewards:</b> <%= event.rewards %>
+        </p>
+        <p class="event-description-container">
+          <b>Agenda:</b> <%= event.agenda %>
+        </p>
+        <p class="event-description-container">
+          <b>Starting Date:</b> <%= event.startDate %>
+        </p>
+        <p class="event-description-container">
+          <b>Ending Date:</b> <%= event.endDate %>
+        </p>
+        <p class="event-description-container">
+          <b>Registration Deadline:</b> <%= event.registrationDeadline %>
+        </p>
       </div>
       <% if (user && user.role === "student") { %> <% if
       (!event.registeredStudents.includes(user._id)) { %>
-      <form
-        action="/<%= event.author.ClubName %>/<%= event.eventName %>/register"
-        method="post"
-        class="needs-validation registration-form"
-        novalidate
-      >
-        <h3 class="registration-title">Register for this Event</h3>
-        <div class="form-fields">
-          <% event.formFields.forEach(field => { %>
-          <div class="mb-3">
-            <label for="<%= field.label %>" class="form-label"
-              ><b><%= field.label %></b></label
-            >
-            <% if (field.type === "checkbox") { %> <input type="checkbox"
-            id="<%= field.label %>" name="<%= field.label %>" value="true" <%=
-            field.isRequired ? 'required' : '' %> /> <% } else { %> <input
-            type="<%= field.type %>" id="<%= field.label %>" name="<%=
-            field.label %>" class="form-control" <%= field.isRequired ?
-            'required' : '' %> />
-            <div class="invalid-feedback">This field is required.</div>
-            <% } %>
-          </div>
-          <% }) %>
-        </div>
-        <div class="button-container">
+      <div class="button-container">
+        <form
+          action="/<%= event.author.ClubName %>/<%= event.eventName %>/register"
+          method="get"
+        >
           <button type="submit" class="btn btn-success submit-btn">
-            Submit Registration
+            Register
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
       <% } else { %>
       <p class="registration-status">
         You are already registered for this event.

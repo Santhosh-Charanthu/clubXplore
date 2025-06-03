@@ -215,10 +215,11 @@ app.get("/:clubName/profile", async (req, res) => {
     console.log("Filtered Events:", club.events);
 
     res.render("profile/profile.ejs", { club, user });
+    // res.render("profile/profile2.ejs", { club, user });
   } catch (e) {
     console.log("Error loading profile:", e);
     req.flash("error", "Something went wrong!");
-    res.redirect("/");
+    res.redirect("clubRegistration/login");
   }
 });
 
@@ -228,8 +229,8 @@ app.get("/clubRegistration", (req, res) => {
 
 app.post(
   "/clubRegistration",
-  validateClub,
   upload.single("ClubLogo"),
+  validateClub,
   async (req, res) => {
     try {
       let { ClubName, password, branchName } = req.body;
@@ -283,6 +284,7 @@ app.post(
     }
   }
 );
+
 app.get("/clubRegistration/login", (req, res) => {
   res.render("club/clubformLogin.ejs");
 });
@@ -323,9 +325,31 @@ app.get("/:clubName/createpost", async (req, res) => {
 
 // Replace the existing app.post("/:clubName/createpost") with this
 app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
+  const { clubName } = req.params;
   try {
-    const { clubName } = req.params;
-    const { eventName, eventDetails, visibility, formFields } = req.body;
+    const {
+      eventName,
+      eventDetails,
+      visibility,
+      branchVisibility,
+      branchName,
+      startDate,
+      endDate,
+      registrationDeadline,
+      mode,
+      venue,
+      meetingLink,
+      coordinators,
+      registrationRequired,
+      participantLimit,
+      eligibility,
+      teamSize,
+      rewards,
+      sponsors,
+      agenda,
+      approvalStatus,
+      formFields,
+    } = req.body;
 
     console.log("Request Body:", req.body); // Debug visibility value
 
@@ -335,10 +359,10 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    if (!req.file) {
-      req.flash("error", "Please upload an image.");
-      return res.redirect(`/${clubName}/createpost`);
-    }
+    // if (!req.file) {
+    //   req.flash("error", "Please upload an image.");
+    //   return res.redirect(`/${clubName}/createpost`);
+    // }
 
     const url = req.file.path;
     const fileName = req.file.filename;
@@ -378,6 +402,23 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
       eventDetails,
       image: { url, fileName },
       visibility,
+      branchVisibility,
+      branchName,
+      startDate,
+      endDate,
+      registrationDeadline,
+      mode,
+      venue,
+      meetingLink,
+      coordinators,
+      registrationRequired: req.body.registrationRequired === "on",
+      participantLimit,
+      eligibility,
+      teamSize,
+      rewards,
+      sponsors,
+      agenda,
+      approvalStatus,
       author: club._id,
       formFields: parsedFormFields,
       registeredStudents: [],
@@ -632,21 +673,12 @@ app.post("/:clubName/:eventName/eventdetails", async (req, res) => {
 app.get("/:clubName/:eventName/register", async (req, res) => {
   if (!req.user) {
     return res.redirect("/studentRegistration/login");
-    // return res.status(401).send("You must be logged in to register.");
   }
 
   let { clubName, eventName } = req.params;
-  console.log(clubName, eventName);
-  console.log(req.session);
 
   const club = await Club.findOne({ ClubName: clubName })
-    .populate({
-      path: "events",
-      populate: {
-        path: "registeredStudents",
-        model: "Student",
-      },
-    })
+    .populate("events")
     .exec();
 
   if (!club) {
@@ -659,21 +691,7 @@ app.get("/:clubName/:eventName/register", async (req, res) => {
     return res.status(404).send("Event not found");
   }
 
-  let user = req.user;
-  console.log(user);
-
-  if (user.role === "student") {
-    if (!event.registeredStudents) {
-      event.registeredStudents = []; // ✅ Fix: Ensure the array is initialized
-    }
-    event.registeredStudents.push(user._id);
-    await event.save();
-    await club.save(); // ✅ Fix: Save the parent document
-  }
-
-  console.log(event);
-
-  res.render("profile/event", { event });
+  res.render("profile/register", { event, user: req.user, clubName });
 });
 
 // Replace app.get and app.post for "/:clubName/:eventName/register"
@@ -682,32 +700,44 @@ app.post("/:clubName/:eventName/register", async (req, res) => {
     return res.redirect("/studentRegistration/login");
   }
 
-  const { clubName, eventName } = req.params;
+  // ✅ Decode the parameters
+  const clubName = decodeURIComponent(req.params.clubName);
+  const eventName = decodeURIComponent(req.params.eventName);
+
+  console.log("Decoded clubName:", clubName);
+  console.log("Decoded eventName:", eventName);
 
   try {
     const club = await Club.findOne({ ClubName: clubName }).populate("events");
+
     if (!club) {
+      console.log("Club not found in DB:", clubName);
       req.flash("error", "Club not found");
       return res.redirect("/clubRegistration");
     }
 
     const event = club.events.find((e) => e.eventName === eventName);
+
     if (!event) {
+      console.log("Event not found in club:", eventName);
       req.flash("error", "Event not found");
       return res.redirect(`/${clubName}/profile`);
     }
 
-    // Check if student is already registered
     const existingRegistration = await Registration.findOne({
       eventId: event._id,
       studentId: req.user._id,
     });
+
     if (existingRegistration) {
       req.flash("error", "You are already registered for this event");
-      return res.redirect(`/${clubName}/${eventName}/eventdetails`);
+      return res.redirect(
+        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+          eventName
+        )}/eventdetails`
+      );
     }
 
-    // Save registration with dynamic form data
     const formData = new Map();
     for (const field of event.formFields) {
       formData.set(field.label, req.body[field.label] || "");
@@ -718,17 +748,26 @@ app.post("/:clubName/:eventName/register", async (req, res) => {
       studentId: req.user._id,
       formData,
     });
+
     await registration.save();
 
     event.registeredStudents.push(req.user._id);
     await event.save();
 
     req.flash("success", "Registered successfully!");
-    res.redirect(`/${clubName}/${eventName}/eventdetails`);
+    res.redirect(
+      `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+        eventName
+      )}/eventdetails`
+    );
   } catch (error) {
     console.error("Error registering student:", error);
     req.flash("error", "Failed to register");
-    res.redirect(`/${clubName}/${eventName}/eventdetails`);
+    res.redirect(
+      `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+        eventName
+      )}/eventdetails`
+    );
   }
 });
 
@@ -1009,7 +1048,7 @@ app.get(
     } catch (error) {
       console.error("Error fetching registrations:", error);
       req.flash("error", "Something went wrong!");
-      res.redirect("/");
+      res.redirect("clubRegistration/login");
     }
   }
 );
@@ -1019,8 +1058,13 @@ app.post("/:clubName/:eventName/eventdetails/viewRegistration", (req, res) => {
 });
 
 app.use((req, res, next) => {
-  const err = new ExpressError(404, "Page Not Found"); // ✅ Correct order
-  next(err);
+  next(new ExpressError(404, "Page Not Found")); // ✅ No need to manually flash here
+});
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message = "Something went wrong!" } = err;
+  res.status(statusCode).render("error", { statusCode, message }); // ✅ Pass statusCode
 });
 
 // General Error-Handling Middleware

@@ -1,60 +1,211 @@
 <%- include("../layouts/boilerplate") %>
 
-<div class="row mt-3">
-  <div class="col-4 offset-3">
-    <h3>Edit the Club <%= clubDetails.ClubName %></h3>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <h3 class="text-center mb-4">Edit Club: <%= clubDetails.ClubName %></h3>
 
-    <form
-      method="post"
-      action="/<%=clubDetails.ClubName %>/edit?_method=PUT"
-      novalidate
-      class="needs-validation"
-      enctype="multipart/form-data"
-    >
-      <div>
-        <label for="ClubName" class="form-label">Club Name</label>
-        <input
-          type="text"
-          name="ClubName"
-          value="<%= clubDetails.ClubName %>"
-          class="form-control"
-          required
-        />
-        <div class="invalid-feedback">Club Name is required.</div>
-      </div>
+      <form
+        id="editClubForm"
+        method="post"
+        action="/<%= clubDetails.ClubName %>/edit?_method=PUT"
+        novalidate
+        class="needs-validation event-form shadow p-4 rounded"
+        enctype="multipart/form-data"
+      >
+        <!-- Club Name -->
+        <div class="mb-4">
+          <label for="ClubName" class="form-label fw-bold">Club Name</label>
+          <input
+            type="text"
+            id="ClubName"
+            name="ClubName"
+            value="<%= clubDetails.ClubName %>"
+            class="form-control"
+            required
+          />
+          <div class="error-message" id="ClubNameError"></div>
+        </div>
 
-      <!-- Branch Name -->
-      <div>
-        <label for="branchName" class="form-label">Branch Name</label>
-        <input
-          type="text"
-          name="branchName"
-          value="<%= clubDetails.branchName %>"
-          class="form-control"
-          required
-        />
-        <div class="invalid-feedback">Branch Name is required.</div>
-      </div>
+        <!-- Branch Name -->
+        <div class="mb-4">
+          <label for="branchName" class="form-label fw-bold">Branch Name</label>
+          <input
+            type="text"
+            id="branchName"
+            name="branchName"
+            value="<%= clubDetails.branchName %>"
+            class="form-control"
+            required
+          />
+          <div class="error-message" id="branchNameError"></div>
+        </div>
 
-      <!-- Club Logo Upload -->
-      <div>
-        <label for="ClubLogo" class="form-label">New ClubLogo</label>
-        <br />
+        <!-- Club Logo Upload -->
+        <div class="mb-4">
+          <label for="ClubLogo" class="form-label fw-bold">New Club Logo</label>
+          <input
+            type="file"
+            id="ClubLogo"
+            name="ClubLogo"
+            class="form-control"
+          />
+          <div class="error-message" id="ClubLogoError"></div>
+        </div>
 
-        <input type="file" name="ClubLogo" class="form-control" />
-      </div>
+        <!-- Password -->
+        <div class="mb-4">
+          <label for="password" class="form-label fw-bold">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            required
+          />
+          <div class="error-message" id="passwordError"></div>
+        </div>
 
-      <!-- Password -->
-      <div>
-        <label for="password" class="form-label">Password</label>
-        <input type="password" name="password" class="form-control" required />
-        <div class="invalid-feedback">Password is required.</div>
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-dark add-btn mt-3">
-        Save Changes
-      </button>
-    </form>
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
+
+<style>
+  .event-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .event-form:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Red Border for Invalid Inputs */
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  /* Blue Border on Focus */
+  .form-control:focus {
+    border-color: #007bff !important; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important; /* Blue glow */
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .event-form {
+      padding: 15px;
+    }
+    .btn-lg {
+      padding: 10px;
+    }
+  }
+</style>
+
+<script>
+  document
+    .getElementById("editClubForm")
+    .addEventListener("submit", function (event) {
+      let isValid = true;
+
+      // Get input fields
+      const clubNameInput = document.getElementById("ClubName");
+      const branchNameInput = document.getElementById("branchName");
+      const passwordInput = document.getElementById("password");
+      const clubLogoInput = document.getElementById("ClubLogo");
+
+      // Get error message elements
+      const clubNameError = document.getElementById("ClubNameError");
+      const branchNameError = document.getElementById("branchNameError");
+      const passwordError = document.getElementById("passwordError");
+      const clubLogoError = document.getElementById("ClubLogoError");
+
+      // Reset errors and styles
+      clubNameError.textContent = "";
+      branchNameError.textContent = "";
+      passwordError.textContent = "";
+      clubLogoError.textContent = "";
+      clubNameInput.classList.remove("error-border");
+      branchNameInput.classList.remove("error-border");
+      passwordInput.classList.remove("error-border");
+      clubLogoInput.classList.remove("error-border");
+
+      // Validate Club Name
+      if (clubNameInput.value.trim() === "") {
+        clubNameError.textContent = "Club name is required.";
+        clubNameInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Branch Name
+      if (branchNameInput.value.trim() === "") {
+        branchNameError.textContent = "Branch name is required.";
+        branchNameInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Password
+      if (passwordInput.value.trim() === "") {
+        passwordError.textContent = "Password is required.";
+        passwordInput.classList.add("error-border");
+        isValid = false;
+      }
+
+      // Validate Club Logo (Optional)
+      if (clubLogoInput.files.length === 0) {
+        clubLogoError.textContent = "You can upload a new logo if needed.";
+      }
+
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.type === "file") {
+        // File input validation
+        if (this.files.length > 0) {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      } else {
+        // Text input validation
+        if (this.value.trim() !== "") {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      }
+    });
+  });
+</script>
