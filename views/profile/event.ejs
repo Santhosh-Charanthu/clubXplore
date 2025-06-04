@@ -27,9 +27,9 @@
         <p class="event-description-container">
           <%= coordinator.name %> (<%= coordinator.contact %>)
         </p>
-        <% }) %> <% if(!event.branchName) {%>
+        <% }) %> <% if (event.branchName) { %>
         <p class="event-description-container">
-          <b>Branch:</b> for <%= event.branchName %> Students only eligible for
+          <b>Branch:</b> For <%= event.branchName %> students only eligible for
           participation
         </p>
         <% } %>
@@ -52,6 +52,7 @@
           <b>Registration Deadline:</b> <%= event.registrationDeadline %>
         </p>
       </div>
+
       <% if (user && user.role === "student") { %> <% if
       (!event.registeredStudents.includes(user._id)) { %>
       <div class="button-container">
@@ -76,15 +77,22 @@
           >
             <button type="submit" class="btn btn-primary edit-btn">Edit</button>
           </form>
+
           <form
+            id="deleteEventForm"
             action="/<%= event.author.ClubName %>/<%= event.eventName %>/delete?_method=DELETE"
             method="post"
           >
-            <button type="submit" class="btn btn-danger delete-btn">
+            <button
+              type="button"
+              class="btn btn-danger delete-btn"
+              onclick="confirmEventDeletion()"
+            >
               Delete
             </button>
           </form>
         </div>
+
         <form
           action="/<%= event.author.ClubName %>/<%= event.eventName %>/eventdetails/viewRegistration"
           method="get"
@@ -101,7 +109,71 @@
   </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div
+  id="confirmEventModal"
+  style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  "
+>
+  <div
+    style="
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    "
+  >
+    <h4>Are you sure?</h4>
+    <p>
+      You are about to delete the event
+      <strong><%= event.eventName %></strong> in club
+      <strong><%= event.author.ClubName %></strong>.
+    </p>
+    <button
+      onclick="submitEventDelete()"
+      class="btn btn-danger"
+      style="margin: 5px"
+    >
+      Yes, Delete
+    </button>
+    <button
+      onclick="closeEventModal()"
+      class="btn btn-secondary"
+      style="margin: 5px"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+
+<script>
+  function confirmEventDeletion() {
+    document.getElementById("confirmEventModal").style.display = "flex";
+  }
+
+  function closeEventModal() {
+    document.getElementById("confirmEventModal").style.display = "none";
+  }
+
+  function submitEventDelete() {
+    document.getElementById("deleteEventForm").submit();
+  }
+</script>
+
 <style>
+  /* Your existing styles from earlier */
   .event-title {
     text-align: center;
     font-size: 2.5rem;
@@ -149,72 +221,6 @@
 
   .event-description-container {
     margin-bottom: 20px;
-  }
-
-  .event-details {
-    font-size: 1.2rem;
-    color: #34495e;
-    line-height: 1.8;
-    text-align: left;
-    padding: 10px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .registration-form {
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: opacity 0.3s ease;
-  }
-
-  .registration-form:focus-within {
-    opacity: 1;
-  }
-
-  .registration-title {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .form-fields .mb-3 {
-    margin-bottom: 15px;
-  }
-
-  .form-label {
-    font-weight: 600;
-    color: #34495e;
-    margin-bottom: 5px;
-    display: block;
-  }
-
-  .form-control {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    width: 100%;
-    transition: border-color 0.3s ease;
-  }
-
-  .form-control:focus {
-    border-color: #3498db;
-    outline: none;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-  }
-
-  .invalid-feedback {
-    color: #e74c3c;
-    font-size: 0.9rem;
-    margin-top: 5px;
-    display: none;
-  }
-
-  .form-control:invalid:focus + .invalid-feedback {
-    display: block;
   }
 
   .registration-status {
@@ -291,12 +297,6 @@
     .event-image-container {
       height: 300px;
     }
-    .event-details {
-      font-size: 1rem;
-    }
-    .registration-form {
-      padding: 15px;
-    }
     .button-group {
       flex-direction: column;
       gap: 10px;
@@ -309,9 +309,6 @@
   @media (max-width: 480px) {
     .event-image-container {
       height: 250px;
-    }
-    .event-details {
-      font-size: 0.9rem;
     }
   }
 </style>
