@@ -4,6 +4,7 @@ const clubJoiSchema = Joi.object({
   ClubName: Joi.string().required().min(1), // You might want to adjust min length based on your needs
 
   branchName: Joi.string().required().min(1),
+  password: Joi.string().required().min(5).label("Password"),
 
   ClubLogo: Joi.object({
     url: Joi.string().uri().optional(), // Validates that it's a valid URL
