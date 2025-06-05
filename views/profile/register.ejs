@@ -2,135 +2,358 @@
 
 <style>
   body {
-    background: #f4f6f8;
+    background: linear-gradient(to bottom, #f4f6f8, #e8ecef);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+    line-height: 1.6;
   }
 
   .event-title {
     text-align: center;
-    font-size: 2.2rem;
-    margin-top: 40px;
+    font-size: 2.5rem;
+    margin: 60px 0 40px;
     color: #2c3e50;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .registration-form {
-    width: 700px;
+    width: 1000px;
+    max-width: 95%;
     margin: 40px auto;
-    padding: 30px;
+    padding: 50px;
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
   }
 
-  .form-fields .mb-3 {
-    margin-bottom: 20px;
+  .registration-form:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .form-fields .mb-3,
+  .team-members .mb-3 {
+    margin-bottom: 28px;
   }
 
   .form-label {
     display: block;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     color: #34495e;
+    font-size: 1.15rem;
+    position: relative;
   }
 
-  .form-control {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    width: 100%;
+  .form-control,
+  .form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 14px;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    background: #fcfcfc;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+    min-width: 160px;
+    width: 100%;
   }
 
-  .form-control:focus {
+  .form-control:focus,
+  .form-select:focus {
     border-color: #3498db;
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
     outline: none;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+  }
+
+  .form-control[name$="[name]"],
+  .form-control[name$="[mobile]"],
+  .form-control[name$="[registrationNumber]"],
+  .form-control[name$="[branch]"],
+  .form-select[name$="[branch]"] {
+    padding: 14px;
+    background: #fcfcfc;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+    min-width: 160px;
+    width: 100%;
   }
 
   .invalid-feedback {
     color: #e74c3c;
-    font-size: 0.85rem;
-    margin-top: 5px;
+    font-size: 0.9rem;
+    margin-top: 8px;
     display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
-  .form-control:invalid:focus + .invalid-feedback {
+  .was-validated .form-control:invalid + .invalid-feedback,
+  .was-validated .form-select:invalid + .invalid-feedback {
     display: block;
+    opacity: 1;
+  }
+
+  .was-validated .team-member-row .form-control:invalid ~ .invalid-feedback,
+  .was-validated .team-member-row .form-select:invalid ~ .invalid-feedback {
+    display: block;
+    opacity: 1;
   }
 
   input[type="checkbox"] {
-    transform: scale(1.2);
-    margin-right: 10px;
+    transform: scale(1.4);
+    margin-right: 14px;
     cursor: pointer;
+    accent-color: #3498db;
   }
 
   .button-container {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 50px;
   }
 
   .btn {
-    padding: 12px 24px;
-    font-size: 1rem;
-    border-radius: 6px;
+    padding: 16px 32px;
+    font-size: 1.15rem;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
     font-weight: 600;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
   }
 
   .btn-success {
     background-color: #27ae60;
     color: #ffffff;
+    box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
   }
 
   .btn-success:hover {
     background-color: #219150;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(39, 174, 96, 0.5);
+  }
+
+  .btn-outline-primary {
+    border: 2px solid #3498db;
+    color: #3498db;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #3498db;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
   }
 
   .btn:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
+  }
+
+  .remove-x {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.2s;
+    padding: 0 12px;
+    line-height: 1;
+  }
+
+  .remove-x:hover {
+    color: #c0392b;
+    transform: scale(1.3);
+  }
+
+  .team-members {
+    padding: 24px;
+    background: #fefefe;
+    border-radius: 16px;
+    border: 2px solid #e8ecef;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .team-member-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(to right, #f9f9f9, #fdfdfd);
+    border-radius: 12px;
+    border: 1px solid #e8ecef;
+    position: relative;
+    animation: slideIn 0.4s ease-out;
+  }
+
+  .team-member-row:hover {
+    background: linear-gradient(to right, #f5f7fa, #fafafa);
+    border-color: #d0d7de;
+  }
+
+  .team-member-row input,
+  .team-member-row select {
+    flex: 1;
+    min-width: 160px;
+    width: 100%;
+  }
+
+  .invalid-feedback {
+    position: absolute;
+    bottom: -24px;
+    left: 20px;
+    width: calc(100% - 40px);
+    font-weight: 500;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @media (max-width: 768px) {
     .event-title {
+      font-size: 2.2rem;
+      margin: 40px 0 30px;
+    }
+
+    .registration-form {
+      padding: 30px;
+      margin: 20px auto;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+    }
+
+    .team-member-row {
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 15px;
+    }
+
+    .team-member-row input,
+    .team-member-row select {
+      width: 100%;
+      min-width: 100%;
+    }
+
+    .invalid-feedback {
+      position: static;
+      margin-top: 10px;
+    }
+
+    .team-members {
+      padding: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .event-title {
       font-size: 1.8rem;
+      margin: 30px 0 20px;
     }
 
     .registration-form {
       padding: 20px;
     }
 
+    .form-label {
+      font-size: 1.05rem;
+    }
+
+    .team-member-row {
+      padding: 12px;
+    }
+
     .btn {
-      width: 100%;
+      font-size: 1rem;
+    }
+  }
+
+  .member-box {
+    background: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin: 2px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .member-box input,
+  .member-box select {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    border: none;
+    background: transparent;
+  }
+
+  .member-box input:focus,
+  .member-box select:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  @media (max-width: 768px) {
+    .member-box {
+      padding: 4px 6px;
+    }
+
+    .member-box input,
+    .member-box select {
+      padding: 8px;
     }
   }
 
   @media (max-width: 480px) {
-    .event-title {
-      font-size: 1.5rem;
-      margin-top: 20px;
+    .member-box {
+      padding: 3px 5px;
     }
 
-    .registration-form {
-      margin: 20px;
+    .member-box input,
+    .member-box select {
+      padding: 6px;
     }
   }
 </style>
 
-<% const encodedEventName = encodeURIComponent(event.eventName); const
+<% const encodedEventName = encodeURIComponent(event.eventName); %> <% const
 encodedClubName = encodeURIComponent(clubName); %>
 
 <h2 class="event-title">Register for <%= event.eventName %></h2>
+
+<% if (error && error.length > 0) { %>
+<div class="alert alert-danger" role="alert"><%= error %></div>
+<% } %> <% if (success && success.length > 0) { %>
+<div class="alert alert-success" role="alert"><%= success %></div>
+<% } %>
+
 <form
   action="/<%= encodedClubName %>/<%= encodedEventName %>/register"
   method="post"
   class="needs-validation registration-form"
   novalidate
 >
+  <!-- Custom Form Fields -->
   <div class="form-fields">
     <% event.formFields.forEach(field => { %>
     <div class="mb-3">
@@ -138,17 +361,328 @@ encodedClubName = encodeURIComponent(clubName); %>
         ><b><%= field.label %></b></label
       >
       <% if (field.type === "checkbox") { %> <input type="checkbox" id="<%=
-      field.label %>" name="<%= field.label %>" value="true" <%=
+      field.label %>" name="formData[<%= field.label %>]" value="true" <%=
       field.isRequired ? 'required' : '' %> /> <% } else { %> <input type="<%=
-      field.type %>" id="<%= field.label %>" name="<%= field.label %>"
-      class="form-control" <%= field.isRequired ? 'required' : '' %> /> <% } %>
+      field.type %>" id="<%= field.label %>" name="formData[<%= field.label %>]"
+      class="form-control" <%= field.isRequired ? 'required' : '' %> />
       <div class="invalid-feedback">This field is required.</div>
+      <% } %>
     </div>
     <% }) %>
   </div>
+
+  <!-- Team Members Section -->
+  <% if (event.teamSize.max > 1 || event.teamSize.min > 1) { %>
+  <div class="team-members">
+    <h4 class="form-label">
+      Team Members (Min: <%= event.teamSize.min %>, Max: <%= event.teamSize.max
+      %>)
+    </h4>
+    <div class="mb-3">
+      <label for="teamName" class="form-label"><b>Team Name</b></label>
+      <input
+        type="text"
+        id="teamName"
+        name="teamName"
+        class="form-control"
+        placeholder="Enter Team Name"
+        required
+      />
+      <div class="invalid-feedback">Team name is required.</div>
+    </div>
+    <div id="teamMembersContainer">
+      <% for (let i = 0; i < event.teamSize.min; i++) { %>
+      <div class="team-member-row">
+        <div class="member-box">
+          <input
+            type="text"
+            name="teamMembers[<%= i %>][name]"
+            class="form-control"
+            placeholder="Team Member Name"
+            required
+          />
+        </div>
+        <div class="member-box">
+          <input
+            type="text"
+            name="teamMembers[<%= i %>][mobile]"
+            class="form-control"
+            placeholder="Mobile Number"
+            pattern="[0-9]{10}"
+            required
+          />
+        </div>
+        <div class="member-box">
+          <input
+            type="text"
+            name="teamMembers[<%= i %>][registrationNumber]"
+            class="form-control"
+            placeholder="Registration Number"
+            required
+          />
+        </div>
+        <div class="member-box">
+          <% if (event.branchVisibility === "branchExclusive" &&
+          event.branchName) { %>
+          <select
+            name="teamMembers[<%= i %>][branch]"
+            class="form-select"
+            required
+          >
+            <option value="" disabled selected>Select Branch</option>
+            <option value="<%= event.branchName %>">
+              <%= event.branchName %>
+            </option>
+          </select>
+          <% } else { %>
+          <input
+            type="text"
+            name="teamMembers[<%= i %>][branch]"
+            class="form-control"
+            placeholder="Branch"
+            required
+          />
+          <% } %>
+        </div>
+        <% if (i >= event.teamSize.min) { %>
+        <button type="button" class="remove-x">×</button>
+        <% } %>
+        <div class="invalid-feedback">All fields are required.</div>
+      </div>
+      <% } %>
+    </div>
+    <% if (event.teamSize.max > event.teamSize.min) { %>
+    <button
+      type="button"
+      id="addTeamMember"
+      class="btn btn-outline-primary mt-4"
+    >
+      <i class="fas fa-plus me-2"></i>Add Team Member
+    </button>
+    <% } %>
+    <div class="invalid-feedback" id="teamSizeError" style="display: none">
+      Please add at least <%= event.teamSize.min %> and at most <%=
+      event.teamSize.max %> team members.
+    </div>
+  </div>
+  <% } else { %>
+  <!-- Single Member Registration -->
+  <div class="team-members">
+    <div id="teamMembersContainer">
+      <div class="team-member-row">
+        <div class="member-box">
+          <input
+            type="text"
+            name="teamMembers[0][name]"
+            class="form-control"
+            placeholder="Your Name"
+            required
+          />
+        </div>
+        <div class="member-box">
+          <input
+            type="text"
+            name="teamMembers[0][mobile]"
+            class="form-control"
+            placeholder="Mobile Number"
+            pattern="[0-9]{10}"
+            required
+          />
+        </div>
+        <div class="member-box">
+          <input
+            type="text"
+            name="teamMembers[0][registrationNumber]"
+            class="form-control"
+            placeholder="Registration Number"
+            required
+          />
+        </div>
+        <div class="member-box">
+          <% if (event.branchVisibility === "branchExclusive" &&
+          event.branchName) { %>
+          <select name="teamMembers[0][branch]" class="form-select" required>
+            <option value="" disabled selected>Select Branch</option>
+            <option value="<%= event.branchName %>">
+              <%= event.branchName %>
+            </option>
+          </select>
+          <% } else { %>
+          <input
+            type="text"
+            name="teamMembers[0][branch]"
+            class="form-control"
+            placeholder="Branch"
+            required
+          />
+          <% } %>
+        </div>
+        <div class="invalid-feedback">All fields are required.</div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
   <div class="button-container">
     <button type="submit" class="btn btn-success submit-btn">
       Submit Registration
     </button>
   </div>
 </form>
+
+<script>
+  // Client-side form validation
+  (() => {
+    "use strict";
+    const form = document.querySelector(".needs-validation");
+    const teamMembersContainer = document.getElementById(
+      "teamMembersContainer"
+    );
+    const teamSizeError = document.getElementById("teamSizeError");
+    const minTeamSize = parseInt("<%= event.teamSize.min %>");
+    const maxTeamSize = parseInt("<%= event.teamSize.max %>");
+
+    form.addEventListener(
+      "submit",
+      (event) => {
+        let isValid = form.checkValidity();
+        let teamSizeValid = true;
+
+        // Validate team size if team section exists
+        if (teamMembersContainer) {
+          const teamMembers =
+            teamMembersContainer.querySelectorAll(".team-member-row");
+          const teamSize = teamMembers.length;
+
+          if (teamSize < minTeamSize || teamSize > maxTeamSize) {
+            teamSizeValid = false;
+            if (teamSizeError) {
+              teamSizeError.style.display = "block";
+            }
+          } else if (teamSizeError) {
+            teamSizeError.style.display = "none";
+          }
+
+          // Validate individual team member fields
+          teamMembers.forEach((row) => {
+            const inputs = row.querySelectorAll("input, select");
+            inputs.forEach((input) => {
+              if (!input.checkValidity()) {
+                isValid = false;
+              }
+            });
+          });
+        }
+
+        if (!isValid || !teamSizeValid) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        form.classList.add("was-validated");
+      },
+      false
+    );
+  })();
+
+  // Dynamic team member fields
+  ("<% if (event.teamSize.max > event.teamSize.min) { %>");
+  let teamMemberIndex = " <%= event.teamSize.min %>";
+  const maxTeamSize = "<%= event.teamSize.max %>";
+
+  document.getElementById("addTeamMember").addEventListener("click", () => {
+    const teamMembersContainer = document.getElementById(
+      "teamMembersContainer"
+    );
+    const currentTeamMembers =
+      teamMembersContainer.querySelectorAll(".team-member-row").length;
+
+    if (currentTeamMembers >= maxTeamSize) {
+      alert(`Maximum team size is ${maxTeamSize}`);
+      return;
+    }
+
+    const memberDiv = document.createElement("div");
+    memberDiv.classList.add("team-member-row");
+    memberDiv.style.opacity = "0";
+    memberDiv.innerHTML = `
+      <div class="member-box">
+        <input
+          type="text"
+          name="teamMembers[${teamMemberIndex}][name]"
+          class="form-control"
+          placeholder="Team Member Name"
+          required
+        />
+      </div>
+      <div class="member-box">
+        <input
+          type="text"
+          name="teamMembers[${teamMemberIndex}][mobile]"
+          class="form-control"
+          placeholder="Mobile Number"
+          pattern="[0-9]{10}"
+          required
+        />
+      </div>
+      <div class="member-box">
+        <input
+          type="text"
+          name="teamMembers[${teamMemberIndex}][registrationNumber]"
+          class="form-control"
+          placeholder="Registration Number"
+          required
+        />
+      </div>
+      <div class="member-box">
+        <% if (event.branchVisibility === "branchExclusive" && event.branchName) { %>
+        <select
+          name="teamMembers[${teamMemberIndex}][branch]"
+          class="form-select"
+          required
+        >
+          <option value="" disabled selected>Select Branch</option>
+          <option value="<%= event.branchName %>"><%= event.branchName %></option>
+        </select>
+        <% } else { %>
+        <input
+          type="text"
+          name="teamMembers[${teamMemberIndex}][branch]"
+          class="form-control"
+          placeholder="Branch"
+          required
+        />
+        <% } %>
+      </div>
+      <button type="button" class="remove-x">×</button>
+      <div class="invalid-feedback">All fields are required.</div>
+    `;
+    teamMembersContainer.appendChild(memberDiv);
+    setTimeout(() => {
+      memberDiv.style.opacity = "1";
+      memberDiv.style.transform = "translateY(0)";
+    }, 10);
+    teamMemberIndex++;
+
+    memberDiv.querySelector(".remove-x").addEventListener("click", () => {
+      const currentTeamMembers =
+        teamMembersContainer.querySelectorAll(".team-member-row").length;
+      if (currentTeamMembers <= "<%= event.teamSize.min %>") {
+        alert(
+          `Minimum team size is <%= event.teamSize.min %>. Cannot remove more members.`
+        );
+        return;
+      }
+      memberDiv.style.opacity = "0";
+      memberDiv.style.transform = "translateY(15px)";
+      setTimeout(() => {
+        memberDiv.remove();
+        teamMemberIndex = Math.max(
+          "<%= event.teamSize.min %>",
+          teamMemberIndex - 1
+        );
+      }, 400);
+    });
+  });
+  ("<% } %>");
+</script>

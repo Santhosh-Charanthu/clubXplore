@@ -679,48 +679,49 @@ app.post("/:clubName/:eventName/eventdetails", async (req, res) => {
   }
 });
 
+// Existing GET route for registration page
 app.get("/:clubName/:eventName/register", async (req, res) => {
   if (!req.user) {
     return res.redirect("/studentRegistration/login");
   }
 
   let { clubName, eventName } = req.params;
+  clubName = decodeURIComponent(clubName);
+  eventName = decodeURIComponent(eventName);
 
   const club = await Club.findOne({ ClubName: clubName })
     .populate("events")
     .exec();
 
   if (!club) {
-    return res.status(404).send("Club not found");
+    req.flash("error", "Club not found");
+    return res.redirect("/clubRegistration");
   }
 
   const event = club.events.find((event) => event.eventName === eventName);
 
   if (!event) {
-    return res.status(404).send("Event not found");
+    req.flash("error", "Event not found");
+    return res.redirect(`/${encodeURIComponent(clubName)}/profile`);
   }
 
   res.render("profile/register", { event, user: req.user, clubName });
 });
 
-// Replace app.get and app.post for "/:clubName/:eventName/register"
+// Updated POST route for registration
 app.post("/:clubName/:eventName/register", async (req, res) => {
   if (!req.user) {
+    req.flash("error", "You must be logged in to register.");
     return res.redirect("/studentRegistration/login");
   }
 
-  // ✅ Decode the parameters
   const clubName = decodeURIComponent(req.params.clubName);
   const eventName = decodeURIComponent(req.params.eventName);
-
-  console.log("Decoded clubName:", clubName);
-  console.log("Decoded eventName:", eventName);
 
   try {
     const club = await Club.findOne({ ClubName: clubName }).populate("events");
 
     if (!club) {
-      console.log("Club not found in DB:", clubName);
       req.flash("error", "Club not found");
       return res.redirect("/clubRegistration");
     }
@@ -728,11 +729,11 @@ app.post("/:clubName/:eventName/register", async (req, res) => {
     const event = club.events.find((e) => e.eventName === eventName);
 
     if (!event) {
-      console.log("Event not found in club:", eventName);
       req.flash("error", "Event not found");
-      return res.redirect(`/${clubName}/profile`);
+      return res.redirect(`/${encodeURIComponent(clubName)}/profile`);
     }
 
+    // Check for existing registration
     const existingRegistration = await Registration.findOne({
       eventId: event._id,
       studentId: req.user._id,
@@ -747,19 +748,113 @@ app.post("/:clubName/:eventName/register", async (req, res) => {
       );
     }
 
-    const formData = new Map();
-    for (const field of event.formFields) {
-      formData.set(field.label, req.body[field.label] || "");
+    // Validate team size
+    const teamMembers = req.body.teamMembers || [];
+    const teamSize = Array.isArray(teamMembers) ? teamMembers.length : 0;
+
+    if (event.teamSize.max > 1 || event.teamSize.min > 1) {
+      if (teamSize < event.teamSize.min) {
+        req.flash(
+          "error",
+          `Please add at least ${event.teamSize.min} team members.`
+        );
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/register`
+        );
+      }
+      if (teamSize > event.teamSize.max) {
+        req.flash("error", `Maximum team size is ${event.teamSize.max}.`);
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/register`
+        );
+      }
+    } else if (teamSize !== 1) {
+      req.flash("error", "Exactly one team member is required for this event.");
+      return res.redirect(
+        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+          eventName
+        )}/register`
+      );
     }
 
+    // Validate team member details
+    for (let i = 0; i < teamSize; i++) {
+      const member = teamMembers[i];
+      if (
+        !member.name ||
+        !member.mobile ||
+        !member.registrationNumber ||
+        !member.branch
+      ) {
+        req.flash("error", "All team member fields are required.");
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/register`
+        );
+      }
+      if (!/^[0-9]{10}$/.test(member.mobile)) {
+        req.flash("error", `Invalid mobile number for team member ${i + 1}.`);
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/register`
+        );
+      }
+      if (
+        event.branchVisibility === "branchExclusive" &&
+        event.branchName &&
+        member.branch !== event.branchName
+      ) {
+        req.flash(
+          "error",
+          `Team member ${i + 1} must be from ${event.branchName}.`
+        );
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/register`
+        );
+      }
+    }
+
+    // Process custom form fields
+    const formData = new Map();
+    for (const field of event.formFields) {
+      const value = req.body.formData && req.body.formData[field.label];
+      if (field.isRequired && !value) {
+        req.flash("error", `${field.label} is required.`);
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/register`
+        );
+      }
+      formData.set(field.label, value || "");
+    }
+
+    // Create registration
     const registration = new Registration({
       eventId: event._id,
       studentId: req.user._id,
       formData,
+      teamName: req.body.teamName || undefined,
+      teamMembers: teamMembers.map((member) => ({
+        name: member.name,
+        mobile: member.mobile,
+        registrationNumber: member.registrationNumber,
+        branch: member.branch,
+      })),
+      submittedAt: new Date(),
     });
 
     await registration.save();
 
+    // Update event's registered students
     event.registeredStudents.push(req.user._id);
     await event.save();
 
@@ -771,11 +866,11 @@ app.post("/:clubName/:eventName/register", async (req, res) => {
     );
   } catch (error) {
     console.error("Error registering student:", error);
-    req.flash("error", "Failed to register");
+    req.flash("error", "Failed to register due to a server error.");
     res.redirect(
       `/${encodeURIComponent(clubName)}/${encodeURIComponent(
         eventName
-      )}/eventdetails`
+      )}/register`
     );
   }
 });
@@ -1020,12 +1115,22 @@ app.get(
   "/:clubName/:eventName/eventdetails/viewRegistration",
   async (req, res) => {
     try {
-      const { clubName, eventName } = req.params;
+      const clubName = decodeURIComponent(req.params.clubName);
+      const eventName = decodeURIComponent(req.params.eventName);
+
+      if (!req.user) {
+        req.flash("error", "You must be logged in to view registrations.");
+        return res.redirect("/studentRegistration/login");
+      }
 
       // Find the club and populate events
       const club = await Club.findOne({ ClubName: clubName })
         .populate({
           path: "events",
+          populate: {
+            path: "author",
+            select: "ClubName",
+          },
         })
         .exec();
 
@@ -1038,58 +1143,35 @@ app.get(
 
       if (!event) {
         req.flash("error", "Event not found!");
-        return res.redirect(`/${clubName}/profile`);
+        return res.redirect(`/${encodeURIComponent(clubName)}/profile`);
+      }
+
+      // Check if user has permission (admin or event author)
+      if (req.user.role !== "admin" && !event.author.equals(req.user._id)) {
+        req.flash("error", "You do not have permission to view registrations.");
+        return res.redirect(
+          `/${encodeURIComponent(clubName)}/${encodeURIComponent(
+            eventName
+          )}/eventdetails`
+        );
       }
 
       // Fetch registrations for this event and populate student details
       const registrations = await Registration.find({ eventId: event._id })
-        .populate("studentId", "studentName") // Only fetch studentName for efficiency
+        .populate("studentId", "studentName")
         .exec();
-
-      console.log("Event Data:", JSON.stringify(event, null, 2));
-      console.log("Registrations:", JSON.stringify(registrations, null, 2));
-      console.log("Form Fields:", JSON.stringify(event.formFields, null, 2));
 
       res.render("profile/viewRegistrations", {
         event,
-        registrations, // Pass registrations instead of registeredStudents
+        registrations,
       });
     } catch (error) {
       console.error("Error fetching registrations:", error);
       req.flash("error", "Something went wrong!");
-      res.redirect("clubRegistration/login");
+      res.redirect("/clubRegistration");
     }
   }
 );
-
-app.post("/:clubName/:eventName/eventdetails/viewRegistration", (req, res) => {
-  console.log(req.user);
-});
-
-app.use((req, res, next) => {
-  next(new ExpressError(404, "Page Not Found")); // ✅ No need to manually flash here
-});
-
-// Error handler middleware
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message = "Something went wrong!" } = err;
-  res.status(statusCode).render("error", { statusCode, message }); // ✅ Pass statusCode
-});
-
-// General Error-Handling Middleware
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message = "Something went wrong" } = err;
-
-  // Flash the error message (if using flash)
-  req.flash("error", message);
-
-  // Render an error page or redirect with status
-  res.status(statusCode).render("error", {
-    statusCode,
-    message,
-    currUser: req.user, // Pass current user for template consistency
-  });
-});
 
 app.listen(8080, () => {
   console.log("Listening on port 8080");

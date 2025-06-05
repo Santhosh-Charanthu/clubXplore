@@ -1,48 +1,275 @@
 <%- include("../layouts/boilerplate") %>
 
 <style>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 15px;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  .table-wrapper {
+    overflow-x: auto;
+    max-height: 600px;
+    margin: 0 10px;
+  }
   table {
-    width: 80%;
-    border-collapse: collapse;
-    margin: 20px auto;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
   }
   th,
   td {
-    border: 1px solid black;
-    padding: 10px;
-    text-align: center;
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 0.85rem;
+    color: #2d3748;
   }
   th {
-    background-color: #f2f2f2;
+    background: linear-gradient(135deg, #2b6cb0 0%, #3182ce 100%);
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  th.sub-header {
+    background: #4a5568;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: left;
+    padding: 8px 12px;
+  }
+  tr:nth-child(even) td {
+    background-color: #f7fafc;
+  }
+  tr:hover td {
+    background-color: #e6f0fa;
+  }
+  .row-number {
+    width: 50px;
+    font-weight: 600;
+    color: #1a202c;
+    text-align: center;
+  }
+  .no-data {
+    color: #e53e3e;
+    font-style: italic;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  .cell-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
+  }
+  .cell-content:hover {
+    overflow: visible;
+    white-space: normal;
+    position: relative;
+    background: #fff;
+    border: 1px solid #cbd5e0;
+    padding: 5px;
+    z-index: 20;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+  .member-box {
+    background: #edf2f7;
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    text-align: center;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .member-box.no-data {
+    color: #e53e3e;
+    font-style: italic;
+    background: #fff5f5;
+  }
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin: 40px 0 20px;
+    color: #1a202c;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .alert {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background-color: #fed7d7;
+    color: #742a2a;
+    border: 1px solid #feb2b2;
+    animation: fadeIn 0.5s ease-in;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px 10px;
+    }
+    .table-wrapper {
+      margin: 0 5px;
+    }
+    th,
+    td {
+      padding: 8px;
+      font-size: 0.8rem;
+    }
+    .cell-content {
+      max-width: 100px;
+    }
+    .member-box {
+      font-size: 0.75rem;
+      padding: 4px 6px;
+    }
+    h2 {
+      font-size: 1.8rem;
+      margin: 30px 0 15px;
+    }
+  }
+  @media (max-width: 480px) {
+    th,
+    td {
+      padding: 6px;
+      font-size: 0.75rem;
+    }
+    .row-number {
+      width: 40px;
+    }
+    .cell-content {
+      max-width: 80px;
+    }
+    .member-box {
+      padding: 3px 5px;
+    }
   }
 </style>
 
-<h2 style="text-align: center">Registered Students</h2>
+<div class="container">
+  <% if (error && error.length > 0) { %>
+  <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% } %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Student Name</th>
-      <!-- Static header for student name -->
-      <% event.formFields.forEach(field => { %> <% if (field.label.toLowerCase()
-      !== "student name") { %>
-      <!-- Skip "Student Name" if it exists -->
-      <th><%= field.label %></th>
-      <% } %> <% }) %>
-    </tr>
-  </thead>
-  <tbody>
-    <% registrations.forEach(registration => { %> <% if (registration.studentId)
-    { %>
-    <tr>
-      <td><%= registration.studentId.studentName || "N/A" %></td>
-      <% event.formFields.forEach(field => { %> <% if (field.label.toLowerCase()
-      !== "student name") { %>
-      <!-- Skip "Student Name" in data -->
-      <% const value = registration.formData.get(field.label); %>
-      <td><%= value || "N/A" %></td>
-      <% } %> <% }) %>
-    </tr>
-    <% } %> <% }) %>
-  </tbody>
-</table>
+  <h2>Registered Teams for <%= event.eventName %></h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2" class="row-number">#</th>
+          <% event.formFields.forEach(field => { %> <% if
+          (field.label.toLowerCase() !== "student name") { %>
+          <th rowspan="2"><%= field.label %></th>
+          <% } %> <% }); %> <% if (event.teamSize.max > 1 || event.teamSize.min
+          > 1) { %>
+          <th rowspan="2">Team Name</th>
+          <% } %>
+          <th colspan="4">Team Members</th>
+        </tr>
+        <tr>
+          <th class="sub-header">Name</th>
+          <th class="sub-header">Mobile</th>
+          <th class="sub-header">Reg. No.</th>
+          <th class="sub-header">Branch</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (registrations.length === 0) { %>
+        <tr>
+          <td
+            colspan="<%= (event.teamSize.max > 1 || event.teamSize.min > 1) ? 2 + (event.formFields.length - (event.formFields.some(f => f.label.toLowerCase() === 'student name') ? 1 : 0)) + 4 : 1 + (event.formFields.length - (event.formFields.some(f => f.label.toLowerCase() === 'student name') ? 1 : 0)) + 4 %>"
+            class="no-data"
+          >
+            No registrations found for this event.
+          </td>
+        </tr>
+        <% } else { %> <% registrations.forEach((registration, index) => { %> <%
+        if (registration.teamMembers && registration.teamMembers.length > 0) {
+        %> <% registration.teamMembers.forEach((member, memberIndex) => { %>
+        <tr>
+          <% if (memberIndex === 0) { %>
+          <td
+            class="row-number"
+            rowspan="<%= registration.teamMembers.length %>"
+          >
+            <%= index + 1 %>
+          </td>
+          <% event.formFields.forEach(field => { %> <% if
+          (field.label.toLowerCase() !== "student name") { %>
+          <td
+            class="cell-content"
+            rowspan="<%= registration.teamMembers.length %>"
+          >
+            <% const value = registration.formData.get(field.label); %> <%=
+            typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value || "N/A"
+            %>
+          </td>
+          <% } %> <% }); %> <% if (event.teamSize.max > 1 || event.teamSize.min
+          > 1) { %>
+          <td
+            class="cell-content"
+            rowspan="<%= registration.teamMembers.length %>"
+          >
+            <%= registration.teamName || "N/A" %>
+          </td>
+          <% } %> <% } %>
+          <td class="member-box"><%= member.name || 'N/A' %></td>
+          <td class="member-box"><%= member.mobile || 'N/A' %></td>
+          <td class="member-box"><%= member.registrationNumber || 'N/A' %></td>
+          <td class="member-box"><%= member.branch || 'N/A' %></td>
+        </tr>
+        <% }); %> <% } else { %>
+        <tr>
+          <td class="row-number"><%= index + 1 %></td>
+          <% event.formFields.forEach(field => { %> <% if
+          (field.label.toLowerCase() !== "student name") { %>
+          <td class="cell-content">
+            <% const value = registration.formData.get(field.label); %> <%=
+            typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value || "N/A"
+            %>
+          </td>
+          <% } %> <% }); %> <% if (event.teamSize.max > 1 || event.teamSize.min
+          > 1) { %>
+          <td class="cell-content"><%= registration.teamName || "N/A" %></td>
+          <% } %>
+          <td class="member-box no-data">N/A</td>
+          <td class="member-box no-data">N/A</td>
+          <td class="member-box no-data">N/A</td>
+          <td class="member-box no-data">N/A</td>
+        </tr>
+        <% } %> <% }); %> <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
