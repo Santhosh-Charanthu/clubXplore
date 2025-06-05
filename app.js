@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const express = require("express");
 const app = express();
+const fs = require("fs");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
@@ -187,6 +188,7 @@ app.get("/:clubName/profile", async (req, res) => {
       .populate("author") // Populate the College reference to get the college field
       .populate({
         path: "events",
+        options: { sort: { createdAt: -1 } },
         populate: { path: "author" }, // Populate Event.author (Club)
       });
 
@@ -359,10 +361,10 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    // if (!req.file) {
-    //   req.flash("error", "Please upload an image.");
-    //   return res.redirect(`/${clubName}/createpost`);
-    // }
+    if (!req.file) {
+      req.flash("error", "Please upload an image.");
+      return res.redirect(`/${clubName}/createpost`);
+    }
 
     const url = req.file.path;
     const fileName = req.file.filename;
@@ -371,6 +373,13 @@ app.post("/:clubName/createpost", upload.single("image"), async (req, res) => {
     if (!["collegeExclusive", "openToAll"].includes(visibility)) {
       req.flash("error", "Invalid visibility value.");
       return res.redirect(`/${clubName}/createpost`);
+    }
+
+    if (!formFields) {
+      req.flash(
+        "error",
+        "You must create the registration form for this event."
+      );
     }
 
     // Parse formFields with safety checks

@@ -245,7 +245,6 @@
             placeholder="Branch Name"
             class="form-control"
             rows="4"
-            required
           ></input>
           <div class="invalid-feedback">Please Enter Branch Name</div>
         </div>
@@ -527,6 +526,27 @@
         row.remove();
       });
     });
+
+    (() => {
+    'use strict';
+
+    const forms = document.querySelectorAll('.needs-validation');
+
+    Array.from(forms).forEach(form => {
+      form.addEventListener(
+        'submit',
+        event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add('was-validated');
+        },
+        false
+      );
+    });
+  })();
 </script>
 
 <!-- Update the post route -->

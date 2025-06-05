@@ -37,6 +37,13 @@
           <b>Eligibility:</b> <%= event.eligibility %>
         </p>
         <p class="event-description-container">
+          <b>Team Size: </b> <% if(event.teamSize.min == event.teamSize.max) {%>
+            <p><%= event.teamSize.max %></p>
+            <% } else{%>
+              <p><%= event.teamSize.min %> - <%= event.teamSize.max %></p>
+              <% } %>
+        </p>
+        <p class="event-description-container">
           <b>Rewards:</b> <%= event.rewards %>
         </p>
         <p class="event-description-container">
@@ -109,7 +116,7 @@
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+// Delete Confirmation Modal
 <div
   id="confirmEventModal"
   style="

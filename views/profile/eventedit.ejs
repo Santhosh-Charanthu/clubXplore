@@ -6,73 +6,157 @@
   action="/<%= club.ClubName %>/<%= event.eventName %>/edit?_method=PUT"
   method="POST"
   enctype="multipart/form-data"
-  class="container mt-4 registration-form-container"
+  class="container mt-4 registration-form-container needs-validation"
+  novalidate
 >
+  <!-- Event Name -->
   <div class="mb-3">
     <label for="eventName" class="form-label"><b>Event Name</b></label>
-    <input
-      type="text"
-      id="eventName"
-      name="eventName"
-      class="form-control"
-      value="<%= event.eventName %>"
-      required
-    />
-    <div class="invalid-feedback">This field is required.</div>
+    <input type="text" id="eventName" name="eventName" class="form-control" value="<%= event.eventName %>" required />
+    <div class="invalid-feedback">Event name is required.</div>
   </div>
 
+  <!-- Event Details -->
   <div class="mb-3">
     <label for="eventDetails" class="form-label"><b>Event Details</b></label>
-    <textarea
-      id="eventDetails"
-      name="eventDetails"
-      class="form-control"
-      rows="3"
-      required
-    ><%= event.eventDetails %></textarea>
-    <div class="invalid-feedback">This field is required.</div>
+    <textarea id="eventDetails" name="eventDetails" class="form-control" rows="3" required><%= event.eventDetails %></textarea>
+    <div class="invalid-feedback">Event details are required.</div>
   </div>
 
+  <!-- Event Image -->
   <div class="mb-3">
     <label for="eventImage" class="form-label"><b>Event Image</b></label>
     <input type="file" name="eventImage" class="form-control" />
     <% if (event.image && event.image.url) { %>
     <div class="event-image-container mt-2">
-      <img
-        src="<%= event.image.url %>"
-        alt="Event Image"
-        class="event-image"
-      />
+      <img src="<%= event.image.url %>" alt="Event Image" class="event-image" />
     </div>
     <% } %>
   </div>
 
+  <!-- Mode -->
+  <div class="mb-3">
+    <label for="mode" class="form-label"><b>Mode</b></label>
+    <select class="form-select" id="mode" name="mode" required>
+      <option value="">Select mode</option>
+      <option value="Online" <%= event.mode === 'Online' ? 'selected' : '' %>>Online</option>
+      <option value="Offline" <%= event.mode === 'Offline' ? 'selected' : '' %>>Offline</option>
+    </select>
+    <div class="invalid-feedback">Please select a mode.</div>
+  </div>
+
+  <!-- Venue -->
+  <div class="mb-3">
+    <label for="venue" class="form-label"><b>Venue</b></label>
+    <input type="text" id="venue" name="venue" class="form-control" value="<%= event.venue %>" required />
+    <div class="invalid-feedback">Venue is required.</div>
+  </div>
+
+ <!-- Coordinators -->
+<div class="mb-3">
+  <label class="form-label"><b>Coordinators</b></label>
+  <div id="coordinatorContainer">
+    <% event.coordinators.forEach((coordinator, index) => { %>
+      <div class="row g-2 mb-2 align-items-center coordinator-row">
+        <div class="col-md-5">
+          <input type="text" name="coordinators[<%= index %>][name]" class="form-control" value="<%= coordinator.name %>" required placeholder="Coordinator Name" />
+        </div>
+        <div class="col-md-5">
+          <input type="text" name="coordinators[<%= index %>][contact]" class="form-control" value="<%= coordinator.contact %>" required placeholder="Contact" />
+        </div>
+        <div class="col-md-2 text-end">
+          <span class="remove-coordinator text-danger fs-4" style="cursor: pointer;">&times;</span>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  <button type="button" id="addCoordinatorBtn" class="btn btn-outline-secondary btn-sm mt-2">+ Add Coordinator</button>
+</div>
+
+
+  <!-- Branch Name -->
+  <div class="mb-3">
+    <label for="branchName" class="form-label"><b>Eligible Branch</b> (Optional)</label>
+    <input type="text" id="branchName" name="branchName" class="form-control" value="<%= event.branchName %>" placeholder="Eg: CSE, ECE" />
+  </div>
+
+  <!-- Eligibility -->
+  <div class="mb-3">
+    <label for="eligibility" class="form-label"><b>Eligibility</b></label>
+    <input type="text" id="eligibility" name="eligibility" class="form-control" value="<%= event.eligibility %>" required />
+    <div class="invalid-feedback">Eligibility is required.</div>
+  </div>
+
+  <!-- Team Size -->
+  <div class="mb-3">
+    <label class="form-label"><b>Team Size</b></label>
+    <div class="row g-2">
+      <div class="col">
+        <input type="number" name="teamSize[min]" class="form-control" placeholder="Min" min="1" value="<%= event.teamSize.min %>" required />
+      </div>
+      <div class="col">
+        <input type="number" name="teamSize[max]" class="form-control" placeholder="Max" min="1" value="<%= event.teamSize.max %>" required />
+      </div>
+    </div>
+    <div class="invalid-feedback">Team size is required.</div>
+  </div>
+
+  <!-- Rewards -->
+  <div class="mb-3">
+    <label for="rewards" class="form-label"><b>Rewards</b></label>
+    <input type="text" id="rewards" name="rewards" class="form-control" value="<%= event.rewards %>" required />
+    <div class="invalid-feedback">Rewards are required.</div>
+  </div>
+
+  <!-- Agenda -->
+  <div class="mb-3">
+    <label for="agenda" class="form-label"><b>Agenda</b></label>
+    <textarea id="agenda" name="agenda" class="form-control" rows="3" required><%= event.agenda %></textarea>
+    <div class="invalid-feedback">Agenda is required.</div>
+  </div>
+
+  <!-- Dates -->
+  <div class="mb-3">
+    <label for="startDate" class="form-label"><b>Starting Date</b></label>
+    <input type="date" id="startDate" name="startDate" class="form-control" value="<%= event.startDate.toISOString().split('T')[0] %>" required />
+    <div class="invalid-feedback">Start date is required.</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="endDate" class="form-label"><b>Ending Date</b></label>
+    <input type="date" id="endDate" name="endDate" class="form-control" value="<%= event.endDate.toISOString().split('T')[0] %>" required />
+    <div class="invalid-feedback">End date is required.</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="registrationDeadline" class="form-label"><b>Registration Deadline</b></label>
+    <input type="date" id="registrationDeadline" name="registrationDeadline" class="form-control" value="<%= event.registrationDeadline.toISOString().split('T')[0] %>" required />
+    <div class="invalid-feedback">Registration deadline is required.</div>
+  </div>
+
+  <!-- Visibility -->
   <div class="mb-3">
     <label class="form-label"><b>Visibility</b></label>
     <div class="form-check">
-      <input
-        class="form-check-input"
-        type="radio"
-        name="visibility"
-        value="collegeExclusive"
-        id="collegeExclusive"
-        <%= event.visibility === 'collegeExclusive' ? 'checked' : '' %>
-        required
-      />
-      <label class="form-check-label" for="collegeExclusive">
-        College Exclusive
-      </label>
+      <input class="form-check-input" type="radio" name="visibility" value="collegeExclusive" id="collegeExclusive" <%= event.visibility === 'collegeExclusive' ? 'checked' : '' %> required />
+      <label class="form-check-label" for="collegeExclusive">College Exclusive</label>
     </div>
-    <div class="form-check mt-2">
-      <input
-        class="form-check-input"
-        type="radio"
-        name="visibility"
-        value="openToAll"
-        id="openToAll"
-        <%= event.visibility === 'openToAll' ? 'checked' : '' %>
-      />
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="visibility" value="openToAll" id="openToAll" <%= event.visibility === 'openToAll' ? 'checked' : '' %> />
       <label class="form-check-label" for="openToAll">Open to All</label>
+    </div>
+    <div class="invalid-feedback">Please select a visibility option.</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label"><b>Branch Visibility</b></label>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="branchVisibility" value="branchExclusive" id="branchExclusive" <%= event.branchVisibility === 'branchExclusive' ? 'checked' : '' %> required />
+      <label class="form-check-label" for="branchExclusive">Branch Exclusive</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="branchVisibility" value="openToAllBranches" id="openToAllBranches" <%= event.branchVisibility === 'openToAllBranches' ? 'checked' : '' %> />
+      <label class="form-check-label" for="openToAllBranches">Open to All Branches</label>
     </div>
     <div class="invalid-feedback">Please select a visibility option.</div>
   </div>
@@ -81,53 +165,39 @@
   <h3>Custom Form Fields</h3>
   <div id="formFieldsContainer">
     <% event.formFields.forEach((field, index) => { %>
-    <div class="form-field mb-3" data-label="<%= field.label %>">
-      <!-- Hidden input to track original label -->
-      <input type="hidden" name="formFields[originalLabel][]" value="<%= field.label %>">
-      <label class="form-label"><b>Field Label</b></label>
-      <input
-        type="text"
-        name="formFields[label][]"
-        class="form-control"
-        placeholder="Field Label"
-        value="<%= field.label %>"
-        required
-      />
-      <div class="invalid-feedback">This field is required.</div>
-      
-      <label class="form-label mt-2"><b>Field Type</b></label>
-      <select name="formFields[type][]" class="form-select">
-        <option value="text" <%= field.type === 'text' ? 'selected' : '' %>>Text</option>
-        <option value="email" <%= field.type === 'email' ? 'selected' : '' %>>Email</option>
-        <option value="number" <%= field.type === 'number' ? 'selected' : '' %>>Number</option>
-        <option value="checkbox" <%= field.type === 'checkbox' ? 'selected' : '' %>>Checkbox</option>
-      </select>
+      <div class="form-field mb-3" data-label="<%= field.label %>">
+        <input type="hidden" name="formFields[originalLabel][]" value="<%= field.label %>">
+        <label class="form-label"><b>Field Label</b></label>
+        <input type="text" name="formFields[label][]" class="form-control" placeholder="Field Label" value="<%= field.label %>" required />
+        <div class="invalid-feedback">This field is required.</div>
 
-      <div class="form-check mt-2">
-        <input
-          type="checkbox"
-          name="formFields[isRequired][]"
-          value="<%= index %>"
-          class="form-check-input"
-          <%= field.isRequired ? 'checked' : '' %>
-        />
-        <label class="form-check-label">Required</label>
+        <label class="form-label mt-2"><b>Field Type</b></label>
+        <select name="formFields[type][]" class="form-select">
+          <option value="text" <%= field.type === 'text' ? 'selected' : '' %>>Text</option>
+          <option value="email" <%= field.type === 'email' ? 'selected' : '' %>>Email</option>
+          <option value="number" <%= field.type === 'number' ? 'selected' : '' %>>Number</option>
+          <option value="checkbox" <%= field.type === 'checkbox' ? 'selected' : '' %>>Checkbox</option>
+        </select>
+
+        <div class="form-check mt-2">
+          <input type="checkbox" name="formFields[isRequired][]" value="<%= index %>" class="form-check-input" <%= field.isRequired ? 'checked' : '' %> />
+          <label class="form-check-label">Required</label>
+        </div>
+
+        <button type="button" class="btn btn-danger btn-sm mt-2 remove-field">Remove</button>
       </div>
-      <button type="button" class="btn btn-danger btn-sm mt-2 remove-field">Remove</button>
-    </div>
     <% }) %>
   </div>
-  <button type="button" class="btn btn-secondary mt-3" onclick="addFormField()">
-    Add Form Field
-  </button>
 
-  <!-- Hidden input to track deleted fields -->
-  <input type="hidden" name="deletedFields" id="deletedFields" value="">
+  <button type="button" class="btn btn-secondary mt-3" onclick="addFormField()">Add Form Field</button>
+  <input type="hidden" name="deletedFields" id="deletedFields" value="" />
 
+  <!-- Submit -->
   <div class="back-button-container">
-    <button type="submit" class="btn btn-success add-btn mt-3">Update Event</button>
+    <button type="submit" class="btn btn-success add-btn mt-4">Update Event</button>
   </div>
 </form>
+
 
 <!-- JavaScript for Adding & Removing Fields -->
 <script>
@@ -184,6 +254,54 @@
     const formData = new FormData(this);
     console.log('Form Data:', Object.fromEntries(formData));
   });
+
+  let coordinatorIndex = Number("<%= event.coordinators.length %>");
+
+  const coordinatorContainer = document.getElementById("coordinatorContainer");
+  const addBtn = document.getElementById("addCoordinatorBtn");
+
+  function addRemoveFunctionality(button) {
+    button.addEventListener("click", function () {
+      this.closest(".coordinator-row").remove();
+    });
+  }
+
+  // Add remove functionality to existing buttons
+  document.querySelectorAll(".remove-coordinator").forEach(addRemoveFunctionality);
+
+  addBtn.addEventListener("click", function () {
+    const row = document.createElement("div");
+    row.className = "row g-2 mb-2 align-items-center coordinator-row";
+    row.innerHTML = `
+      <div class="col-md-5">
+        <input type="text" name="coordinators[${coordinatorIndex}][name]" class="form-control" placeholder="Coordinator Name" required />
+      </div>
+      <div class="col-md-5">
+        <input type="text" name="coordinators[${coordinatorIndex}][contact]" class="form-control" placeholder="Contact" required />
+      </div>
+      <div class="col-md-2 text-end">
+        <span class="remove-coordinator text-danger fs-4" style="cursor: pointer;">&times;</span>
+      </div>
+    `;
+
+    coordinatorContainer.appendChild(row);
+    addRemoveFunctionality(row.querySelector(".remove-coordinator"));
+    coordinatorIndex++;
+  });
+
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
 </script>
 
 <style>
