@@ -235,7 +235,17 @@ app.post(
   validateClub,
   async (req, res) => {
     try {
-      let { ClubName, password, branchName } = req.body;
+      let {
+        ClubName,
+        password,
+        branchName,
+        clubDescription,
+        facultyCoordinators,
+        studentCoordinators,
+        socialMediaLink,
+        Achievements,
+        establishedYear,
+      } = req.body;
 
       if (!ClubName || !password) {
         req.flash("error", "All fields are required!");
@@ -265,6 +275,12 @@ app.post(
       const newClub = new Club({
         ClubName,
         branchName,
+        clubDescription,
+        facultyCoordinators,
+        studentCoordinators,
+        socialMediaLink,
+        Achievements,
+        establishedYear,
         ClubLogo: {
           url: url,
           filename: fileName,
@@ -1167,7 +1183,7 @@ app.get(
 
       if (!req.user) {
         req.flash("error", "You must be logged in to view registrations.");
-        return res.redirect("/studentRegistration/login");
+        return res.redirect("/collegeRegistration/login");
       }
 
       const club = await Club.findOne({ ClubName: clubName })

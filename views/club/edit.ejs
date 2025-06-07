@@ -1,82 +1,5 @@
 <%- include("../layouts/boilerplate") %>
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <h3 class="text-center mb-4">Edit Club: <%= clubDetails.ClubName %></h3>
-
-      <form
-        id="editClubForm"
-        method="post"
-        action="/<%= clubDetails.ClubName %>/edit?_method=PUT"
-        novalidate
-        class="needs-validation event-form shadow p-4 rounded"
-        enctype="multipart/form-data"
-      >
-        <!-- Club Name -->
-        <div class="mb-4">
-          <label for="ClubName" class="form-label fw-bold">Club Name</label>
-          <input
-            type="text"
-            id="ClubName"
-            name="ClubName"
-            value="<%= clubDetails.ClubName %>"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="ClubNameError"></div>
-        </div>
-
-        <!-- Branch Name -->
-        <div class="mb-4">
-          <label for="branchName" class="form-label fw-bold">Branch Name</label>
-          <input
-            type="text"
-            id="branchName"
-            name="branchName"
-            value="<%= clubDetails.branchName %>"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="branchNameError"></div>
-        </div>
-
-        <!-- Club Logo Upload -->
-        <div class="mb-4">
-          <label for="ClubLogo" class="form-label fw-bold">New Club Logo</label>
-          <input
-            type="file"
-            id="ClubLogo"
-            name="ClubLogo"
-            class="form-control"
-          />
-          <div class="error-message" id="ClubLogoError"></div>
-        </div>
-
-        <!-- Password -->
-        <div class="mb-4">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="passwordError"></div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-lg w-100">
-            Save Changes
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 <style>
   .event-form {
     background: #fff;
@@ -131,81 +54,281 @@
   }
 </style>
 
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h3 class="text-center mb-4">Edit Club: <%= clubDetails.ClubName %></h3>
+
+      <form
+        id="editClubForm"
+        method="post"
+        action="/<%= clubDetails.ClubName %>/edit?_method=PUT"
+        enctype="multipart/form-data"
+        class="needs-validation event-form shadow p-4 rounded"
+        novalidate
+      >
+        <!-- Club Name -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Club Name</label>
+          <input
+            type="text"
+            name="ClubName"
+            class="form-control"
+            value="<%= clubDetails.ClubName %>"
+            required
+          />
+        </div>
+
+        <!-- Branch Name -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Branch Name</label>
+          <input
+            type="text"
+            name="branchName"
+            class="form-control"
+            value="<%= clubDetails.branchName %>"
+            required
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Password</label>
+          <input
+            type="password"
+            name="password"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <!-- Club Description -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Club Description</label>
+          <textarea
+            name="clubDescription"
+            class="form-control"
+            rows="3"
+            required
+          >
+<%= clubDetails.clubDescription %></textarea
+          >
+        </div>
+
+        <!-- Club Logo -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">New Club Logo</label>
+          <input type="file" name="ClubLogo" class="form-control" />
+          <small class="text-muted">Leave empty if no change</small>
+        </div>
+
+        <!-- Faculty Coordinators -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Faculty Coordinators</label>
+          <div id="facultyCoordinatorsList">
+            <% clubDetails.facultyCoordinators.forEach((faculty, index) => { %>
+            <div class="row mb-2 align-items-end faculty-entry">
+              <div class="col">
+                <input
+                  type="text"
+                  name="facultyCoordinators[<%= index %>][name]"
+                  class="form-control"
+                  value="<%= faculty.name %>"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="email"
+                  name="facultyCoordinators[<%= index %>][email]"
+                  class="form-control"
+                  value="<%= faculty.email %>"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="text"
+                  name="facultyCoordinators[<%= index %>][phoneNumber]"
+                  class="form-control"
+                  value="<%= faculty.phoneNumber %>"
+                  required
+                />
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            onclick="addFacultyCoordinator()"
+          >
+            + Add Faculty
+          </button>
+        </div>
+
+        <!-- Student Coordinators -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Student Coordinators</label>
+          <div id="studentCoordinatorsList">
+            <% clubDetails.studentCoordinators.forEach((student, index) => { %>
+            <div class="row mb-2 align-items-end student-entry">
+              <div class="col">
+                <input
+                  type="text"
+                  name="studentCoordinators[<%= index %>][name]"
+                  class="form-control"
+                  value="<%= student.name %>"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="email"
+                  name="studentCoordinators[<%= index %>][email]"
+                  class="form-control"
+                  value="<%= student.email %>"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="text"
+                  name="studentCoordinators[<%= index %>][phoneNumber]"
+                  class="form-control"
+                  value="<%= student.phoneNumber %>"
+                  required
+                />
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            onclick="addStudentCoordinator()"
+          >
+            + Add Student
+          </button>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Social Media Links</label>
+          <div id="socialMediaLinksList">
+            <% clubDetails.socialMediaLink.forEach((link, index) => { %>
+            <div class="row mb-2 align-items-end social-entry">
+              <div class="col">
+                <input
+                  type="text"
+                  name="socialMediaLink[<%= index %>][name]"
+                  class="form-control"
+                  value="<%= link.name %>"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="url"
+                  name="socialMediaLink[<%= index %>][link]"
+                  class="form-control"
+                  value="<%= link.link %>"
+                  required
+                />
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            onclick="addSocialLink()"
+          >
+            + Add Link
+          </button>
+        </div>
+
+        <!-- Established Year -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Established Year</label>
+          <input
+            type="text"
+            name="establishedYear"
+            class="form-control"
+            value="<%= clubDetails.establishedYear %>"
+          />
+        </div>
+
+        <!-- Achievements -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Achievements</label>
+          <textarea name="Achievements" class="form-control" rows="3">
+<%= clubDetails.Achievements %></textarea
+          >
+        </div>
+
+        <!-- Submit -->
+        <div class="mb-4 text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
-  document
-    .getElementById("editClubForm")
-    .addEventListener("submit", function (event) {
-      let isValid = true;
+  let facultyIndex =
+    Number("<%= clubDetails.facultyCoordinators.length %>") || 0;
+  let studentIndex =
+    Number("<%= clubDetails.studentCoordinators.length %>") || 0;
+  let socialIndex = Number("<%= clubDetails.socialMediaLink.length %>") || 0;
 
-      // Get input fields
-      const clubNameInput = document.getElementById("ClubName");
-      const branchNameInput = document.getElementById("branchName");
-      const passwordInput = document.getElementById("password");
-      const clubLogoInput = document.getElementById("ClubLogo");
+  function addFacultyCoordinator() {
+    const container = document.getElementById("facultyCoordinatorsList");
+    const div = document.createElement("div");
+    div.classList.add("row", "mb-2", "align-items-end", "faculty-entry");
+    div.innerHTML = `
+      <div class="col"><input type="text" name="facultyCoordinators[${facultyIndex}][name]" class="form-control" placeholder="Name" required /></div>
+      <div class="col"><input type="email" name="facultyCoordinators[${facultyIndex}][email]" class="form-control" placeholder="Email" required /></div>
+      <div class="col"><input type="text" name="facultyCoordinators[${facultyIndex}][phoneNumber]" class="form-control" placeholder="Phone" required /></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.faculty-entry').remove()">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    facultyIndex++;
+  }
 
-      // Get error message elements
-      const clubNameError = document.getElementById("ClubNameError");
-      const branchNameError = document.getElementById("branchNameError");
-      const passwordError = document.getElementById("passwordError");
-      const clubLogoError = document.getElementById("ClubLogoError");
+  function addStudentCoordinator() {
+    const container = document.getElementById("studentCoordinatorsList");
+    const div = document.createElement("div");
+    div.classList.add("row", "mb-2", "align-items-end", "student-entry");
+    div.innerHTML = `
+      <div class="col"><input type="text" name="studentCoordinators[${studentIndex}][name]" class="form-control" placeholder="Name" required /></div>
+      <div class="col"><input type="email" name="studentCoordinators[${studentIndex}][email]" class="form-control" placeholder="Email" required /></div>
+      <div class="col"><input type="text" name="studentCoordinators[${studentIndex}][phoneNumber]" class="form-control" placeholder="Phone" required /></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.student-entry').remove()">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    studentIndex++;
+  }
 
-      // Reset errors and styles
-      clubNameError.textContent = "";
-      branchNameError.textContent = "";
-      passwordError.textContent = "";
-      clubLogoError.textContent = "";
-      clubNameInput.classList.remove("error-border");
-      branchNameInput.classList.remove("error-border");
-      passwordInput.classList.remove("error-border");
-      clubLogoInput.classList.remove("error-border");
-
-      // Validate Club Name
-      if (clubNameInput.value.trim() === "") {
-        clubNameError.textContent = "Club name is required.";
-        clubNameInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Branch Name
-      if (branchNameInput.value.trim() === "") {
-        branchNameError.textContent = "Branch name is required.";
-        branchNameInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Password
-      if (passwordInput.value.trim() === "") {
-        passwordError.textContent = "Password is required.";
-        passwordInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Club Logo (Optional)
-      if (clubLogoInput.files.length === 0) {
-        clubLogoError.textContent = "You can upload a new logo if needed.";
-      }
-
-      if (!isValid) {
-        event.preventDefault();
-      }
-    });
-
-  // Real-time Validation - Remove Error on Input
-  document.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", function () {
-      if (this.type === "file") {
-        // File input validation
-        if (this.files.length > 0) {
-          this.classList.remove("error-border");
-          document.getElementById(this.id + "Error").textContent = "";
-        }
-      } else {
-        // Text input validation
-        if (this.value.trim() !== "") {
-          this.classList.remove("error-border");
-          document.getElementById(this.id + "Error").textContent = "";
-        }
-      }
-    });
-  });
+  function addSocialLink() {
+    const container = document.getElementById("socialMediaLinksList");
+    const div = document.createElement("div");
+    div.classList.add("row", "mb-2", "align-items-end", "social-entry");
+    div.innerHTML = `
+      <div class="col"><input type="text" name="socialMediaLink[${socialIndex}][name]" class="form-control" placeholder="Platform" required /></div>
+      <div class="col"><input type="url" name="socialMediaLink[${socialIndex}][link]" class="form-control" placeholder="URL" required /></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.social-entry').remove()">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    socialIndex++;
+  }
 </script>

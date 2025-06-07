@@ -1,89 +1,5 @@
 <%- include("../layouts/boilerplate") %>
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <h3 class="text-center mb-4">Create a New Club</h3>
-
-      <form
-        id="clubRegistrationForm"
-        method="post"
-        action="/clubRegistration"
-        novalidate
-        class="needs-validation event-form shadow p-4 rounded"
-        enctype="multipart/form-data"
-      >
-        <!-- Club Name -->
-        <div class="mb-4">
-          <label for="ClubName" class="form-label fw-bold">Club Name</label>
-          <input
-            type="text"
-            id="ClubName"
-            name="ClubName"
-            placeholder="Enter Club Name"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="ClubNameError"></div>
-        </div>
-
-        <!-- Branch Name -->
-        <div class="mb-4">
-          <label for="branchName" class="form-label fw-bold">Branch Name</label>
-          <input
-            type="text"
-            id="branchName"
-            name="branchName"
-            placeholder="Enter Branch Name"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="branchNameError"></div>
-        </div>
-
-        <!-- Password -->
-        <div class="mb-4">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Set Password"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="passwordError"></div>
-        </div>
-
-        <!-- Club Logo -->
-        <div class="mb-4">
-          <label for="ClubLogo" class="form-label fw-bold">Upload Logo</label>
-          <input
-            type="file"
-            id="ClubLogo"
-            name="ClubLogo"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="ClubLogoError"></div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="mb-4 text-center">
-          <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
-            Create Club
-          </button>
-          <br />
-          <p>
-            Already registered?
-            <a href="/clubRegistration/login"> Login</a>
-          </p>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 <style>
   .event-form {
     background: #fff;
@@ -137,6 +53,214 @@
     }
   }
 </style>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h3 class="text-center mb-4">Create a New Club</h3>
+
+      <form
+        id="clubRegistrationForm"
+        method="post"
+        action="/clubRegistration"
+        enctype="multipart/form-data"
+        class="needs-validation event-form shadow p-4 rounded"
+        novalidate
+      >
+        <!-- Club Name -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Club Name</label>
+          <input type="text" name="ClubName" class="form-control" required />
+        </div>
+
+        <!-- Branch Name -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Branch Name</label>
+          <input type="text" name="branchName" class="form-control" required />
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Password</label>
+          <input
+            type="password"
+            name="password"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <!-- Club Description -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Club Description</label>
+          <textarea
+            name="clubDescription"
+            class="form-control"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+
+        <!-- Logo Upload -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Club Logo</label>
+          <input type="file" name="ClubLogo" class="form-control" required />
+        </div>
+
+        <!-- Faculty Coordinators -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Faculty Coordinators</label>
+          <div id="facultyCoordinatorsList">
+            <div class="row mb-2 align-items-end faculty-entry">
+              <div class="col">
+                <input
+                  type="text"
+                  name="facultyCoordinators[0][name]"
+                  class="form-control"
+                  placeholder="Name"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="email"
+                  name="facultyCoordinators[0][email]"
+                  class="form-control"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="text"
+                  name="facultyCoordinators[0][phoneNumber]"
+                  class="form-control"
+                  placeholder="Phone"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            onclick="addFacultyCoordinator()"
+          >
+            + Add Faculty
+          </button>
+        </div>
+
+        <!-- Student Coordinators -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Student Coordinators</label>
+          <div id="studentCoordinatorsList">
+            <div class="row mb-2 align-items-end student-entry">
+              <div class="col">
+                <input
+                  type="text"
+                  name="studentCoordinators[0][name]"
+                  class="form-control"
+                  placeholder="Name"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="email"
+                  name="studentCoordinators[0][email]"
+                  class="form-control"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="text"
+                  name="studentCoordinators[0][phoneNumber]"
+                  class="form-control"
+                  placeholder="Phone"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            onclick="addStudentCoordinator()"
+          >
+            + Add Student
+          </button>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Social Media Links</label>
+          <div id="socialMediaLinksList">
+            <div class="row mb-2 align-items-end social-entry">
+              <div class="col">
+                <input
+                  type="text"
+                  name="socialMediaLink[0][name]"
+                  class="form-control"
+                  placeholder="Platform"
+                  required
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="url"
+                  name="socialMediaLink[0][link]"
+                  class="form-control"
+                  placeholder="URL"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            onclick="addSocialLink()"
+          >
+            + Add Link
+          </button>
+        </div>
+
+        <!-- Established Year -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Established Year</label>
+          <input
+            type="text"
+            name="establishedYear"
+            class="form-control"
+            placeholder="e.g. 2015"
+          />
+        </div>
+
+        <!-- Achievements -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Achievements</label>
+          <textarea
+            name="Achievements"
+            class="form-control"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <!-- Submit -->
+        <div class="mb-4 text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Create Club
+          </button>
+          <p class="mt-2">
+            Already registered? <a href="/clubRegistration/login">Login</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <script>
   document
@@ -217,4 +341,55 @@
       }
     });
   });
+
+  let facultyIndex = 1;
+  let studentIndex = 1;
+  let socialIndex = 1;
+
+  function addFacultyCoordinator() {
+    const container = document.getElementById("facultyCoordinatorsList");
+    const div = document.createElement("div");
+    div.classList.add("row", "mb-2", "align-items-end", "faculty-entry");
+    div.innerHTML = `
+      <div class="col"><input type="text" name="facultyCoordinators[${facultyIndex}][name]" class="form-control" placeholder="Name" required /></div>
+      <div class="col"><input type="email" name="facultyCoordinators[${facultyIndex}][email]" class="form-control" placeholder="Email" required /></div>
+      <div class="col"><input type="text" name="facultyCoordinators[${facultyIndex}][phoneNumber]" class="form-control" placeholder="Phone" required /></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.faculty-entry').remove()">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    facultyIndex++;
+  }
+
+  function addStudentCoordinator() {
+    const container = document.getElementById("studentCoordinatorsList");
+    const div = document.createElement("div");
+    div.classList.add("row", "mb-2", "align-items-end", "student-entry");
+    div.innerHTML = `
+      <div class="col"><input type="text" name="studentCoordinators[${studentIndex}][name]" class="form-control" placeholder="Name" required /></div>
+      <div class="col"><input type="email" name="studentCoordinators[${studentIndex}][email]" class="form-control" placeholder="Email" required /></div>
+      <div class="col"><input type="text" name="studentCoordinators[${studentIndex}][phoneNumber]" class="form-control" placeholder="Phone" required /></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.student-entry').remove()">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    studentIndex++;
+  }
+
+  function addSocialLink() {
+    const container = document.getElementById("socialMediaLinksList");
+    const div = document.createElement("div");
+    div.classList.add("row", "mb-2", "align-items-end", "social-entry");
+    div.innerHTML = `
+      <div class="col"><input type="text" name="socialMediaLink[${socialIndex}][name]" class="form-control" placeholder="Platform" required /></div>
+      <div class="col"><input type="url" name="socialMediaLink[${socialIndex}][link]" class="form-control" placeholder="URL" required /></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.social-entry').remove()">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    socialIndex++;
+  }
 </script>

@@ -14,9 +14,43 @@ const clubSchema = new Schema({
     type: String,
     required: true,
   },
+  clubDescription: {
+    type: String,
+    required: true,
+  },
   ClubLogo: {
     url: String,
     filename: String,
+  },
+  facultyCoordinators: [
+    {
+      name: String,
+      email: String,
+      phoneNumber: String,
+    },
+  ],
+
+  studentCoordinators: [
+    {
+      name: String,
+      email: String,
+      phoneNumber: String,
+    },
+  ],
+
+  socialMediaLink: [
+    {
+      name: String,
+      link: String,
+    },
+  ],
+
+  Achievements: {
+    type: String,
+  },
+
+  establishedYear: {
+    type: String,
   },
 
   author: {

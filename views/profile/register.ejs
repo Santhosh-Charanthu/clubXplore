@@ -243,7 +243,6 @@ encodedClubName = encodeURIComponent(clubName); %>
   class="needs-validation registration-form"
   novalidate
 >
-  <!-- Team Name (if team event) -->
   <% if (event.teamSize.max > 1 || event.teamSize.min > 1) { %>
   <div class="mb-4">
     <label for="teamName" class="form-label"><b>Team Name</b></label>
@@ -259,7 +258,6 @@ encodedClubName = encodeURIComponent(clubName); %>
   </div>
   <% } %>
 
-  <!-- Team Members Section -->
   <div class="team-member-section">
     <h4 class="mb-3">
       <% if (event.teamSize.max > 1 || event.teamSize.min > 1) { %> Team Members
@@ -268,7 +266,6 @@ encodedClubName = encodeURIComponent(clubName); %>
     </h4>
 
     <div id="teamMembersContainer">
-      <!-- First member -->
       <div class="team-member-card" data-member-index="0">
         <div class="member-header">
           <span class="member-title">Member 1</span>
@@ -276,38 +273,23 @@ encodedClubName = encodeURIComponent(clubName); %>
         <% event.formFields.forEach((field) => { %> <% const safeLabel =
         field.label.replace(/[^a-zA-Z0-9]/g, '_'); %>
         <div class="mb-3">
-          <label for="member-0-<%= safeLabel %>" class="form-label"
-            ><b><%= field.label %></b></label
-          >
-          <% if (field.type === "checkbox") { %>
-          <input
-            type="checkbox"
-            id="member-0-<%= safeLabel %>"
-            name="teamMembers[0][<%= safeLabel %>]"
-            value="true"
-            <%
-            if
-            (field.isRequired)
-            {
-            %
-          />required<% } %> /> <% } else { %>
-          <input
-            type="<%= field.type %>"
-            id="member-0-<%= safeLabel %>"
-            name="teamMembers[0][<%= safeLabel %>]"
-            class="form-control"
-            placeholder="<%= field.label %>"
-            <%
-            if
-            (field.isRequired)
-            {
-            %
-          />required<% } %> <% if (field.type === 'number') {
-          %>pattern="[0-9]+"<% } %> <% if (field.type === 'email') {
-          %>pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"<% } %> />
+          <label for="member-0-<%= safeLabel %>" class="form-label">
+            <b><%= field.label %></b>
+          </label>
+
+          <% if (field.type === "checkbox") { %> <input type="checkbox"
+          id="member-0-<%= safeLabel %>" name="teamMembers[0][<%= safeLabel %>]"
+          value="true" <%= field.isRequired ? 'required' : '' %> /> <% } else {
+          %> <input type="<%= field.type %>" id="member-0-<%= safeLabel %>"
+          name="teamMembers[0][<%= safeLabel %>]" class="form-control"
+          placeholder="<%= field.label %>" <%= field.isRequired ? 'required' :
+          '' %> <%= field.type === 'number' ? 'pattern="[0-9]+"' : '' %> <%=
+          field.type === 'email' ?
+          'pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"' : '' %> />
           <div class="invalid-feedback">This field is required.</div>
           <% } %>
         </div>
+
         <% }) %>
       </div>
     </div>
