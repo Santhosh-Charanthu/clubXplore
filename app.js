@@ -24,7 +24,7 @@ let Event = require("./models/Event");
 let Student = require("./models/student");
 let Registration = require("./models/registration");
 const cloudinary = require("cloudinary").v2;
-const { validateClub } = require("./middleware.js");
+const { validateClub, isUserLoggedIn } = require("./middleware.js");
 const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
@@ -124,17 +124,49 @@ app.get("/collegeRegistration/login", (req, res) => {
 
 app.post(
   "/collegeRegistration/login",
-
   passport.authenticate("college", {
     failureRedirect: "/collegeRegistration/login",
-    failureFlash: true, // Show an error message
+    failureFlash: true,
   }),
   async (req, res) => {
-    let redirectUrl = res.locals.redirectUrl || "/clubRegistration/login";
-    res.redirect(redirectUrl);
+    try {
+      const college = await College.findById(req.user._id).populate("clubs");
+      if (!college) {
+        req.flash("error", "College not found!");
+        return res.redirect("/collegeRegistration/login");
+      }
+      res.redirect(`/collegeProfile/${req.user._id}`);
+    } catch (e) {
+      console.error("Login error:", e);
+      req.flash("error", "Something went wrong during login.");
+      res.redirect("/collegeRegistration/login");
+    }
   }
 );
 
+app.post(
+  "/club/verify-password",
+  passport.authenticate("club", {
+    failureRedirect: "/collegeRegistration/login",
+    failureFlash: true,
+  }),
+  async (req, res) => {
+    try {
+      const { ClubName } = req.body;
+      const club = await Club.findOne({ ClubName });
+      if (!club) {
+        req.flash("error", "Club not found!");
+        return res.redirect("/collegeRegistration/login");
+      }
+      req.flash("success", `Welcome to ${ClubName}'s profile!`);
+      res.redirect(`/${ClubName}/profile`);
+    } catch (e) {
+      console.error("Club verification error:", e);
+      req.flash("error", "Something went wrong during verification.");
+      res.redirect("/collegeRegistration/login");
+    }
+  }
+);
 app.get("/collegeRegistration/signup", (req, res) => {
   res.render("users/signup.ejs");
 });
@@ -157,7 +189,7 @@ app.post(
       } = req.body;
       if (!college || !email || !password) {
         req.flash("error", "All fields are required!");
-        return res.redirect("/signup");
+        return res.redirect("/collegeRegistration/signup");
       }
       if (!req.file) {
         req.flash("error", "Please upload a logo.");
@@ -182,15 +214,119 @@ app.post(
 
       const registeredCollege = await College.register(newCollege, password);
 
-      req.login(registeredCollege, (err) => {
+      req.login(registeredCollege, async (err) => {
         if (err) return next(err);
         req.flash("success", "Welcome to Club Management!");
-        res.redirect("/clubRegistration/login");
+        res.redirect(`/collegeProfile/${registeredCollege._id}`);
       });
     } catch (e) {
       console.error("Signup error:", e);
       req.flash("error", "Signup failed. Try again.");
       res.redirect("/collegeRegistration/signup");
+    }
+  }
+);
+app.get("/collegeProfile/:id", isUserLoggedIn, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const college = await College.findById(id).populate("clubs");
+    if (!college) {
+      req.flash("error", "College not found!");
+      return res.redirect("/collegeRegistration/login");
+    }
+    if (!req.user._id.equals(college._id)) {
+      req.flash(
+        "error",
+        "You are not authorized to view this college profile!"
+      );
+      return res.redirect(`/collegeProfile/${req.user._id}`);
+    }
+    res.render("profile/collegeIndex", { college });
+  } catch (e) {
+    console.error("Error rendering college profile:", e);
+    req.flash("error", "Something went wrong: " + e.message);
+    res.redirect("/collegeRegistration/login");
+  }
+});
+
+// GET route to render the edit form
+app.get("/college/edit/:id", isUserLoggedIn, async (req, res) => {
+  try {
+    const college = await College.findById(req.params.id);
+    if (!college) {
+      req.flash("error", "College not found!");
+      return res.redirect("/collegeRegistration/login");
+    }
+    res.render("users/collegeEdit.ejs", { college });
+  } catch (e) {
+    console.error("Error rendering edit form:", e);
+    req.flash("error", "Something went wrong.");
+    res.redirect("/collegeIndex/" + req.params.id);
+  }
+});
+
+// PUT route to handle form submission
+app.put(
+  "/college/edit/:id",
+  isUserLoggedIn,
+  upload.single("collegeLogo"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        college,
+        email,
+        collegeId,
+        principalName,
+        establishedYear,
+        address,
+        collegeType,
+        affiliatedUniversity,
+      } = req.body;
+
+      // Validate required fields
+      if (!college || !email || !collegeId) {
+        req.flash("error", "College name, email, and college ID are required!");
+        return res.redirect(`/college/edit/${id}`);
+      }
+
+      // Find the college
+      const collegeDoc = await College.findById(id);
+      if (!collegeDoc) {
+        req.flash("error", "College not found!");
+        return res.redirect("/collegeRegistration/login");
+      }
+
+      // Update fields
+      collegeDoc.college = college;
+      collegeDoc.email = email;
+      collegeDoc.collegeId = collegeId;
+      collegeDoc.principalName = principalName || "";
+      collegeDoc.establishedYear = establishedYear || "";
+      collegeDoc.address = address || "";
+      collegeDoc.collegeType = collegeType || "";
+      collegeDoc.affiliatedUniversity = affiliatedUniversity || "";
+
+      // Update logo if a new file is uploaded
+      if (req.file) {
+        // Delete old logo from Cloudinary if it exists
+        if (collegeDoc.collegeLogo.filename) {
+          await cloudinary.uploader.destroy(collegeDoc.collegeLogo.filename);
+        }
+        collegeDoc.collegeLogo = {
+          url: req.file.path,
+          filename: req.file.filename,
+        };
+      }
+
+      // Save updated college
+      await collegeDoc.save();
+      req.flash("success", "College details updated successfully!");
+      res.redirect(`/collegeProfile/${id}`);
+    } catch (e) {
+      console.error("Error updating college:", e);
+      req.flash("error", "Failed to update college details.");
+      res.redirect(`/college/edit/${id}`);
     }
   }
 );
@@ -722,10 +858,6 @@ app.post("/:clubName/:eventName/eventdetails", async (req, res) => {
     res.status(500).send("Server error.");
   }
 });
-
-// Debug: Log Registration model
-console.log("Registration model:", Registration);
-console.log("Registration.findOne:", typeof Registration.findOne);
 
 app.get("/:clubName/:eventName/register", async (req, res) => {
   if (!req.user) {
