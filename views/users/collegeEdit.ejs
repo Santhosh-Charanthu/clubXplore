@@ -1,0 +1,201 @@
+<%- include("../layouts/boilerplate") %>
+
+<style>
+  body {
+    background-color: #f4f6f8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .edit-form-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .edit-form-container h1 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 35px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 16px 18px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 17px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #4caf50;
+    background-color: #fff;
+    outline: none;
+  }
+
+  .form-group input[type="file"] {
+    padding: 6px;
+    background-color: transparent;
+  }
+
+  .form-group img {
+    margin-top: 10px;
+    max-width: 120px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .form-buttons button {
+    padding: 14px 28px;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .submit-btn {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .submit-btn:hover {
+    background-color: #43a047;
+    transform: scale(1.02);
+  }
+
+  .cancel-btn {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background-color: #e53935;
+    transform: scale(1.02);
+  }
+
+  .error-message,
+  .success-message {
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .error-message {
+    color: #d32f2f;
+    background-color: #fdecea;
+    border: 1px solid #f5c6cb;
+  }
+
+  .success-message {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    border: 1px solid #a5d6a7;
+  }
+</style>
+
+<div class="edit-form-container">
+  <h1>Edit College Details</h1>
+
+  <% if (error && error.length) { %>
+    <div class="error-message"><%= error %></div>
+  <% } %>
+  <% if (success && success.length) { %>
+    <div class="success-message"><%= success %></div>
+  <% } %>
+
+  <form action="/college/edit/<%= college._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="college">College Name</label>
+      <input type="text" id="college" name="college" value="<%= college.college %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="<%= college.email %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="collegeId">College ID</label>
+      <input type="text" id="collegeId" name="collegeId" value="<%= college.collegeId %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="principalName">Principal Name</label>
+      <input type="text" id="principalName" name="principalName" value="<%= college.principalName %>">
+    </div>
+
+    <div class="form-group">
+      <label for="establishedYear">Established Year</label>
+      <input type="number" id="establishedYear" name="establishedYear" value="<%= college.establishedYear %>">
+    </div>
+
+    <div class="form-group">
+      <label for="address">Address</label>
+      <textarea id="address" name="address" rows="3"><%= college.address %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="collegeType">College Type</label>
+      <select id="collegeType" name="collegeType">
+        <option value="Government" <%= college.collegeType === 'Government' ? 'selected' : '' %>>Government</option>
+        <option value="Private" <%= college.collegeType === 'Private' ? 'selected' : '' %>>Private</option>
+        <option value="Autonomous" <%= college.collegeType === 'Autonomous' ? 'selected' : '' %>>Autonomous</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="affiliatedUniversity">Affiliated University</label>
+      <input type="text" id="affiliatedUniversity" name="affiliatedUniversity" value="<%= college.affiliatedUniversity %>">
+    </div>
+
+    <div class="form-group">
+      <label for="collegeLogo">College Logo</label>
+      <input type="file" id="collegeLogo" name="collegeLogo" accept="image/*">
+      <% if (college.collegeLogo && college.collegeLogo.url) { %>
+        <p>Current Logo:</p>
+        <img src="<%= college.collegeLogo.url %>" alt="Current Logo">
+      <% } %>
+    </div>
+
+    <div class="form-buttons">
+      <button type="submit" class="submit-btn">Save Changes</button>
+      <!-- Optional Cancel Button -->
+      <!-- <a href="/college/dashboard" class="cancel-btn" style="text-decoration: none; display: inline-block;">Cancel</a> -->
+    </div>
+  </form>
+</div>
