@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const passportLocalMongoose = require("passport-local-mongoose");
@@ -8,7 +9,7 @@ const collegeSchema = new Schema({
     required: true,
     unique: true,
   },
-  email: {
+  collegeId: {
     type: String,
     required: true,
     unique: true,
@@ -16,6 +17,32 @@ const collegeSchema = new Schema({
   collegeLogo: {
     url: String,
     filename: String,
+  },
+  principalName: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match: [/^\S+@\S+\.\S+$/, "Please use a valid email address."],
+  },
+  establishedYear: {
+    type: Number,
+    required: true,
+    min: 1800,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+  collegeType: {
+    type: String,
+    required: true,
+  },
+  affiliatedUniversity: {
+    type: String,
   },
   clubs: [
     {

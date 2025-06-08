@@ -267,12 +267,14 @@ encodedClubName = encodeURIComponent(clubName); %>
 
     <div id="teamMembersContainer">
       <div class="team-member-card" data-member-index="0">
+        <% if (event.teamSize.max > 1 || event.teamSize.min > 1) { %>
         <div class="member-header">
           <span class="member-title">Member 1</span>
         </div>
-        <% event.formFields.forEach((field) => { %> <% const safeLabel =
+        <% } %> <% event.formFields.forEach((field) => { %> <% const safeLabel =
         field.label.replace(/[^a-zA-Z0-9]/g, '_'); %>
         <div class="mb-3">
+          <% if((field.label).toLowerCase() != "team name"){ %>
           <label for="member-0-<%= safeLabel %>" class="form-label">
             <b><%= field.label %></b>
           </label>
@@ -287,7 +289,7 @@ encodedClubName = encodeURIComponent(clubName); %>
           field.type === 'email' ?
           'pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"' : '' %> />
           <div class="invalid-feedback">This field is required.</div>
-          <% } %>
+          <% } %> <% } %>
         </div>
 
         <% }) %>

@@ -30,6 +30,7 @@ const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
 const Joi = require("joi");
 const methodoverride = require("method-override");
+const club = require("./models/club");
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -143,7 +144,17 @@ app.post(
   upload.single("collegeLogo"),
   async (req, res, next) => {
     try {
-      let { college, password, email } = req.body;
+      let {
+        college,
+        password,
+        email,
+        collegeId,
+        principalName,
+        establishedYear,
+        address,
+        collegeType,
+        affiliatedUniversity,
+      } = req.body;
       if (!college || !email || !password) {
         req.flash("error", "All fields are required!");
         return res.redirect("/signup");
@@ -159,6 +170,12 @@ app.post(
       const newCollege = new College({
         email,
         college,
+        collegeId,
+        principalName,
+        establishedYear,
+        address,
+        collegeType,
+        affiliatedUniversity,
         collegeLogo: { url, filename: fileName },
         role: "college",
       });
@@ -484,7 +501,16 @@ app.put(
 
   async (req, res) => {
     try {
-      const { ClubName, branchName, password } = req.body;
+      const {
+        ClubName,
+        branchName,
+        clubDescription,
+        facultyCoordinators,
+        studentCoordinators,
+        socialMediaLink,
+        Achievements,
+        establishedYear,
+      } = req.body;
       const existingClub = await Club.findOne({
         ClubName: req.params.clubName,
       });
@@ -495,10 +521,12 @@ app.put(
 
       existingClub.ClubName = ClubName;
       existingClub.branchName = branchName;
-
-      if (password) {
-        await existingClub.setPassword(password);
-      }
+      existingClub.clubDescription = clubDescription;
+      existingClub.facultyCoordinators = facultyCoordinators;
+      existingClub.studentCoordinators = studentCoordinators;
+      existingClub.socialMediaLink = socialMediaLink;
+      existingClub.Achievements = Achievements;
+      existingClub.establishedYear = establishedYear;
 
       if (req.file) {
         existingClub.ClubLogo = {
@@ -961,6 +989,7 @@ app.get("/:clubName/:eventName/edit", async (req, res) => {
     res.redirect(`/${clubName}/profile`);
   }
 });
+
 app.put(
   "/:clubName/:eventName/edit",
   upload.single("eventImage"),
@@ -1107,6 +1136,31 @@ app.put(
         }
 
         event.formFields = newFormFields;
+
+        if (
+          req.body.teamSize &&
+          req.body.teamSize.min &&
+          req.body.teamSize.max
+        ) {
+          const minTeamSize = parseInt(req.body.teamSize.min);
+          const maxTeamSize = parseInt(req.body.teamSize.max);
+
+          if (
+            !isNaN(minTeamSize) &&
+            !isNaN(maxTeamSize) &&
+            minTeamSize > 0 &&
+            maxTeamSize >= minTeamSize
+          ) {
+            event.teamSize = {
+              min: minTeamSize,
+              max: maxTeamSize,
+            };
+          } else {
+            throw new Error(
+              "Invalid team size. Make sure min and max are valid and max ≥ min."
+            );
+          }
+        }
       }
 
       // Save the updated event

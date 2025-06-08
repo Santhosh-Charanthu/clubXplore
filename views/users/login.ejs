@@ -1,84 +1,113 @@
 <%- include("../layouts/boilerplate") %>
 
-<h1 class="text-center mt-4">College Registration</h1>
+<!-- Styling (reused from Club Login form) -->
+<style>
+  .event-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+  }
 
-<div class="login-container">
-  <form
-    class="form"
-    action="/collegeRegistration/login"
-    method="post"
-    id="loginForm"
-    novalidate
-  >
-    <p class="form-title">Sign in to your college</p>
+  .event-form:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
 
-    <!-- College Input -->
-    <div class="input-container">
-      <input
-        id="college"
-        name="college"
-        type="text"
-        placeholder="Enter your college"
-        required
-      />
-      <span>
-        <svg
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-            stroke-width="2"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-          ></path>
-        </svg>
-      </span>
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  .form-control:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .event-form {
+      padding: 15px;
+    }
+
+    .btn-lg {
+      padding: 10px;
+    }
+  }
+</style>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <h3 class="text-center mb-4">Log in to Your College</h3>
+
+      <form
+        id="loginForm"
+        method="post"
+        action="/collegeRegistration/login"
+        novalidate
+        class="needs-validation event-form shadow p-4 rounded"
+      >
+        <!-- College Name -->
+        <div class="mb-4">
+          <label for="college" class="form-label fw-bold">College Name</label>
+          <input
+            type="text"
+            id="college"
+            name="college"
+            placeholder="Enter your college"
+            class="form-control form-control-lg"
+            required
+          />
+          <div class="error-message" id="collegeError"></div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4">
+          <label for="password" class="form-label fw-bold">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            class="form-control"
+            required
+          />
+          <div class="error-message" id="passwordError"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Login
+          </button>
+        </div>
+        <br />
+        <p class="signup-link text-center">
+          No account?
+          <a href="/collegeRegistration/signup">Sign up</a>
+        </p>
+      </form>
     </div>
-    <p class="error-message" id="collegeError"></p>
-
-    <!-- Password Input -->
-    <div class="input-container">
-      <input
-        id="password"
-        name="password"
-        type="password"
-        placeholder="Enter password"
-        required
-      />
-      <span>
-        <svg
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            stroke-width="2"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-          ></path>
-          <path
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            stroke-width="2"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-          ></path>
-        </svg>
-      </span>
-    </div>
-    <p class="error-message" id="passwordError"></p>
-
-    <button class="submit" type="submit">Sign in</button>
-
-    <p class="signup-link">
-      No account?
-      <a href="/collegeRegistration/signup">Sign up</a>
-    </p>
-  </form>
+  </div>
 </div>
 
 <!-- JavaScript for Real-Time Validation -->
@@ -100,14 +129,12 @@
       collegeInput.classList.remove("error-border");
       passwordInput.classList.remove("error-border");
 
-      // Validate College Name
       if (collegeInput.value.trim() === "") {
         collegeError.textContent = "College name is required.";
         collegeInput.classList.add("error-border");
         isValid = false;
       }
 
-      // Validate Password
       if (passwordInput.value.trim() === "") {
         passwordError.textContent = "Password is required.";
         passwordInput.classList.add("error-border");
@@ -119,35 +146,13 @@
       }
     });
 
-  // Real-time Validation - Remove Error on Input
+  // Real-time input fix
   document.querySelectorAll("input").forEach((input) => {
     input.addEventListener("input", function () {
       if (this.value.trim() !== "") {
-        this.classList.remove("error-border"); // Remove red border
-        this.nextElementSibling?.classList.remove("error-message"); // Remove error text
-        this.parentElement.nextElementSibling.textContent = ""; // Clear error message
+        this.classList.remove("error-border");
+        this.parentElement.querySelector(".error-message").textContent = "";
       }
     });
   });
 </script>
-
-<!-- CSS for Real-Time Error Handling -->
-<style>
-  .error-message {
-    color: red;
-    font-size: 0.9em;
-    margin-top: 5px;
-    text-align: left;
-  }
-
-  /* Red Border for Invalid Inputs */
-  .error-border {
-    border: 2px solid red !important;
-  }
-
-  /* Blue Border on Focus */
-  .input-container input:focus {
-    border-color: #4b6cb7 !important; /* Blue border */
-    box-shadow: 0 0 5px rgba(75, 108, 183, 0.5) !important;
-  }
-</style>
