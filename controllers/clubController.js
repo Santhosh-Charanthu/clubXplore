@@ -359,11 +359,30 @@ module.exports.destroyClub = async (req, res) => {
     const { ClubName } = req.params;
 
     // Find the club document
-    const club = await Club.findOne({ ClubName: ClubName });
+    const club = await Club.findOne({ ClubName: ClubName }).populate("events");
     if (!club) {
       req.flash("error", "Club not found.");
       return res.redirect("/listings");
     }
+
+    for (const event of club.events) {
+      if (event.image && event.image.filename) {
+        const imagePath = path.join(
+          __dirname,
+          "..",
+          "uploads",
+          event.image.filename
+        );
+        try {
+          await fs.unlink(imagePath);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+
+    const eventIds = club.events.map((e) => e.id);
+    await Event.deleteMany({ _id: { $in: eventIds } });
 
     await College.updateOne(
       { clubs: club._id },

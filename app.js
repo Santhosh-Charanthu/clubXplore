@@ -24,7 +24,6 @@ let Event = require("./models/Event");
 let Student = require("./models/student");
 let Registration = require("./models/registration");
 const cloudinary = require("cloudinary").v2;
-const { validateClub, isUserLoggedIn } = require("./middleware.js");
 const multer = require("multer");
 const { storage } = require("./cloudconfig.js");
 const upload = multer({ storage: storage });
