@@ -109,22 +109,20 @@ module.exports.showClubProfile = async (req, res) => {
 
     let user = req.user;
     let filteredEvents = club.events;
-
     // If user is a student
     if (user.role === "student") {
+      let userCollege = await College.findById(user.author);
       filteredEvents = club.events.filter((event) => {
         // Show event if it's open to all or if it's college exclusive and matches user's college
         return (
           event.visibility === "openToAll" ||
           (event.visibility === "collegeExclusive" &&
-            user.college === club.author.college) // Corrected to club.author.college
+            userCollege.college === club.author.college) // Corrected to club.author.college
         );
       });
       // Replace club.events with filtered events
       club.events = filteredEvents;
     }
-
-    console.log("Filtered Events:", club.events);
 
     res.render("profile/profile.ejs", { club, user });
     // res.render("profile/profile2.ejs", { club, user });
@@ -199,8 +197,6 @@ module.exports.handleEventCreation = async (req, res) => {
       approvalStatus,
       formFields,
     } = req.body;
-
-    console.log("Request Body:", req.body); // Debug visibility value
 
     let club = await Club.findOne({ ClubName: clubName });
     if (!club) {
@@ -279,8 +275,6 @@ module.exports.handleEventCreation = async (req, res) => {
       formFields: parsedFormFields,
       registeredStudents: [],
     });
-
-    console.log("New Event:", newEvent); // Debug the event before saving
 
     await newEvent.save();
     club.events.push(newEvent);
@@ -404,7 +398,7 @@ module.exports.showEventDetails = async (req, res) => {
   if (!req.user) {
     return res.redirect("/interface");
   }
-  let { clubName, eventName } = req.params;
+  let { clubName, eventId } = req.params;
 
   const club = await Club.findOne({ ClubName: clubName })
     .populate({
@@ -420,23 +414,21 @@ module.exports.showEventDetails = async (req, res) => {
     return res.status(404).send("Club not found");
   }
 
-  const event = club.events.find(
-    (event) => event.eventName === req.params.eventName
-  );
+  const event = club.events.find((event) => event._id.equals(eventId));
 
   if (!event) {
     return res.status(404).send("Event not found");
   }
 
   let user = req.user;
-  console.log(user);
 
   res.render("profile/event", { event, user });
 };
 
 module.exports.showEventEdit = async (req, res) => {
   try {
-    const { clubName, eventName } = req.params;
+    const { clubName, eventId } = req.params;
+    console.log(eventId);
     const club = await Club.findOne({ ClubName: clubName }).populate("events");
 
     if (!club) {
@@ -444,7 +436,8 @@ module.exports.showEventEdit = async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    const event = club.events.find((e) => e.eventName === eventName);
+    const event = club.events.find((e) => e._id.equals(eventId));
+    console.log(event);
     if (!event) {
       req.flash("error", "Event not found");
       return res.redirect(`/${clubName}/profile`);
@@ -459,23 +452,19 @@ module.exports.showEventEdit = async (req, res) => {
 };
 
 module.exports.updateEvent = async (req, res) => {
+  const eventId = decodeURIComponent(req.params.eventId);
+  const clubName = decodeURIComponent(req.params.clubName);
   try {
-    const eventName = decodeURIComponent(req.params.eventName);
-    const clubName = decodeURIComponent(req.params.clubName);
-
-    let event = await Event.findOne({ eventName });
+    let event = await Event.findById(eventId);
 
     if (!event) {
       req.flash("error", "Event not found!");
       return res.redirect(`/${clubName}/profile`);
     }
 
-    console.log("Request Body:", req.body);
-    console.log("Uploaded File:", req.file);
-
     // Update event name if provided
-    if (req.body.eventName && req.body.eventName !== event.eventName) {
-      event.eventName = req.body.eventName.trim();
+    if (req.body.eventId && req.body.eventid !== event.eventId) {
+      event.eventId = req.body.eventId.trim();
     }
 
     // Update event details if provided
@@ -628,23 +617,20 @@ module.exports.updateEvent = async (req, res) => {
     await event.save();
     console.log("Event updated successfully:", event);
     req.flash("success", "Event updated successfully!");
-    const redirectEventName = encodeURIComponent(
-      req.body.eventName || eventName
-    );
-    res.redirect(`/${clubName}/${redirectEventName}/eventdetails`);
+    res.redirect(`/${clubName}/event/${eventId}`);
   } catch (error) {
     console.error("🔥 Server Error:", error);
     req.flash("error", `Failed to update event: ${error.message}`);
-    res.redirect(`/${clubName}/${eventName}/edit`);
+    res.redirect(`/${clubName}/edit/${eventId}`);
   }
 };
 
 module.exports.destroyEvent = async (req, res) => {
   try {
-    const { clubName, eventName } = req.params;
+    const { clubName, eventId } = req.params;
 
     // Step 1: Find and delete the event
-    const event = await Event.findOne({ eventName });
+    const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).send("Event not found");
     }
@@ -679,8 +665,13 @@ module.exports.destroyEvent = async (req, res) => {
 
     // Step 4: Delete the event from the database
     await Event.deleteOne({ _id: event._id });
-
-    console.log(` Event "${eventName}" deleted successfully from ${clubName}`);
+    req.flash(
+      "success",
+      `Event "${event.eventName}" deleted successfully from ${clubName}`
+    );
+    console.log(
+      `Event "${event.eventName}" deleted successfully from ${clubName}`
+    );
     res.redirect(`/${clubName}/profile`);
   } catch (error) {
     console.error(" Server Error:", error);
@@ -691,7 +682,7 @@ module.exports.destroyEvent = async (req, res) => {
 module.exports.showRegistrations = async (req, res) => {
   try {
     const clubName = decodeURIComponent(req.params.clubName);
-    const eventName = decodeURIComponent(req.params.eventName);
+    const eventId = decodeURIComponent(req.params.eventId);
 
     if (!req.user) {
       req.flash("error", "You must be logged in to view registrations.");
@@ -713,7 +704,7 @@ module.exports.showRegistrations = async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    const event = club.events.find((event) => event.eventName === eventName);
+    const event = club.events.find((event) => event._id.equals(eventId));
 
     if (!event) {
       req.flash("error", "Event not found!");
@@ -721,13 +712,9 @@ module.exports.showRegistrations = async (req, res) => {
     }
 
     if (!event.author._id.equals(req.user._id)) {
-      console.log(event.author._id);
-      console.log(req.user._id);
       req.flash("error", "You do not have permission to view registrations.");
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-          eventName
-        )}/eventdetails`
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`
       );
     }
 
@@ -735,15 +722,12 @@ module.exports.showRegistrations = async (req, res) => {
       .populate("studentId", "studentName")
       .exec();
 
-    console.log("Event formFields:", JSON.stringify(event.formFields, null, 2));
-    console.log("Registrations:", JSON.stringify(registrations, null, 2));
-
     res.render("profile/viewRegistrations", {
       event,
       registrations,
       clubName,
       encodedClubName: encodeURIComponent(clubName),
-      encodedEventName: encodeURIComponent(eventName),
+      encodedEventId: encodeURIComponent(eventId),
     });
   } catch (error) {
     console.error("Error fetching registrations:", error);

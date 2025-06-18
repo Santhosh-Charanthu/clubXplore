@@ -85,7 +85,14 @@
   }
 
   .create-post {
-    margin: 0 150px 0 20px;
+    /* margin: 0 150px 0 20px; */
+    text-align: center;
+  }
+
+  .wide-button {
+    min-width: 100px; /* Adjust width as needed */
+    text-align: center;
+    white-space: nowrap;
   }
 
   .logo {
@@ -143,7 +150,9 @@
     <% if(user.role !== "student") { %>
     <span>
       <div class="btn-container success">
-        <a href="/<%= club.ClubName %>/createpost" class="btn btn-success"
+        <a
+          href="/<%= club.ClubName %>/createpost"
+          class="btn btn-success wide-button"
           >Create Event</a
         >
       </div>
@@ -159,7 +168,7 @@
 <div class="card-container">
   <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
   <a
-    href="/<%= club.ClubName %>/<%= event.eventName %>/eventdetails"
+    href="/<%= club.ClubName %>/event/<%= event._id %>"
     style="text-decoration: none; color: inherit"
   >
     <div class="card">

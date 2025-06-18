@@ -3,7 +3,7 @@
 <h1 class="event-title">Edit Event: <%= event.eventName %></h1>
 
 <form
-  action="/<%= club.ClubName %>/<%= event.eventName %>/edit?_method=PUT"
+  action="/<%= club.ClubName %>/event/<%= event._id %>/edit?_method=PUT"
   method="POST"
   enctype="multipart/form-data"
   class="container mt-4 registration-form-container needs-validation"

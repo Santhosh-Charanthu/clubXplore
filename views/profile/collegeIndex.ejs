@@ -44,6 +44,18 @@
     margin-bottom: 10px;
   }
 
+  .navbar {
+    display: flex;
+    justify-content: end;
+    margin-right: 20px;
+  }
+
+  #get-link {
+    color: white;
+    background-color: rgb(7, 136, 215);
+    border: none;
+  }
+
   @media (max-width: 1200px) {
     .club-card {
       width: 33.33%;
@@ -171,8 +183,10 @@
 </style>
 
 <nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand"></a>
+  <div class="student-registation-form-link">
+    <form action="/collegeProfile/<%= college._id %>/get-link" method="post">
+      <button type="submit" id="get-link">Get student Registration Url</button>
+    </form>
   </div>
 </nav>
 

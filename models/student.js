@@ -8,10 +8,6 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
-  college: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -21,6 +17,10 @@ const studentSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "College",
   },
   role: {
     type: String,

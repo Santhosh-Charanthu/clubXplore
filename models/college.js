@@ -50,6 +50,12 @@ const collegeSchema = new Schema({
       ref: "Club", // Ensure the reference matches the actual model name
     },
   ],
+  students: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Student",
+    },
+  ],
   role: {
     type: String,
     required: true,

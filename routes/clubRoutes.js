@@ -51,20 +51,20 @@ router
 
 router.route("/:ClubName/delete").delete(clubController.destroyClub);
 
-router
-  .route("/:clubName/:eventName/eventdetails")
-  .get(clubController.showEventDetails);
+router.route("/:clubName/event/:eventId").get(clubController.showEventDetails);
 ////
 
 router
-  .route("/:clubName/:eventName/edit")
+  .route("/:clubName/event/:eventId/edit")
   .get(clubController.showEventEdit)
   .put(upload.single("eventImage"), clubController.updateEvent);
 
-router.route("/:clubName/:eventName/delete").get(clubController.destroyEvent);
+router
+  .route("/:clubName/event/:eventId/delete")
+  .delete(clubController.destroyEvent);
 
 router
-  .route("/:clubName/:eventName/eventdetails/viewRegistration")
+  .route("/:clubName/event/:eventId/viewRegistration")
   .get(clubController.showRegistrations);
 
 module.exports = router;

@@ -2,29 +2,38 @@ let College = require("../models/college");
 let Club = require("../models/club");
 let Student = require("../models/student");
 let Registration = require("../models/registration");
+const college = require("../models/college");
 
 module.exports.showStudentRegistration = (req, res) => {
-  res.render("student/signup");
+  let { id: collegeId } = req.params;
+  res.render("student/signup", { collegeId });
 };
 
 module.exports.handleStudentRegistration = async (req, res) => {
+  let { id: collegeId } = req.params;
   try {
-    let { studentName, college, email, regNo, password } = req.body;
+    let { studentName, email, regNo, password } = req.body;
     const newStudent = new Student({
       studentName,
-      college,
       email,
       regNo,
       role: "student",
+      author: collegeId,
     });
+
+    const college = await College.findById(collegeId);
     const registeredStudent = await Student.register(newStudent, password);
+    college.students.push(registeredStudent._id);
+    await college.save();
+
     req.login(registeredStudent, (err) => {
       if (err) return next(err);
       req.flash("success", "Welcome to Club Management!");
       res.redirect("/index");
     });
   } catch (e) {
-    console.log(e);
+    req.flash("error", e.message);
+    res.redirect(`/college/${collegeId}/studentRegistration/signup`);
   }
 };
 
@@ -50,7 +59,7 @@ module.exports.showCollegeProfile = async (req, res) => {
     });
   } else {
     let user = req.user;
-    college = await College.findOne({ college: user.college }).populate({
+    college = await College.findById(user.author).populate({
       path: "clubs",
       populate: { path: "events" },
     });
@@ -292,7 +301,6 @@ module.exports.handleEventRegistration = async (req, res) => {
     });
 
     await registration.save();
-    console.log("Registration saved:", registration); // Debug
 
     event.registeredStudents.push(req.user._id);
     await event.save();

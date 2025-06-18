@@ -4,7 +4,7 @@ const passport = require("passport");
 const studentController = require("../controllers/studentController");
 
 router
-  .route("/studentRegistration/signup")
+  .route("/college/:id/studentRegistration/signup")
   .get(studentController.showStudentRegistration)
   .post(studentController.handleStudentRegistration);
 

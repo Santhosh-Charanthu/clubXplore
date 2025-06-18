@@ -30,6 +30,10 @@ router
   .get(isUserLoggedIn, collegeController.showCollegeProfile);
 
 router
+  .route("/collegeProfile/:id/get-link")
+  .post(collegeController.showRegistrationLink);
+
+router
   .route("/college/edit/:id")
   .get(collegeController.showEditForm)
   .put(

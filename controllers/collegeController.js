@@ -98,6 +98,13 @@ module.exports.showCollegeProfile = async (req, res) => {
   }
 };
 
+module.exports.showRegistrationLink = (req, res) => {
+  const { id } = req.params;
+  const registrationLink = `http://localhost:8080/college/${id}/studentRegistration/signup`;
+  req.flash("success", `Student registration link:\n ${registrationLink}`);
+  res.redirect(`/collegeProfile/${id}`);
+};
+
 module.exports.showEditForm = async (req, res) => {
   try {
     const college = await College.findById(req.params.id);

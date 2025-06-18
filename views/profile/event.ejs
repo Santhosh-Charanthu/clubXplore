@@ -1,184 +1,5 @@
 <%- include("../layouts/boilerplate") %>
 
-<h1 class="event-title"><%= event.eventName %></h1>
-
-<div class="event-card-container">
-  <div class="event-card">
-    <div class="event-image-container">
-      <img
-        src="<%= event.image.url %>"
-        class="event-image"
-        alt="<%= event.eventName %>"
-      />
-    </div>
-    <div class="event-details-card">
-      <div class="event-description-container">
-        <p class="event-description-container">
-          <b>Description:</b> <%= event.eventDetails %>
-        </p>
-        <p class="event-description-container">
-          <b>Mode:</b> <%= event.mode %>
-        </p>
-        <p class="event-description-container">
-          <b>Venue:</b> <%= event.venue %>
-        </p>
-        <p class="event-description-container"><b>Coordinators:</b></p>
-        <% event.coordinators.forEach(coordinator => { %>
-        <p class="event-description-container">
-          <%= coordinator.name %> (<%= coordinator.contact %>)
-        </p>
-        <% }) %> <% if (event.branchName) { %>
-        <p class="event-description-container">
-          <b>Branch:</b> For <%= event.branchName %> students only eligible for
-          participation
-        </p>
-        <% } %>
-        <p class="event-description-container">
-          <b>Eligibility:</b> <%= event.eligibility %>
-        </p>
-        <p class="event-description-container">
-          <b>Team Size: </b> <% if(event.teamSize.min == event.teamSize.max) {%>
-            <p><%= event.teamSize.max %></p>
-            <% } else{%>
-              <p><%= event.teamSize.min %> - <%= event.teamSize.max %></p>
-              <% } %>
-        </p>
-        <p class="event-description-container">
-          <b>Rewards:</b> <%= event.rewards %>
-        </p>
-        <p class="event-description-container">
-          <b>Agenda:</b> <%= event.agenda %>
-        </p>
-        <p class="event-description-container">
-          <b>Starting Date:</b> <%= event.startDate %>
-        </p>
-        <p class="event-description-container">
-          <b>Ending Date:</b> <%= event.endDate %>
-        </p>
-        <p class="event-description-container">
-          <b>Registration Deadline:</b> <%= event.registrationDeadline %>
-        </p>
-      </div>
-
-      <% if (user && user.role === "student") { %> <% if
-      (!event.registeredStudents.includes(user._id)) { %>
-      <div class="button-container">
-        <form
-          action="/<%= event.author.ClubName %>/<%= event.eventName %>/register"
-          method="get"
-        >
-          <button type="submit" class="btn btn-success submit-btn">
-            Register
-          </button>
-        </form>
-      </div>
-      <% } else { %>
-      <p class="registration-status">
-        You are already registered for this event.
-      </p>
-      <% } %> <% } %> <% if (!user || user.role !== "student") { %>
-      <div class="admin-actions">
-        <div class="button-group">
-          <form
-            action="/<%= event.author.ClubName %>/<%= event.eventName %>/edit"
-          >
-            <button type="submit" class="btn btn-primary edit-btn">Edit</button>
-          </form>
-
-          <form
-            id="deleteEventForm"
-            action="/<%= event.author.ClubName %>/<%= event.eventName %>/delete?_method=DELETE"
-            method="post"
-          >
-            <button
-              type="button"
-              class="btn btn-danger delete-btn"
-              onclick="confirmEventDeletion()"
-            >
-              Delete
-            </button>
-          </form>
-        </div>
-
-        <form
-          action="/<%= event.author.ClubName %>/<%= event.eventName %>/eventdetails/viewRegistration"
-          method="get"
-        >
-          <div class="button-container">
-            <button type="submit" class="btn btn-info view-btn">
-              View Registrations
-            </button>
-          </div>
-        </form>
-      </div>
-      <% } %>
-    </div>
-  </div>
-</div>
-
-// Delete Confirmation Modal
-<div
-  id="confirmEventModal"
-  style="
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-  "
->
-  <div
-    style="
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    "
-  >
-    <h4>Are you sure?</h4>
-    <p>
-      You are about to delete the event
-      <strong><%= event.eventName %></strong> in club
-      <strong><%= event.author.ClubName %></strong>.
-    </p>
-    <button
-      onclick="submitEventDelete()"
-      class="btn btn-danger"
-      style="margin: 5px"
-    >
-      Yes, Delete
-    </button>
-    <button
-      onclick="closeEventModal()"
-      class="btn btn-secondary"
-      style="margin: 5px"
-    >
-      Cancel
-    </button>
-  </div>
-</div>
-
-<script>
-  function confirmEventDeletion() {
-    document.getElementById("confirmEventModal").style.display = "flex";
-  }
-
-  function closeEventModal() {
-    document.getElementById("confirmEventModal").style.display = "none";
-  }
-
-  function submitEventDelete() {
-    document.getElementById("deleteEventForm").submit();
-  }
-</script>
-
 <style>
   /* Your existing styles from earlier */
   .event-title {
@@ -239,6 +60,19 @@
     border-radius: 5px;
     margin-top: 20px;
   }
+
+.registration-ended-status {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: #c0392b;
+  font-size: 1.1rem;
+  padding: 10px;
+  background: #fdecea;
+  border-radius: 5px;
+  margin-top: 20px;
+  box-sizing: border-box; /* ensures padding doesn't exceed width */
+}
 
   .admin-actions {
     margin-top: 20px;
@@ -319,3 +153,188 @@
     }
   }
 </style>
+
+
+<h1 class="event-title"><%= event.eventName %></h1>
+
+<div class="event-card-container">
+  <div class="event-card">
+    <div class="event-image-container">
+      <img
+        src="<%= event.image.url %>"
+        class="event-image"
+        alt="<%= event.eventName %>"
+      />
+    </div>
+    <div class="event-details-card">
+      <div class="event-description-container">
+        <p class="event-description-container">
+          <b>Description:</b> <%= event.eventDetails %>
+        </p>
+        <p class="event-description-container">
+          <b>Mode:</b> <%= event.mode %>
+        </p>
+        <p class="event-description-container">
+          <b>Venue:</b> <%= event.venue %>
+        </p>
+        <p class="event-description-container"><b>Coordinators:</b></p>
+        <% event.coordinators.forEach(coordinator => { %>
+        <p class="event-description-container">
+          <%= coordinator.name %> (<%= coordinator.contact %>)
+        </p>
+        <% }) %> <% if (event.branchName) { %>
+        <p class="event-description-container">
+          <b>Branch:</b> For <%= event.branchName %> students only eligible for
+          participation
+        </p>
+        <% } %>
+        <p class="event-description-container">
+          <b>Eligibility:</b> <%= event.eligibility %>
+        </p>
+        <p class="event-description-container">
+          <b>Team Size: </b> <% if(event.teamSize.min == event.teamSize.max) {%>
+            <p><%= event.teamSize.max %></p>
+            <% } else{%>
+              <p><%= event.teamSize.min %> - <%= event.teamSize.max %></p>
+              <% } %>
+        </p>
+        <p class="event-description-container">
+          <b>Rewards:</b> <%= event.rewards %>
+        </p>
+        <p class="event-description-container">
+          <b>Agenda:</b> <%= event.agenda %>
+        </p>
+        <p class="event-description-container">
+          <b>Starting Date:</b> <%= event.startDate %>
+        </p>
+        <p class="event-description-container">
+          <b>Ending Date:</b> <%= event.endDate %>
+        </p>
+        <p class="event-description-container">
+          <b>Registration Deadline:</b> <%= event.registrationDeadline %>
+        </p>
+      </div>
+
+      <% if (user && user.role === "student") { %> <% if
+      (!event.registeredStudents.includes(user._id)) { %>
+      <div class="button-container">
+        <form
+          action="/<%= event.author.ClubName %>/<%= event.eventName %>/register"
+          method="get"
+        >
+        <% if (new Date() > new Date(event.endDate)) { %>
+            <p class="registration-ended-status"> Registration Completed</p>
+          <% } else {%>
+          <button type="submit" class="btn btn-success submit-btn">
+            Register
+          </button>
+          <% } %>
+        </form>
+      </div>
+      <% } else { %>
+      <p class="registration-status">
+        You are already registered for this event.
+      </p>
+      <% } %> <% } %> <% if (!user || user.role !== "student") { %>
+      <div class="admin-actions">
+        <div class="button-group">
+          <form
+            action="/<%= event.author.ClubName %>/event/<%= event._id %>/edit"
+          >
+            <button type="submit" class="btn btn-primary edit-btn">Edit</button>
+          </form>
+
+          <form
+            id="deleteEventForm"
+            action="/<%= event.author.ClubName %>/event/<%= event._id %>/delete?_method=DELETE"
+            method="post"
+          >
+            <button
+              type="button"
+              class="btn btn-danger delete-btn"
+              onclick="confirmEventDeletion()"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
+
+        <form
+          action="/<%= event.author.ClubName %>/event/<%= event._id %>/viewRegistration"
+          method="get"
+        >
+          <div class="button-container">
+            <button type="submit" class="btn btn-info view-btn">
+              View Registrations
+            </button>
+          </div>
+        </form>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+// Delete Confirmation Modal
+<div
+  id="confirmEventModal"
+  style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  "
+>
+  <div
+    style="
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    "
+  >
+    <h4>Are you sure?</h4>
+    <p>
+      You are about to delete the event
+      <strong><%= event.eventName %></strong> in club
+      <strong><%= event.author.ClubName %></strong>.
+    </p>
+    <button
+      onclick="submitEventDelete()"
+      class="btn btn-danger"
+      type="button"
+      style="margin: 5px"
+    >
+      Yes, Delete
+    </button>
+    <button
+      onclick="closeEventModal()"
+      class="btn btn-secondary"
+      style="margin: 5px"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+
+<script>
+  function confirmEventDeletion() {
+    document.getElementById("confirmEventModal").style.display = "flex";
+  }
+
+  function closeEventModal() {
+    document.getElementById("confirmEventModal").style.display = "none";
+  }
+
+  function submitEventDelete() {
+    document.getElementById("deleteEventForm").submit();
+  }
+</script>
