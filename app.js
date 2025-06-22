@@ -109,7 +109,7 @@ passport.deserializeUser(async (obj, done) => {
   }
 });
 
-dbUrl = "mongodb+srv://santhosh:santhosh981@cluster0.whu02.mongodb.net/clubs";
+dbUrl = process.env.DB_URL;
 
 mongoose
   .connect(dbUrl)
