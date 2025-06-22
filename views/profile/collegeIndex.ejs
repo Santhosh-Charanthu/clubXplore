@@ -180,6 +180,30 @@
   .password-modal-content .close-btn:hover {
     background-color: #d32f2f;
   }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    align-items: center; /* center horizontally */
+    margin-right: 30px;
+  }
+
+  .logo img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover; /* keep aspect ratio and crop if needed */
+  }
+
+  .logo-buttons {
+    display: flex; /* place buttons side-by-side */
+    gap: 10px; /* space between buttons */
+    margin-top: 10px; /* space between image and buttons */
+  }
 </style>
 
 <nav class="navbar bg-body-tertiary">
@@ -190,39 +214,31 @@
   </div>
 </nav>
 
-<div style="display: flex; flex-direction: row">
-  <div>
-    <img
-      src="<%= college.collegeLogo.url %>"
-      alt="College Logo"
-      style="
-        height: 140px;
-        width: 140px;
-        margin-top: 20px;
-        margin-left: 50px;
-        border: 1px solid rgb(0, 0, 0);
-        border-radius: 50%;
-      "
-    />
-    <div class="button-container">
+<div class="container">
+  <div class="logo">
+    <img src="<%= college.collegeLogo.url %>" alt="College Logo" />
+    <div class="logo-buttons">
       <button
-        class="edit-button"
+        class="btn btn-success"
         onclick="location.href='/college/edit/<%= college._id %>'"
       >
         Edit
       </button>
-      <button
-        class="create-club-button"
-        onclick="location.href='/clubRegistration'"
-      >
+      <button class="btn btn-dark" onclick="location.href='/clubRegistration'">
         Create Club
       </button>
     </div>
   </div>
-  <h1 class="col-6" style="margin-top: 70px; margin-left: 0px">
+  <h1 class="col-6" style="margin-bottom: 60px; margin-left: 0px">
     <%= college.college %>
   </h1>
+  <div class="clubs-number">
+    <span style="font-size: 25px"
+      ><b>Clubs: </b><%= college.clubs.length %></span
+    >
+  </div>
 </div>
+<hr />
 
 <div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
   <p>Clubs in this college are:</p>
