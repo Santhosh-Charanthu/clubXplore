@@ -42,18 +42,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
 
 const sessionOptions = {
-  store: MongoStore.create({
-    mongoUrl: process.env.DB_URL,
-    touchAfter: 24 * 3600, // time period in seconds
-  }),
-  secret: process.env.SECRET,
+  secret: "supersecretpassword",
   resave: false,
   saveUninitialized: true,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: true,
   },
 };
 
