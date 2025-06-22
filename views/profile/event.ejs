@@ -219,7 +219,7 @@
       (!event.registeredStudents.includes(user._id)) { %>
       <div class="button-container">
         <form
-          action="/<%= event.author.ClubName %>/<%= event.eventName %>/register"
+          action="/<%= event.author.ClubName %>/event/<%= event._id %>/register"
           method="get"
         >
         <% if (new Date() > new Date(event.endDate)) { %>

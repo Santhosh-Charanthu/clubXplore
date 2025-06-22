@@ -221,7 +221,7 @@
   }
 </style>
 
-<% const encodedEventName = encodeURIComponent(event.eventName); %> <% const
+<% const encodedEventId = encodeURIComponent(event._id); %> <% const
 encodedClubName = encodeURIComponent(clubName); %>
 
 <h2 class="event-title">Register for <%= event.eventName %></h2>
@@ -238,7 +238,7 @@ encodedClubName = encodeURIComponent(clubName); %>
 <% } else { %>
 
 <form
-  action="/<%= encodedClubName %>/<%= encodedEventName %>/register"
+  action="/<%= encodedClubName %>/event/<%= encodedEventId %>/register"
   method="post"
   class="needs-validation registration-form"
   novalidate

@@ -24,7 +24,7 @@ router.route("/index").get(studentController.showCollegeProfile);
 router.route("/search-colleges").get(studentController.searchColleges);
 
 router
-  .route("/:clubName/:eventName/register")
+  .route("/:clubName/event/:eventId/register")
   .get(studentController.showEventRegistration)
   .post(studentController.handleEventRegistration);
 

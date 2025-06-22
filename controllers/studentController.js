@@ -89,9 +89,9 @@ module.exports.showEventRegistration = async (req, res) => {
     return res.redirect("/studentRegistration/login");
   }
 
-  let { clubName, eventName } = req.params;
+  let { clubName, eventId } = req.params;
   clubName = decodeURIComponent(clubName);
-  eventName = decodeURIComponent(eventName);
+  eventId = decodeURIComponent(eventId);
 
   const club = await Club.findOne({ ClubName: clubName })
     .populate("events")
@@ -102,8 +102,9 @@ module.exports.showEventRegistration = async (req, res) => {
     return res.redirect("/clubRegistration");
   }
 
-  const event = club.events.find((event) => event.eventName === eventName);
+  const event = club.events.find((event) => event._id.equals(eventId));
 
+  console.log(event);
   if (!event) {
     req.flash("error", "Event not found");
     return res.redirect(`/${encodeURIComponent(clubName)}/profile`);
@@ -112,9 +113,7 @@ module.exports.showEventRegistration = async (req, res) => {
   if (new Date(event.registrationDeadline) < new Date()) {
     req.flash("error", "Registration for this event has closed");
     return res.redirect(
-      `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-        eventName
-      )}/eventdetails`
+      `/${encodeURIComponent(clubName)}/event${encodeURIComponent(eventId)}`
     );
   }
 
@@ -122,7 +121,7 @@ module.exports.showEventRegistration = async (req, res) => {
     event,
     user: req.user,
     clubName,
-    encodedEventName: encodeURIComponent(eventName),
+    encodedEventId: encodeURIComponent(eventId),
     encodedClubName: encodeURIComponent(clubName),
   });
 };
@@ -134,7 +133,7 @@ module.exports.handleEventRegistration = async (req, res) => {
   }
 
   const clubName = decodeURIComponent(req.params.clubName);
-  const eventName = decodeURIComponent(req.params.eventName);
+  const eventId = decodeURIComponent(req.params.eventId);
 
   try {
     console.log("Request Body:", JSON.stringify(req.body, null, 2)); // Debug form data
@@ -145,7 +144,8 @@ module.exports.handleEventRegistration = async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    const event = club.events.find((e) => e.eventName === eventName);
+    const event = club.events.find((event) => event._id.equals(eventId));
+    console.log(event);
     if (!event) {
       req.flash("error", "Event not found");
       return res.redirect(`/${encodeURIComponent(clubName)}/profile`);
@@ -154,17 +154,15 @@ module.exports.handleEventRegistration = async (req, res) => {
     if (new Date(event.registrationDeadline) < new Date()) {
       req.flash("error", "Registration for this event has closed");
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-          eventName
-        )}/eventdetails`
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`
       );
     }
 
     if (!Array.isArray(event.formFields)) {
       req.flash("error", "Invalid event configuration");
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-          eventName
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+          eventId
         )}/register`
       );
     }
@@ -178,9 +176,7 @@ module.exports.handleEventRegistration = async (req, res) => {
     if (existingRegistration) {
       req.flash("error", "You are already registered for this event");
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-          eventName
-        )}/eventdetails`
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`
       );
     }
 
@@ -192,8 +188,8 @@ module.exports.handleEventRegistration = async (req, res) => {
     if ((event.teamSize.max > 1 || event.teamSize.min > 1) && !teamName) {
       req.flash("error", "Team name is required");
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-          eventName
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+          eventId
         )}/register`
       );
     }
@@ -215,8 +211,8 @@ module.exports.handleEventRegistration = async (req, res) => {
         `Team size must be between ${event.teamSize.min} and ${event.teamSize.max} members`
       );
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-          eventName
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+          eventId
         )}/register`
       );
     }
@@ -235,8 +231,8 @@ module.exports.handleEventRegistration = async (req, res) => {
             `${field.label} is required for team member ${i + 1}`
           );
           return res.redirect(
-            `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-              eventName
+            `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+              eventId
             )}/register`
           );
         }
@@ -247,8 +243,8 @@ module.exports.handleEventRegistration = async (req, res) => {
             `Invalid number format for ${field.label} in team member ${i + 1}`
           );
           return res.redirect(
-            `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-              eventName
+            `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+              eventId
             )}/register`
           );
         }
@@ -263,8 +259,8 @@ module.exports.handleEventRegistration = async (req, res) => {
             `Invalid email format for ${field.label} in team member ${i + 1}`
           );
           return res.redirect(
-            `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-              eventName
+            `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+              eventId
             )}/register`
           );
         }
@@ -280,8 +276,8 @@ module.exports.handleEventRegistration = async (req, res) => {
             `Duplicate registration number found in team member ${i + 1}`
           );
           return res.redirect(
-            `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-              eventName
+            `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+              eventId
             )}/register`
           );
         }
@@ -307,16 +303,14 @@ module.exports.handleEventRegistration = async (req, res) => {
 
     req.flash("success", "Registered successfully!");
     return res.redirect(
-      `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-        eventName
-      )}/eventdetails`
+      `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`
     );
   } catch (error) {
     console.error("Registration Error:", error);
     req.flash("error", `Failed to complete registration: ${error.message}`);
     return res.redirect(
-      `/${encodeURIComponent(clubName)}/${encodeURIComponent(
-        eventName
+      `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(
+        eventId
       )}/register`
     );
   }
