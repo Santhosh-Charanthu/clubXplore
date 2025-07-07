@@ -79,6 +79,7 @@ npm install
 ## Add .env file
 
 MONGO_URI=your_mongodb_connection
+
 SESSION_SECRET=your_secret
 
 ## Run the app
