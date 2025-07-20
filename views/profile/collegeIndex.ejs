@@ -25,26 +25,54 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  .student-registation-form-link {
-    position: absolute;
-    top: 15px;
-    right: 40px;
+  /* Student registration button in top-right */
+  .student-registration-form-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
   }
 
   #get-link {
     background: #6366f1;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 16px;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background-color 0.3s ease;
   }
 
   #get-link:hover {
     background: #4f46e5;
+  }
+
+  /* Flash message */
+  .flash-message {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .flash-message.success {
+    background: #e6f3ff;
+    border: 1px solid #93c5fd;
+    color: #1e3a8a;
+  }
+
+  .flash-message.error {
+    background: #fee2e2;
+    border: 1px solid #f87171;
+    color: #991b1b;
   }
 
   /* Main college header section */
@@ -88,6 +116,7 @@
     gap: 20px;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   .edit-button {
@@ -149,11 +178,6 @@
     margin: 0 !important;
   }
 
-  /* Hide the hr */
-  hr {
-    display: none;
-  }
-
   /* Club container */
   .club-container {
     display: flex;
@@ -186,7 +210,7 @@
   .card-img-top {
     width: 100%;
     height: 180px;
-    border-radius: 12px; /* Optional: Slightly rounded corners */
+    border-radius: 12px;
     object-fit: cover;
     margin-bottom: 20px;
     display: block;
@@ -225,6 +249,10 @@
     color: #64748b;
     margin: 50px 0;
     font-weight: 500;
+  }
+
+  .club-navigation {
+    text-decoration: none;
   }
 
   /* Responsive adjustments */
@@ -328,8 +356,22 @@
       padding: 15px 20px;
     }
 
-    .student-registation-form-link {
+    .student-registration-form-link {
+      top: 15px;
       right: 20px;
+    }
+
+    #get-link {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .flash-message {
+      top: 60px;
+      right: 10px;
+      padding: 10px 15px;
+      font-size: 12px;
+      max-width: 90%;
     }
 
     .college-header {
@@ -370,41 +412,54 @@
       padding: 0 20px 60px 20px;
     }
   }
-  .club-navigation {
-    text-decoration: none;
-  }
-  .student-registation-form-link {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000; /* Ensure it stays on top */
-  }
-
-  #get-link {
-    padding: 10px 16px;
-    background-color: #4f46e5; /* Indigo-600 like Figma theme */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  #get-link:hover {
-    background-color: #4338ca; /* Indigo-700 */
-  }
 </style>
 
-<div class="student-registation-form-link">
+<script>
+  // Function to copy link to clipboard
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        // Flash message is handled server-side
+      },
+      (err) => {
+        console.error("Failed to copy: ", err);
+        alert("Failed to copy link. Please try again.");
+      }
+    );
+  }
+
+  // Auto-copy link if present (runs on page load)
+  window.onload = function () {
+    const linkInput = document.getElementById("registration-link");
+    if (linkInput && linkInput.value) {
+      copyToClipboard(linkInput.value);
+    }
+  };
+</script>
+
+<!-- Student registration button -->
+<div class="student-registration-form-link">
   <form action="/collegeProfile/<%= college._id %>/get-link" method="post">
-    <button type="submit" id="get-link">Get student Registration Url</button>
+    <button
+      type="submit"
+      id="get-link"
+      aria-label="Get student registration URL"
+    >
+      Get Registration Link
+    </button>
   </form>
+  <!-- Hidden input to store registration link for copying -->
+  <% if (registrationLink) { %>
+  <input type="hidden" id="registration-link" value="<%= registrationLink %>" />
+  <% } %>
 </div>
 
 <div class="college-header">
   <div class="college-logo">
-    <img src="<%= college.collegeLogo.url %>" alt="College Logo" />
+    <img
+      src="<%= college.collegeLogo.url %>"
+      alt="Logo of <%= college.college %>"
+    />
   </div>
 
   <div class="college-details">
@@ -413,12 +468,14 @@
       <button
         class="edit-button"
         onclick="location.href='/college/edit/<%= college._id %>'"
+        aria-label="Edit college profile"
       >
         Edit
       </button>
       <button
         class="create-club-button"
         onclick="location.href='/clubRegistration'"
+        aria-label="Create a new club"
       >
         Create Club
       </button>
@@ -426,28 +483,30 @@
   </div>
 
   <div class="club-count">
-    <span><b>Clubs:</b> <%= college.clubs.length %></span>
+    <span><b>Clubs:</b> <%= college.clubs ? college.clubs.length : 0 %></span>
   </div>
 </div>
-
-<hr />
 
 <div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
   <p>Clubs in this college are:</p>
 </div>
 
 <div class="club-container">
-  <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
+  <% if (college.clubs && college.clubs.length > 0) { %> <%
+  college.clubs.forEach(club => { %>
   <a href="/clubRegistration/login" class="club-navigation">
     <div class="club-card">
       <img
         src="<%= club.ClubLogo.url %>"
         class="card-img-top"
-        alt="<%= club.ClubName %>"
+        alt="Logo of <%= club.ClubName %>"
       />
       <div class="card-body">
         <h3 class="card-title"><%= club.ClubName %></h3>
-        <p><strong>Total Events:</strong> <%= club.events.length %></p>
+        <p>
+          <strong>Total Events:</strong> <%= club.events ? club.events.length :
+          0 %>
+        </p>
       </div>
     </div>
   </a>

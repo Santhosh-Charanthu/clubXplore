@@ -75,6 +75,32 @@ module.exports.handleLogin = async (req, res) => {
   }
 };
 
+module.exports.showRegistrationLink = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const college = await College.findById(id).populate("clubs");
+    if (!college) {
+      req.flash("error", "College not found!");
+      return res.redirect("/collegeRegistration/login");
+    }
+    if (!req.user || !req.user._id.equals(college._id)) {
+      req.flash("error", "You are not authorized to generate this link!");
+      return res.redirect(
+        req.user
+          ? `/collegeProfile/${req.user._id}`
+          : "/collegeRegistration/login"
+      );
+    }
+    const registrationLink = `http://localhost:8080/college/${id}/studentRegistration/signup`;
+    req.flash("success", "link copied successfully");
+    res.redirect(`/collegeProfile/${id}`);
+  } catch (err) {
+    console.error("Error in showRegistrationLink:", err);
+    req.flash("error", "Failed to generate registration link: " + err.message);
+    res.redirect("/collegeRegistration/login");
+  }
+};
+
 module.exports.showCollegeProfile = async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,28 +109,28 @@ module.exports.showCollegeProfile = async (req, res) => {
       req.flash("error", "College not found!");
       return res.redirect("/collegeRegistration/login");
     }
-    if (!req.user._id.equals(college._id)) {
+    if (!req.user || !req.user._id.equals(college._id)) {
       req.flash(
         "error",
         "You are not authorized to view this college profile!"
       );
-      return res.redirect(`/collegeProfile/${req.user._id}`);
+      return res.redirect(
+        req.user
+          ? `/collegeProfile/${req.user._id}`
+          : "/collegeRegistration/login"
+      );
     }
-    res.render("profile/collegeIndex", { college });
-  } catch (e) {
-    console.error("Error rendering college profile:", e);
-    req.flash("error", "Something went wrong: " + e.message);
+    console.log("Rendering collegeIndex for profile:", college._id); // Debugging
+    res.render("profile/collegeIndex", {
+      college,
+      registrationLink: null, // Avoid undefined error
+    });
+  } catch (err) {
+    console.error("Error in showCollegeProfile:", err);
+    req.flash("error", "Something went wrong: " + err.message);
     res.redirect("/collegeRegistration/login");
   }
 };
-
-module.exports.showRegistrationLink = (req, res) => {
-  const { id } = req.params;
-  const registrationLink = `http://localhost:8080/college/${id}/studentRegistration/signup`;
-  req.flash("success", `Student registration link:\n ${registrationLink}`);
-  res.redirect(`/collegeProfile/${id}`);
-};
-
 module.exports.showEditForm = async (req, res) => {
   try {
     const college = await College.findById(req.params.id);

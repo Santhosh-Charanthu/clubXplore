@@ -2,18 +2,23 @@
 
 <style>
   body {
-    background-color: #f4f6f8;
+    background-color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
   .edit-form-container {
-    max-width: 900px;
+    max-width: 900px; /* Increased from 900px to maintain consistency */
     margin: 60px auto;
     padding: 40px;
-    background: #ffffff;
+    background: #fff;
+    border: 1px solid #fff;
     border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .edit-form-container:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   }
 
   .edit-form-container h1 {
@@ -39,21 +44,33 @@
   .form-group input,
   .form-group select,
   .form-group textarea {
-    width: 100%;
-    padding: 16px 18px;
-    border: 1px solid #ccc;
+    width: 100%; /* Ensure fields scale with container */
+    padding: 8px 18px;
+    border: 1px solid #d2d2d2;
     border-radius: 10px;
     font-size: 17px;
-    background-color: #f9f9f9;
+    background-color: #fff;
     transition: border 0.3s ease;
   }
 
   .form-group input:focus,
   .form-group select:focus,
   .form-group textarea:focus {
-    border-color: #4caf50;
+    border-color: #007bff !important; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important; /* Blue glow */
     background-color: #fff;
     outline: none;
+  }
+
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    text-align: left;
   }
 
   .form-group input[type="file"] {
@@ -64,7 +81,7 @@
   .form-group img {
     margin-top: 10px;
     max-width: 120px;
-    border: 1px solid #ccc;
+    border: 1px solid #fff;
     border-radius: 6px;
   }
 
@@ -86,45 +103,45 @@
   }
 
   .submit-btn {
-    background-color: #4caf50;
+    background-color: #28a745;
     color: white;
+    width: 20%; /* Ensure button scales with container */
   }
 
   .submit-btn:hover {
-    background-color: #43a047;
-    transform: scale(1.02);
+    background-color: #218838;
+    transform: translateY(-2px);
   }
 
   .cancel-btn {
-    background-color: #f44336;
+    background-color: #dc3545;
     color: white;
+    width: 100%; /* Ensure button scales with container */
   }
 
   .cancel-btn:hover {
-    background-color: #e53935;
-    transform: scale(1.02);
+    background-color: #c82333;
+    transform: translateY(-2px);
   }
 
-  .error-message,
-  .success-message {
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: 500;
-    margin-bottom: 20px;
-    font-size: 16px;
-    text-align: center;
-  }
-
-  .error-message {
-    color: #d32f2f;
-    background-color: #fdecea;
-    border: 1px solid #f5c6cb;
-  }
-
-  .success-message {
-    color: #2e7d32;
-    background-color: #e8f5e9;
-    border: 1px solid #a5d6a7;
+  @media (max-width: 768px) {
+    .edit-form-container {
+      padding: 20px;
+      margin: 30px auto;
+    }
+    .edit-form-container h1 {
+      font-size: 28px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 12px;
+      font-size: 16px;
+    }
+    .form-buttons button {
+      padding: 12px 20px;
+      font-size: 16px;
+    }
   }
 </style>
 
@@ -138,35 +155,41 @@
     <div class="success-message"><%= success %></div>
   <% } %>
 
-  <form action="/college/edit/<%= college._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+  <form action="/college/edit/<%= college._id %>?_method=PUT" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate id="editCollegeForm">
     <div class="form-group">
       <label for="college">College Name</label>
       <input type="text" id="college" name="college" value="<%= college.college %>" required>
+      <div id="collegeError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" value="<%= college.email %>" required>
+      <div id="emailError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="collegeId">College ID</label>
       <input type="text" id="collegeId" name="collegeId" value="<%= college.collegeId %>" required>
+      <div id="collegeIdError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="principalName">Principal Name</label>
       <input type="text" id="principalName" name="principalName" value="<%= college.principalName %>">
+      <div id="principalNameError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="establishedYear">Established Year</label>
       <input type="number" id="establishedYear" name="establishedYear" value="<%= college.establishedYear %>">
+      <div id="establishedYearError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="address">Address</label>
       <textarea id="address" name="address" rows="3"><%= college.address %></textarea>
+      <div id="addressError" class="error-message"></div>
     </div>
 
     <div class="form-group">
@@ -176,16 +199,19 @@
         <option value="Private" <%= college.collegeType === 'Private' ? 'selected' : '' %>>Private</option>
         <option value="Autonomous" <%= college.collegeType === 'Autonomous' ? 'selected' : '' %>>Autonomous</option>
       </select>
+      <div id="collegeTypeError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="affiliatedUniversity">Affiliated University</label>
       <input type="text" id="affiliatedUniversity" name="affiliatedUniversity" value="<%= college.affiliatedUniversity %>">
+      <div id="affiliatedUniversityError" class="error-message"></div>
     </div>
 
     <div class="form-group">
       <label for="collegeLogo">College Logo</label>
       <input type="file" id="collegeLogo" name="collegeLogo" accept="image/*">
+      <div id="collegeLogoError" class="error-message"></div>
       <% if (college.collegeLogo && college.collegeLogo.url) { %>
         <p>Current Logo:</p>
         <img src="<%= college.collegeLogo.url %>" alt="Current Logo">
@@ -199,3 +225,88 @@
     </div>
   </form>
 </div>
+
+<script>
+  document.getElementById("editCollegeForm").addEventListener("submit", function (event) {
+    let isValid = true;
+
+    // Get input fields
+    const collegeInput = document.getElementById("college");
+    const emailInput = document.getElementById("email");
+    const collegeIdInput = document.getElementById("collegeId");
+
+    // Get error message elements
+    const collegeError = document.getElementById("collegeError");
+    const emailError = document.getElementById("emailError");
+    const collegeIdError = document.getElementById("collegeIdError");
+
+    // Reset errors and styles
+    collegeError.textContent = "";
+    emailError.textContent = "";
+    collegeIdError.textContent = "";
+    collegeInput.classList.remove("error-border");
+    emailInput.classList.remove("error-border");
+    collegeIdInput.classList.remove("error-border");
+
+    // Validate College Name
+    if (collegeInput.value.trim() === "") {
+      collegeError.textContent = "College name is required.";
+      collegeInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Email
+    if (emailInput.value.trim() === "") {
+      emailError.textContent = "Email is required.";
+      emailInput.classList.add("error-border");
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+      emailError.textContent = "Please enter a valid email address.";
+      emailInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate College ID
+    if (collegeIdInput.value.trim() === "") {
+      collegeIdError.textContent = "College ID is required.";
+      collegeIdInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input, select, textarea").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.type === "file") {
+        if (this.files.length > 0) {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      } else {
+        if (this.value.trim() !== "") {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      }
+    });
+  });
+
+  // Bootstrap validation
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
