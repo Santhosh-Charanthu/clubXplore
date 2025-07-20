@@ -452,176 +452,115 @@ module.exports.showEventEdit = async (req, res) => {
 };
 
 module.exports.updateEvent = async (req, res) => {
-  const eventId = decodeURIComponent(req.params.eventId);
-  const clubName = decodeURIComponent(req.params.clubName);
-  try {
-    let event = await Event.findById(eventId);
+  const { clubName, eventId } = req.params;
+  console.log("req.params:", req.params); // Make sure eventId is there
 
+  try {
+    const club = await Club.findOne({ ClubName: clubName });
+    if (!club) {
+      req.flash("error", "Club not found!");
+      return res.redirect("/clubRegistration");
+    }
+
+    console.log(eventId);
+    const event = await Event.findById(eventId);
     if (!event) {
       req.flash("error", "Event not found!");
       return res.redirect(`/${clubName}/profile`);
     }
 
-    // Update event name if provided
-    if (req.body.eventId && req.body.eventid !== event.eventId) {
-      event.eventId = req.body.eventId.trim();
-    }
+    // Update basic fields
+    let {
+      eventName,
+      eventDetails,
+      visibility,
+      branchVisibility,
+      branchName,
+      startDate,
+      endDate,
+      registrationDeadline,
+      mode,
+      venue,
+      meetingLink,
+      coordinators,
+      registrationRequired,
+      participantLimit,
+      eligibility,
+      teamSize,
+      rewards,
+      sponsors,
+      agenda,
+      approvalStatus,
+      formFields,
+      deletedFields,
+    } = req.body;
 
-    // Update event details if provided
-    if (req.body.eventDetails) {
-      event.eventDetails = req.body.eventDetails.trim();
-    }
-
-    // Update event image if a new file is uploaded
+    // Optional: Handle new image upload
     if (req.file) {
-      event.image = { url: req.file.path, filename: req.file.filename };
-    }
-
-    // Update visibility field with validation
-    if (req.body.visibility) {
-      const validVisibility = ["collegeExclusive", "openToAll"];
-      if (validVisibility.includes(req.body.visibility)) {
-        event.visibility = req.body.visibility;
-      } else {
-        throw new Error(
-          "Invalid visibility value. Must be 'collegeExclusive' or 'openToAll'."
-        );
+      if (event.image && event.image.fileName) {
+        await cloudinary.uploader.destroy(event.image.fileName);
       }
-    } else {
-      // Since visibility is required in the schema, ensure it's always set
-      event.visibility = event.visibility || "collegeExclusive"; // Fallback to existing or default
+      event.image.url = req.file.path;
+      event.image.fileName = req.file.filename;
     }
+    mode = req.body.mode?.toLowerCase();
 
-    // Handle formFields with validation
-    if (req.body.formFields) {
-      let { label, type, isRequired, originalLabel } = req.body.formFields;
+    event.eventName = eventName;
+    event.eventDetails = eventDetails;
+    event.visibility = visibility;
+    event.branchVisibility = branchVisibility;
+    event.branchName = branchName;
+    event.startDate = startDate;
+    event.endDate = endDate;
+    event.registrationDeadline = registrationDeadline;
+    event.mode = mode;
+    event.venue = venue;
+    event.meetingLink = meetingLink;
+    event.coordinators = Array.isArray(coordinators)
+      ? coordinators
+      : Object.values(coordinators);
+    event.registrationRequired = registrationRequired === "on";
+    event.participantLimit = participantLimit;
+    event.eligibility = eligibility;
+    event.teamSize = teamSize;
+    event.rewards = rewards;
+    event.sponsors = sponsors;
+    event.agenda = agenda;
+    event.approvalStatus = approvalStatus;
 
-      // Ensure arrays and filter out empty values
-      label = Array.isArray(label) ? label : [label].filter(Boolean);
-      type = Array.isArray(type) ? type : [type].filter(Boolean);
-      isRequired = Array.isArray(isRequired) ? isRequired : [];
-      originalLabel = Array.isArray(originalLabel)
-        ? originalLabel
-        : [originalLabel].filter(Boolean);
+    // Handle form field updates
+    const updatedFormFields = [];
+    const labels = Array.isArray(formFields.label)
+      ? formFields.label
+      : [formFields.label];
+    const types = Array.isArray(formFields.type)
+      ? formFields.type
+      : [formFields.type];
+    const isRequireds = formFields.isRequired || [];
 
-      // Handle deletions
-      let deletedFields = req.body.deletedFields
-        ? req.body.deletedFields.split(",").filter(Boolean)
-        : [];
-
-      // Remove deleted fields
-      event.formFields = event.formFields.filter(
-        (field) => !deletedFields.includes(field.label)
-      );
-
-      // Create a map of existing fields
-      const existingFieldsMap = new Map();
-      event.formFields.forEach((field, index) => {
-        existingFieldsMap.set(index, field);
+    for (let i = 0; i < labels.length; i++) {
+      updatedFormFields.push({
+        label: labels[i],
+        type: types[i],
+        isRequired: isRequireds.includes(String(i)),
       });
-
-      // Validate and process submitted fields
-      const updatedFieldsMap = new Map();
-      const validFieldTypes = ["text", "email", "number", "checkbox"]; // Match schema enum
-
-      for (let index = 0; index < label.length; index++) {
-        const fieldLabel = String(label[index]).trim();
-        const fieldType = String(type[index] || "text").trim();
-        const origLabel = originalLabel[index] || "";
-
-        // Validate field type against schema enum
-        if (!validFieldTypes.includes(fieldType)) {
-          throw new Error(
-            `Invalid field type: ${fieldType}. Must be one of ${validFieldTypes.join(
-              ", "
-            )}.`
-          );
-        }
-
-        // Validate label (ensure it's not empty after trimming)
-        if (!fieldLabel) {
-          throw new Error("Field label cannot be empty.");
-        }
-
-        const fieldData = {
-          label: fieldLabel,
-          type: fieldType,
-          isRequired:
-            isRequired.includes(String(index)) ||
-            isRequired[index] === "true" ||
-            isRequired[index] === "on",
-        };
-
-        // Check if this is an existing field by matching originalLabel
-        let matchedIndex = -1;
-        for (let [idx, field] of existingFieldsMap) {
-          if (field.label === origLabel) {
-            matchedIndex = idx;
-            break;
-          }
-        }
-
-        if (origLabel && matchedIndex !== -1) {
-          // Update existing field
-          updatedFieldsMap.set(matchedIndex, fieldData);
-        } else if (!event.formFields.some((f) => f.label === fieldLabel)) {
-          // Add as new field only if the label doesn’t already exist
-          updatedFieldsMap.set(
-            event.formFields.length + updatedFieldsMap.size,
-            fieldData
-          );
-        }
-      }
-
-      // Rebuild formFields array
-      const newFormFields = [];
-      for (let i = 0; i < event.formFields.length; i++) {
-        if (updatedFieldsMap.has(i)) {
-          newFormFields.push(updatedFieldsMap.get(i)); // Updated field
-        } else if (!deletedFields.includes(event.formFields[i].label)) {
-          newFormFields.push(event.formFields[i]); // Unchanged field
-        }
-      }
-      // Add new fields
-      for (let [idx, field] of updatedFieldsMap) {
-        if (idx >= event.formFields.length) {
-          newFormFields.push(field);
-        }
-      }
-
-      event.formFields = newFormFields;
-
-      if (req.body.teamSize && req.body.teamSize.min && req.body.teamSize.max) {
-        const minTeamSize = parseInt(req.body.teamSize.min);
-        const maxTeamSize = parseInt(req.body.teamSize.max);
-
-        if (
-          !isNaN(minTeamSize) &&
-          !isNaN(maxTeamSize) &&
-          minTeamSize > 0 &&
-          maxTeamSize >= minTeamSize
-        ) {
-          event.teamSize = {
-            min: minTeamSize,
-            max: maxTeamSize,
-          };
-        } else {
-          throw new Error(
-            "Invalid team size. Make sure min and max are valid and max ≥ min."
-          );
-        }
-      }
     }
 
-    // Save the updated event
+    const deleted = deletedFields ? deletedFields.split(",") : [];
+
+    // Filter out deleted fields
+    event.formFields = updatedFormFields.filter(
+      (field) => !deleted.includes(field.label)
+    );
+
     await event.save();
-    console.log("Event updated successfully:", event);
+
     req.flash("success", "Event updated successfully!");
-    res.redirect(`/${clubName}/event/${eventId}`);
-  } catch (error) {
-    console.error("🔥 Server Error:", error);
-    req.flash("error", `Failed to update event: ${error.message}`);
-    res.redirect(`/${clubName}/edit/${eventId}`);
+    res.redirect(`/${clubName}/profile`);
+  } catch (err) {
+    console.error("Error updating event:", err);
+    req.flash("error", "Failed to update event.");
+    res.redirect(`/${clubName}/event/${req.params.id}/edit`);
   }
 };
 

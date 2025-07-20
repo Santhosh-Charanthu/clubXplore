@@ -1,243 +1,435 @@
 <%- include("../layouts/boilerplate") %>
 
 <style>
-  .club-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 70px;
-    padding: 40px;
+  /* Reset and base styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  .club-container a {
-    text-decoration: none;
-    color: black;
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      sans-serif;
+    background: #ffffff;
+    min-height: 100vh;
+    color: #000000;
   }
 
-  .club-card {
-    width: 25%;
-    min-width: 300px;
-    max-width: 300px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-
-  .club-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .card-img-top {
-    height: 200px;
-    width: 100%;
-    object-fit: cover;
-  }
-
-  .card-body {
-    padding: 15px;
-    text-align: center;
-  }
-
-  .card-title {
-    margin-bottom: 10px;
-  }
-
+  /* Top navigation bar */
   .navbar {
-    display: flex;
-    justify-content: end;
-    margin-right: 20px;
+    background: #ffffff !important;
+    padding: 20px 40px;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .student-registation-form-link {
+    position: absolute;
+    top: 15px;
+    right: 40px;
   }
 
   #get-link {
+    background: #6366f1;
     color: white;
-    background-color: rgb(7, 136, 215);
     border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
   }
 
-  @media (max-width: 1200px) {
-    .club-card {
-      width: 33.33%;
-    }
+  #get-link:hover {
+    background: #4f46e5;
   }
 
-  @media (max-width: 900px) {
-    .club-card {
-      width: 50%;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .club-card {
-      width: 100%;
-    }
-  }
-
-  .navbar {
-    margin-top: -20px;
-  }
-
-  .button-container {
+  /* Main college header section */
+  .college-header {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    margin-left: 50px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 100px 60px 100px;
+    background: #ffffff;
+  }
+
+  /* College logo */
+  .college-logo {
+    flex: 0 0 auto;
+  }
+
+  .college-logo img {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+  }
+
+  /* College name and buttons in center */
+  .college-details {
+    flex: 1;
+    text-align: center;
+    margin: 0 60px;
+  }
+
+  .college-details h1 {
+    font-size: 52px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 35px;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  .college-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
   }
 
   .edit-button {
-    padding: 10px 20px;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    background: transparent;
+    border: 2px solid #6366f1;
+    color: #6366f1;
+    padding: 14px 28px;
+    border-radius: 10px;
     font-size: 16px;
-    transition: background 0.3s;
-    width: 140px;
-    text-align: center;
-  }
-  .create-club-button {
-    padding: 10px 20px;
-    color: white;
-    border: none;
-    border-radius: 6px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
-    width: 140px;
-    left: 500px;
-    text-align: center;
-  }
-
-  .edit-button {
-    background-color: #4caf50;
+    transition: all 0.2s ease;
   }
 
   .edit-button:hover {
-    background-color: #45a049;
+    background: #6366f1;
+    color: white;
   }
 
   .create-club-button {
-    background-color: #2196f3;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
   }
 
   .create-club-button:hover {
-    background-color: #1976d2;
+    transform: translateY(-1px);
   }
 
-  .password-modal {
+  /* Club count on the right */
+  .club-count {
+    flex: 0 0 auto;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000000;
+  }
+
+  .club-count b {
+    font-weight: 700;
+  }
+
+  /* Section heading */
+  div[style*="margin-top: 40px"] {
+    margin-top: 80px !important;
+    margin-left: 100px !important;
+    margin-bottom: 50px !important;
+  }
+
+  div[style*="margin-top: 40px"] p {
+    font-size: 36px !important;
+    font-weight: 600 !important;
+    color: #000000 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide the hr */
+  hr {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
   }
 
-  .password-modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
+  /* Club container */
+  .club-container {
+    display: flex;
+    gap: 50px;
+    padding: 0 100px 80px 100px;
+    flex-wrap: wrap;
+  }
+
+  /* Individual club cards */
+  .club-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 50px 40px;
+    width: 320px;
     text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   }
 
-  .password-modal-content h3 {
-    margin-bottom: 20px;
+  .club-card:hover {
+    background: #f1f5f9;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
   }
 
-  .password-modal-content input {
+  /* Club logo in card */
+  .card-img-top {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    height: 180px;
+    border-radius: 12px; /* Optional: Slightly rounded corners */
+    object-fit: cover;
+    margin-bottom: 20px;
+    display: block;
   }
 
-  .password-modal-content button {
-    padding: 10px 20px;
-    background-color: #4caf50;
+  /* Card body */
+  .card-body {
+    padding: 0;
+  }
+
+  .card-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .card-body p {
+    font-size: 18px;
+    color: #64748b;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .card-body strong {
+    color: #475569;
+    font-weight: 600;
+  }
+
+  /* No clubs message */
+  .club-container > p {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    color: #64748b;
+    margin: 50px 0;
+    font-weight: 500;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 1400px) {
+    .college-header {
+      padding: 60px 80px 50px 80px;
+    }
+
+    .college-details h1 {
+      font-size: 46px;
+    }
+
+    div[style*="margin-left: 50px"] {
+      margin-left: 80px !important;
+    }
+
+    .club-container {
+      padding: 0 80px 60px 80px;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .college-header {
+      padding: 50px 60px 40px 60px;
+    }
+
+    .college-details {
+      margin: 0 40px;
+    }
+
+    .college-details h1 {
+      font-size: 40px;
+    }
+
+    div[style*="margin-left: 50px"] {
+      margin-left: 60px !important;
+    }
+
+    div[style*="margin-left: 50px"] p {
+      font-size: 32px !important;
+    }
+
+    .club-container {
+      padding: 0 60px 60px 60px;
+      gap: 40px;
+    }
+
+    .club-card {
+      width: 300px;
+    }
+  }
+
+  @media (max-width: 968px) {
+    .college-header {
+      flex-direction: column;
+      gap: 40px;
+      text-align: center;
+      padding: 40px 40px 30px 40px;
+    }
+
+    .college-details {
+      margin: 0;
+      order: 1;
+    }
+
+    .club-count {
+      order: 2;
+      font-size: 24px;
+    }
+
+    .college-logo {
+      order: 0;
+    }
+
+    .college-logo img {
+      width: 120px;
+      height: 120px;
+    }
+
+    .college-details h1 {
+      font-size: 36px;
+      margin-bottom: 25px;
+    }
+
+    div[style*="margin-left: 50px"] {
+      margin-left: 40px !important;
+    }
+
+    div[style*="margin-left: 50px"] p {
+      font-size: 28px !important;
+    }
+
+    .club-container {
+      padding: 0 40px 60px 40px;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .navbar {
+      padding: 15px 20px;
+    }
+
+    .student-registation-form-link {
+      right: 20px;
+    }
+
+    .college-header {
+      padding: 30px 20px 20px 20px;
+      gap: 30px;
+    }
+
+    .college-buttons {
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .edit-button,
+    .create-club-button {
+      width: 200px;
+    }
+
+    .college-details h1 {
+      font-size: 28px;
+    }
+
+    .club-card {
+      width: 100%;
+      max-width: 300px;
+      padding: 40px 30px;
+    }
+
+    div[style*="margin-left: 50px"] {
+      margin-left: 20px !important;
+    }
+
+    div[style*="margin-left: 50px"] p {
+      font-size: 24px !important;
+    }
+
+    .club-container {
+      padding: 0 20px 60px 20px;
+    }
+  }
+  .club-navigation {
+    text-decoration: none;
+  }
+  .student-registation-form-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensure it stays on top */
+  }
+
+  #get-link {
+    padding: 10px 16px;
+    background-color: #4f46e5; /* Indigo-600 like Figma theme */
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.3s ease;
   }
 
-  .password-modal-content button:hover {
-    background-color: #45a049;
-  }
-
-  .password-modal-content .close-btn {
-    background-color: #f44336;
-    margin-left: 10px;
-  }
-
-  .password-modal-content .close-btn:hover {
-    background-color: #d32f2f;
-  }
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .logo {
-    display: flex;
-    flex-direction: column; /* stack children vertically */
-    align-items: center; /* center horizontally */
-    margin-right: 30px;
-  }
-
-  .logo img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover; /* keep aspect ratio and crop if needed */
-  }
-
-  .logo-buttons {
-    display: flex; /* place buttons side-by-side */
-    gap: 10px; /* space between buttons */
-    margin-top: 10px; /* space between image and buttons */
+  #get-link:hover {
+    background-color: #4338ca; /* Indigo-700 */
   }
 </style>
 
-<nav class="navbar bg-body-tertiary">
-  <div class="student-registation-form-link">
-    <form action="/collegeProfile/<%= college._id %>/get-link" method="post">
-      <button type="submit" id="get-link">Get student Registration Url</button>
-    </form>
-  </div>
-</nav>
+<div class="student-registation-form-link">
+  <form action="/collegeProfile/<%= college._id %>/get-link" method="post">
+    <button type="submit" id="get-link">Get student Registration Url</button>
+  </form>
+</div>
 
-<div class="container">
-  <div class="logo">
+<div class="college-header">
+  <div class="college-logo">
     <img src="<%= college.collegeLogo.url %>" alt="College Logo" />
-    <div class="logo-buttons">
+  </div>
+
+  <div class="college-details">
+    <h1><%= college.college %></h1>
+    <div class="college-buttons">
       <button
-        class="btn btn-success"
+        class="edit-button"
         onclick="location.href='/college/edit/<%= college._id %>'"
       >
         Edit
       </button>
-      <button class="btn btn-dark" onclick="location.href='/clubRegistration'">
+      <button
+        class="create-club-button"
+        onclick="location.href='/clubRegistration'"
+      >
         Create Club
       </button>
     </div>
   </div>
-  <h1 class="col-6" style="margin-bottom: 60px; margin-left: 0px">
-    <%= college.college %>
-  </h1>
-  <div class="clubs-number">
-    <span style="font-size: 25px"
-      ><b>Clubs: </b><%= college.clubs.length %></span
-    >
+
+  <div class="club-count">
+    <span><b>Clubs:</b> <%= college.clubs.length %></span>
   </div>
 </div>
+
 <hr />
 
 <div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
@@ -246,56 +438,20 @@
 
 <div class="club-container">
   <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
-  <div class="club-card" onclick="showPasswordModal('<%= club.ClubName %>')">
-    <img
-      src="<%= club.ClubLogo.url %>"
-      class="card-img-top"
-      alt="<%= club.ClubName %>"
-    />
-    <div class="card-body">
-      <h3 class="card-title"><%= club.ClubName %></h3>
-      <p><strong>Total Events:</strong> <%= club.events.length %></p>
+  <a href="/clubRegistration/login" class="club-navigation">
+    <div class="club-card">
+      <img
+        src="<%= club.ClubLogo.url %>"
+        class="card-img-top"
+        alt="<%= club.ClubName %>"
+      />
+      <div class="card-body">
+        <h3 class="card-title"><%= club.ClubName %></h3>
+        <p><strong>Total Events:</strong> <%= club.events.length %></p>
+      </div>
     </div>
-  </div>
+  </a>
   <% }) %> <% } else { %>
   <p>No clubs available.</p>
   <% } %>
 </div>
-
-<div id="passwordModal" class="password-modal">
-  <div class="password-modal-content">
-    <h3>Enter Password for <span id="clubName"></span></h3>
-    <form id="clubPasswordForm" action="/club/verify-password" method="POST">
-      <input type="hidden" name="ClubName" id="clubNameInput" />
-      <input
-        type="password"
-        name="password"
-        placeholder="Club Password"
-        required
-      />
-      <button type="submit">Submit</button>
-      <button type="button" class="close-btn" onclick="closePasswordModal()">
-        Cancel
-      </button>
-    </form>
-  </div>
-</div>
-
-<script>
-  function showPasswordModal(clubName) {
-    document.getElementById("clubName").textContent = clubName;
-    document.getElementById("clubNameInput").value = clubName;
-    document.getElementById("passwordModal").style.display = "flex";
-  }
-
-  function closePasswordModal() {
-    document.getElementById("passwordModal").style.display = "none";
-    document.getElementById("clubPasswordForm").reset();
-  }
-
-  document.getElementById("passwordModal").addEventListener("click", (e) => {
-    if (e.target === document.getElementById("passwordModal")) {
-      closePasswordModal();
-    }
-  });
-</script>

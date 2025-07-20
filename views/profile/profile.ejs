@@ -1,200 +1,315 @@
 <%- include("../layouts/boilerplate") %>
 
 <style>
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  body {
+    font-family: "Inter", sans-serif;
+    background: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding: 0;
   }
 
-  .btn-container {
+  .club-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 100px 30px 100px;
+    background: #ffffff;
+    flex-wrap: wrap;
+  }
+
+  .club-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .club-logo img {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+
+  .club-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: starts;
+  }
+
+  .club-details h1 {
+    font-size: 52px;
+    font-weight: 700;
+    margin-bottom: 25px;
+  }
+
+  .club-details p {
+    font-size: 18px;
+    color: #475569;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .club-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     margin-top: 20px;
+  }
+
+  .edit-button {
+    background: transparent;
+    border: 2px solid #6366f1;
+    color: #6366f1;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .edit-button:hover {
+    background: #6366f1;
+    color: white;
+  }
+
+  .delete-button {
+    background: #1f2937;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .delete-button:hover {
+    background: #111827;
+  }
+
+  .create-event-button {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .create-event-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .event-section-title {
+    font-size: 36px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 80px;
+    margin-bottom: 50px;
   }
 
   .card-container {
     display: flex;
+    gap: 50px;
+    padding: 0 100px 80px 100px;
     flex-wrap: wrap;
-    justify-content: start;
-    gap: 70px;
-    margin-top: 20px;
-    margin-left: 60px;
-    padding: 10px;
+    justify-content: center;
   }
 
   .card {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
-    width: 20rem;
-    height: 350px;
-    display: flex;
-    flex-direction: column;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 320px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   }
 
   .card:hover {
-    transform: scale(1.05);
+    background: #f1f5f9;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
   }
 
   .card-img-top {
-    border-radius: 10px 10px 0 0;
-    object-fit: cover;
     width: 100%;
-    height: 200px;
-  }
-
-  .card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 15px;
-    overflow: hidden;
+    height: 180px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    display: block;
   }
 
   .card-title {
-    margin-bottom: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
   }
 
   .card-text {
-    margin-bottom: 10px;
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 8px;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
   }
 
-  .card-text small {
-    margin-top: auto;
-  }
-
-  .post {
+  .no-events {
     font-size: 20px;
+    text-align: center;
+    margin-top: 60px;
+    color: #94a3b8;
   }
 
-  .content-information .club-name,
-  .club-line {
+  /* Responsive adjustments */
+  @media (max-width: 968px) {
+    .club-header {
+      flex-direction: column;
+      gap: 40px;
+      text-align: center;
+    }
+
+    .club-details {
+      margin: 0;
+    }
+
+    .club-details h1 {
+      font-size: 36px;
+    }
+
+    .event-section-title {
+      font-size: 28px;
+    }
+  }
+
+  .club-logo {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+
+  .club-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+
+  .edit-icon-wrapper {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+  }
+
+  .edit-icon {
+    font-size: 22px;
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .edit-icon:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .popup-menu {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    background: #1a1a1a;
+    border: 1px solid #444;
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 999;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .popup-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100px;
     text-align: left;
   }
 
-  .content-information {
-    margin: 0 30px 30px 30px;
+  .popup-button:hover {
+    background-color: #555;
   }
 
-  .create-post {
-    /* margin: 0 150px 0 20px; */
-    text-align: center;
+  .delete-button {
+    background-color: #b00020;
   }
 
-  .wide-button {
-    min-width: 100px; /* Adjust width as needed */
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .logo {
-    display: flex;
-    flex-direction: column; /* stack children vertically */
-    align-items: center; /* center horizontally */
-    margin-right: 30px;
-  }
-
-  .logo img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover; /* keep aspect ratio and crop if needed */
-  }
-
-  .logo-buttons {
-    display: flex; /* place buttons side-by-side */
-    gap: 10px; /* space between buttons */
-    margin-top: 10px; /* space between image and buttons */
+  .delete-button:hover {
+    background-color: #e3002a;
   }
 </style>
 
-<div class="container">
-  <div class="logo">
+<!-- Header -->
+<div class="club-header">
+  <div class="club-logo">
     <img src="<%= club.ClubLogo.url %>" alt="Club Logo" />
 
-    <% if(user.role !== "student") {%>
-    <div class="logo-buttons">
-      <a href="/<%= club.ClubName %>/edit">
-        <button class="btn btn-success">Edit</button>
-      </a>
-
-      <!-- Delete Form Trigger -->
-      <form
-        id="deleteForm"
-        method="POST"
-        action="/<%= club.ClubName %>/delete?_method=DELETE"
-        style="margin: 0"
-      >
-        <button type="button" class="btn btn-dark" onclick="confirmDeletion()">
-          Delete
-        </button>
-      </form>
-    </div>
-    <% } %>
-  </div>
-
-  <div class="content-information">
-    <h1 class="club-name"><%= club.ClubName.toUpperCase() %></h1>
-    <p class="club-line"><%= club.clubDescription %></p>
-  </div>
-  <div class="create-post">
-    <span class="post"><b>Posts: </b><%= club.events.length %> </span>
     <% if(user.role !== "student") { %>
-    <span>
-      <div class="btn-container success">
-        <a
-          href="/<%= club.ClubName %>/createpost"
-          class="btn btn-success wide-button"
-          >Create Event</a
+    <div class="edit-icon-wrapper">
+      <i class="fa fa-pencil edit-icon" onclick="togglePopup(event)"></i>
+
+      <div class="popup-menu" id="popupMenu">
+        <a href="/<%= club.ClubName %>/edit">
+          <button class="popup-button">Edit</button>
+        </a>
+        <form
+          method="POST"
+          action="/<%= club.ClubName %>/delete?_method=DELETE"
+          style="margin: 0"
         >
+          <button
+            type="button"
+            class="popup-button delete-button"
+            onclick="confirmDeletion()"
+          >
+            Delete
+          </button>
+        </form>
       </div>
-    </span>
+    </div>
     <% } %>
+  </div>
+
+  <div class="club-details">
+    <h1><%= club.ClubName.toUpperCase() %></h1>
+    <p><%= club.clubDescription %></p>
+  </div>
+
+  <div class="create-event">
+    <a href="/<%= club.ClubName %>/createpost">
+      <button class="create-event-button">Create Event</button>
+    </a>
   </div>
 </div>
 
-<hr />
-
-<h2 style="margin-left: 600px">Events for <%= club.ClubName %></h2>
-
-<div class="card-container">
-  <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
-  <a
-    href="/<%= club.ClubName %>/event/<%= event._id %>"
-    style="text-decoration: none; color: inherit"
-  >
-    <div class="card">
-      <img
-        src="<%= event.image.url %>"
-        class="card-img-top"
-        alt="Event Image"
-      />
-      <div class="card-body">
-        <h5 class="card-title"><%= event.eventName %></h5>
-        <p class="card-text"><%= event.eventDetails %></p>
-        <p class="card-text">
-          <small class="text-muted">
-            <%= event.visibility === 'collegeExclusive' ? 'College Exclusive' :
-            'Open to All' %>
-          </small>
-        </p>
-      </div>
-    </div>
-  </a>
-  <% }) %> <% } else { %>
-  <p>No events created yet.</p>
-  <% } %>
-</div>
-
-<!-- Confirmation Modal -->
+<!-- Modal -->
 <div
   id="confirmModal"
   style="
@@ -238,17 +353,65 @@
   </div>
 </div>
 
-<!-- JavaScript -->
+<!-- JS -->
 <script>
   function confirmDeletion() {
     document.getElementById("confirmModal").style.display = "flex";
   }
-
   function closeModal() {
     document.getElementById("confirmModal").style.display = "none";
   }
-
   function submitForm() {
     document.getElementById("deleteForm").submit();
   }
+
+  function togglePopup(event) {
+    event.stopPropagation(); // Prevent triggering outside click
+    const popup = document.getElementById("popupMenu");
+    popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+  }
+
+  // Hide popup when clicking outside
+  document.addEventListener("click", function (event) {
+    const popup = document.getElementById("popupMenu");
+    const icon = document.querySelector(".edit-icon");
+
+    if (
+      popup &&
+      !popup.contains(event.target) &&
+      !icon.contains(event.target)
+    ) {
+      popup.style.display = "none";
+    }
+  });
 </script>
+
+<!-- Event Section -->
+<div class="event-section-title">Events by <%= club.ClubName %></div>
+
+<div class="card-container">
+  <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
+  <a
+    href="/<%= club.ClubName %>/event/<%= event._id %>"
+    style="text-decoration: none; color: inherit"
+  >
+    <div class="card">
+      <img
+        src="<%= event.image.url %>"
+        class="card-img-top"
+        alt="Event Image"
+      />
+      <h3 class="card-title"><%= event.eventName %></h3>
+      <p class="card-text"><%= event.eventDetails %></p>
+      <p class="card-text">
+        <small
+          ><%= event.visibility === 'collegeExclusive' ? 'College Exclusive' :
+          'Open to All' %></small
+        >
+      </p>
+    </div>
+  </a>
+  <% }) %> <% } else { %>
+  <p class="no-events">No events created yet.</p>
+  <% } %>
+</div>

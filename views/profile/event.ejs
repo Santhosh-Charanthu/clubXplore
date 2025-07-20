@@ -222,7 +222,7 @@
           action="/<%= event.author.ClubName %>/event/<%= event._id %>/register"
           method="get"
         >
-        <% if (new Date() > new Date(event.endDate)) { %>
+        <% if (new Date() > new Date(event.registrationDeadline)) { %>
             <p class="registration-ended-status"> Registration Completed</p>
           <% } else {%>
           <button type="submit" class="btn btn-success submit-btn">
