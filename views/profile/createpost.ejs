@@ -11,9 +11,21 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 
-  .form-control:focus {
-    border-color: #4b6cb7;
-    box-shadow: 0 0 5px rgba(75, 108, 183, 0.5);
+  /* Red Border for Invalid Inputs */
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  /* Blue Border on Focus */
+  .form-control:focus, .form-select:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
   }
 
   .field-container {
@@ -24,10 +36,10 @@
   .field-item {
     display: flex;
     align-items: center;
-    gap: 15px; /* Increased gap for better spacing */
+    gap: 15px;
     margin-bottom: 15px;
     background: #f9f9f9;
-    padding: 12px; /* Slightly more padding */
+    padding: 12px;
     border-radius: 5px;
     transition: transform 0.2s ease;
   }
@@ -38,23 +50,24 @@
 
   .field-item input[type="text"],
   .field-item select {
-    flex: 1; /* Allows inputs to take equal space */
-    min-width: 0; /* Prevents overflow */
+    flex: 1;
+    min-width: 0;
+    width: 100%; /* Ensure fields scale with container */
   }
 
   .field-item .form-check-label {
-    margin-right: 10px; /* Space before the X */
-    white-space: nowrap; /* Prevents wrapping */
+    margin-right: 10px;
+    white-space: nowrap;
   }
 
   .btn-outline-primary {
-    border-color: #4b6cb7;
-    color: #4b6cb7;
+    border-color: #007bff;
+    color: #007bff;
     transition: all 0.3s ease;
   }
 
   .btn-outline-primary:hover {
-    background-color: #4b6cb7;
+    background-color: #007bff;
     color: #fff;
     transform: translateY(-2px);
   }
@@ -75,32 +88,12 @@
     border: none;
     padding: 12px 0;
     transition: all 0.3s ease;
+    width: 100%; /* Ensure submit button scales with container */
   }
 
   .btn-success:hover {
     background-color: #218838;
     transform: translateY(-2px);
-  }
-
-  .remove-x {
-    background: none;
-    border: none;
-    color: #dc3545;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .remove-x:hover {
-    color: #c82333;
-    transform: scale(1.2);
   }
 
   @media (max-width: 768px) {
@@ -111,19 +104,19 @@
       padding: 10px;
     }
     .field-item {
-      flex-wrap: wrap; /* Wraps content on small screens */
+      flex-wrap: wrap;
       gap: 10px;
     }
     .field-item input[type="text"],
     .field-item select {
-      width: 100%; /* Full width on small screens */
+      width: 100%;
     }
   }
 </style>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-8 col-lg-10"> <!-- Increased container width -->
       <h3 class="text-center mb-4">Create New Event</h3>
 
       <form
@@ -132,6 +125,7 @@
         novalidate
         class="needs-validation event-form shadow p-4 rounded"
         enctype="multipart/form-data"
+        id="createEventForm"
       >
         <!-- Event Name -->
         <div class="mb-4">
@@ -144,14 +138,12 @@
             class="form-control form-control-lg"
             required
           />
-          <div class="invalid-feedback">Please enter an event name.</div>
+          <div id="eventNameError" class="error-message"></div>
         </div>
 
         <!-- Description -->
         <div class="mb-4">
-          <label for="description" class="form-label fw-bold"
-            >Description</label
-          >
+          <label for="description" class="form-label fw-bold">Description</label>
           <textarea
             id="description"
             name="eventDetails"
@@ -160,7 +152,7 @@
             rows="4"
             required
           ></textarea>
-          <div class="invalid-feedback">Please enter event details.</div>
+          <div id="descriptionError" class="error-message"></div>
         </div>
 
         <!-- Image Upload -->
@@ -173,7 +165,7 @@
             class="form-control"
             required
           />
-          <div class="invalid-feedback">Please upload an image.</div>
+          <div id="imageError" class="error-message"></div>
         </div>
 
         <!-- Visibility -->
@@ -202,7 +194,7 @@
             />
             <label class="form-check-label" for="openToAll">Open to All</label>
           </div>
-          <div class="invalid-feedback">Please select a visibility option.</div>
+          <div id="visibilityError" class="error-message"></div>
         </div>
 
         <div class="mb-4">
@@ -232,7 +224,7 @@
               >Open to All Branches</label
             >
           </div>
-          <div class="invalid-feedback">Please select a visibility option.</div>
+          <div id="branchVisibilityError" class="error-message"></div>
         </div>
 
         <div class="mb-4">
@@ -246,7 +238,7 @@
             class="form-control"
             rows="4"
           ></input>
-          <div class="invalid-feedback">Please Enter Branch Name</div>
+          <div id="branchNameError" class="error-message"></div>
         </div>
 
         <!-- Event Dates -->
@@ -261,6 +253,7 @@
             class="form-control"
             required
           />
+          <div id="startDateError" class="error-message"></div>
         </div>
 
         <div class="mb-3">
@@ -274,6 +267,7 @@
             class="form-control"
             required
           />
+          <div id="endDateError" class="error-message"></div>
         </div>
 
         <div class="mb-3">
@@ -287,6 +281,7 @@
             class="form-control"
             required
           />
+          <div id="registrationDeadlineError" class="error-message"></div>
         </div>
 
         <!-- Mode -->
@@ -298,6 +293,7 @@
             <option value="offline">Offline</option>
             <option value="hybrid">Hybrid</option>
           </select>
+          <div id="modeError" class="error-message"></div>
         </div>
 
         <!-- Venue & Meeting Link -->
@@ -306,6 +302,7 @@
             >Venue (if offline)</label
           >
           <input type="text" id="venue" name="venue" class="form-control" />
+          <div id="venueError" class="error-message"></div>
         </div>
 
         <div class="mb-3">
@@ -318,14 +315,15 @@
             name="meetingLink"
             class="form-control"
           />
+          <div id="meetingLinkError" class="error-message"></div>
         </div>
 
         <!-- Coordinators -->
         <div class="mb-3">
           <label class="form-label fw-bold">Event Coordinators</label>
           <div id="coordinatorContainer">
-            <div class="row g-2 mb-2">
-              <div class="col-md-6">
+            <div class="row g-2 mb-2 align-items-center coordinator-row">
+              <div class="col-md-5">
                 <input
                   type="text"
                   name="coordinators[0][name]"
@@ -333,7 +331,7 @@
                   placeholder="Name"
                 />
               </div>
-              <div class="col-md-6">
+              <div class="col-md-5">
                 <input
                   type="text"
                   name="coordinators[0][contact]"
@@ -341,12 +339,15 @@
                   placeholder="Contact"
                 />
               </div>
+              <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-danger btn-sm remove-coordinator">Remove</button>
+              </div>
             </div>
           </div>
           <button
             type="button"
             id="addCoordinatorBtn"
-            class="btn btn-outline-secondary btn-sm mt-2"
+            class="btn btn-outline-primary btn-sm mt-2"
           >
             + Add Coordinator
           </button>
@@ -379,6 +380,7 @@
             name="participantLimit"
             class="form-control"
           />
+          <div id="participantLimitError" class="error-message"></div>
         </div>
 
         <div class="mb-3">
@@ -392,6 +394,7 @@
             class="form-control"
             placeholder="e.g. Only 2nd Year CSE students"
           />
+          <div id="eligibilityError" class="error-message"></div>
         </div>
 
         <div class="mb-3 row">
@@ -406,6 +409,7 @@
               class="form-control"
               value="1"
             />
+            <div id="teamSizeMinError" class="error-message"></div>
           </div>
           <div class="col-md-6">
             <label for="teamSizeMax" class="form-label fw-bold"
@@ -418,6 +422,7 @@
               class="form-control"
               value="1"
             />
+            <div id="teamSizeMaxError" class="error-message"></div>
           </div>
         </div>
 
@@ -432,6 +437,7 @@
             class="form-control"
             rows="2"
           ></textarea>
+          <div id="rewardsError" class="error-message"></div>
         </div>
 
         <div class="mb-3">
@@ -442,6 +448,7 @@
             class="form-control"
             rows="3"
           ></textarea>
+          <div id="agendaError" class="error-message"></div>
         </div>
 
         <!-- Dynamic Form Fields -->
@@ -476,8 +483,8 @@
     const fieldDiv = document.createElement("div");
     fieldDiv.classList.add("field-item");
     fieldDiv.innerHTML = `
-      <input type="text" name="formFields[label][]" placeholder="Field Name" class="form-control" required>
-      <select name="formFields[type][]" class="form-control" required>
+      <input type="text" name="formFields[label][]" placeholder="Field Name" class="form-control" required style="width: 100%;">
+      <select name="formFields[type][]" class="form-control" required style="width: 100%;">
         <option value="text">Text</option>
         <option value="email">Email</option>
         <option value="number">Number</option>
@@ -486,12 +493,12 @@
       <label class="form-check-label">
         <input type="checkbox" name="formFields[isRequired][]" value="true" class="form-check-input"> Required
       </label>
-      <button type="button" class="remove-x">×</button>
+      <button type="button" class="btn btn-danger btn-sm remove-field">Remove</button>
     `;
     document.getElementById("formFieldsContainer").appendChild(fieldDiv);
 
-    // Add remove functionality to the X button
-    fieldDiv.querySelector(".remove-x").addEventListener("click", () => {
+    // Add remove functionality to the Remove button
+    fieldDiv.querySelector(".remove-field").addEventListener("click", () => {
       fieldDiv.remove();
     });
   });
@@ -508,13 +515,13 @@
 
       row.innerHTML = `
       <div class="col-md-5">
-        <input type="text" name="coordinators[${coordinatorIndex}][name]" class="form-control" placeholder="Name" required />
+        <input type="text" name="coordinators[${coordinatorIndex}][name]" class="form-control" placeholder="Name" required style="width: 100%;" />
       </div>
       <div class="col-md-5">
-        <input type="text" name="coordinators[${coordinatorIndex}][contact]" class="form-control" placeholder="Contact" required />
+        <input type="text" name="coordinators[${coordinatorIndex}][contact]" class="form-control" placeholder="Contact" required style="width: 100%;" />
       </div>
       <div class="col-md-2 text-end">
-        <button type="button" class="remove-x">×</button>
+        <button type="button" class="btn btn-danger btn-sm remove-coordinator">Remove</button>
       </div>
     `;
 
@@ -522,16 +529,151 @@
       coordinatorIndex++;
 
       // Add remove functionality
-      row.querySelector(".remove-x").addEventListener("click", () => {
+      row.querySelector(".remove-coordinator").addEventListener("click", () => {
         row.remove();
       });
     });
 
-    (() => {
+  document.getElementById("createEventForm").addEventListener("submit", function (event) {
+    let isValid = true;
+
+    // Get input fields
+    const eventNameInput = document.getElementById("eventName");
+    const descriptionInput = document.getElementById("description");
+    const imageInput = document.getElementById("image");
+    const visibilityInputs = document.getElementsByName("visibility");
+    const branchVisibilityInputs = document.getElementsByName("branchVisibility");
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+    const registrationDeadlineInput = document.getElementById("registrationDeadline");
+    const modeInput = document.getElementById("mode");
+
+    // Get error message elements
+    const eventNameError = document.getElementById("eventNameError");
+    const descriptionError = document.getElementById("descriptionError");
+    const imageError = document.getElementById("imageError");
+    const visibilityError = document.getElementById("visibilityError");
+    const branchVisibilityError = document.getElementById("branchVisibilityError");
+    const startDateError = document.getElementById("startDateError");
+    const endDateError = document.getElementById("endDateError");
+    const registrationDeadlineError = document.getElementById("registrationDeadlineError");
+    const modeError = document.getElementById("modeError");
+
+    // Reset errors and styles
+    eventNameError.textContent = "";
+    descriptionError.textContent = "";
+    imageError.textContent = "";
+    visibilityError.textContent = "";
+    branchVisibilityError.textContent = "";
+    startDateError.textContent = "";
+    endDateError.textContent = "";
+    registrationDeadlineError.textContent = "";
+    modeError.textContent = "";
+    eventNameInput.classList.remove("error-border");
+    descriptionInput.classList.remove("error-border");
+    imageInput.classList.remove("error-border");
+    modeInput.classList.remove("error-border");
+    startDateInput.classList.remove("error-border");
+    endDateInput.classList.remove("error-border");
+    registrationDeadlineInput.classList.remove("error-border");
+
+    // Validate Event Name
+    if (eventNameInput.value.trim() === "") {
+      eventNameError.textContent = "Please enter an event name.";
+      eventNameInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Description
+    if (descriptionInput.value.trim() === "") {
+      descriptionError.textContent = "Please enter event details.";
+      descriptionInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Image Upload
+    if (imageInput.files.length === 0) {
+      imageError.textContent = "Please upload an image.";
+      imageInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Visibility
+    let visibilitySelected = false;
+    visibilityInputs.forEach(input => {
+      if (input.checked) visibilitySelected = true;
+    });
+    if (!visibilitySelected) {
+      visibilityError.textContent = "Please select a visibility option.";
+      isValid = false;
+    }
+
+    // Validate Branch Visibility
+    let branchVisibilitySelected = false;
+    branchVisibilityInputs.forEach(input => {
+      if (input.checked) branchVisibilitySelected = true;
+    });
+    if (!branchVisibilitySelected) {
+      branchVisibilityError.textContent = "Please select a branch visibility option.";
+      isValid = false;
+    }
+
+    // Validate Dates
+    if (startDateInput.value === "") {
+      startDateError.textContent = "Start date and time are required.";
+      startDateInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    if (endDateInput.value === "") {
+      endDateError.textContent = "End date and time are required.";
+      endDateInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    if (registrationDeadlineInput.value === "") {
+      registrationDeadlineError.textContent = "Registration deadline is required.";
+      registrationDeadlineInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Mode
+    if (modeInput.value === "") {
+      modeError.textContent = "Please select an event mode.";
+      modeInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input, select, textarea").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.type === "file") {
+        if (this.files.length > 0) {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      } else if (this.type === "radio") {
+        if (this.checked) {
+          document.getElementById(this.name + "Error").textContent = "";
+        }
+      } else {
+        if (this.value.trim() !== "") {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      }
+    });
+  });
+
+  // Bootstrap validation
+  (() => {
     'use strict';
-
     const forms = document.querySelectorAll('.needs-validation');
-
     Array.from(forms).forEach(form => {
       form.addEventListener(
         'submit',
@@ -540,7 +682,6 @@
             event.preventDefault();
             event.stopPropagation();
           }
-
           form.classList.add('was-validated');
         },
         false
@@ -548,5 +689,3 @@
     });
   })();
 </script>
-
-<!-- Update the post route -->

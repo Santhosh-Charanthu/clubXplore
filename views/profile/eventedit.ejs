@@ -1,32 +1,164 @@
 <%- include("../layouts/boilerplate") %>
 
+<style>
+  .event-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+
+  .event-form:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Red Border for Invalid Inputs */
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  /* Blue Border on Focus */
+  .form-control:focus, .form-select:focus {
+    border-color: #007bff !important; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important; /* Blue glow */
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline-secondary, .btn-danger {
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: #fff;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .event-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 30px;
+    color: #4b6cb7;
+  }
+
+  .event-image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .event-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+  }
+
+  .form-label {
+    color: #555;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .form-control, .form-select {
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .back-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  hr {
+    margin: 30px 0;
+    border-color: #ddd;
+  }
+
+  h3 {
+    text-align: center;
+    color: #4b6cb7;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .event-form {
+      padding: 15px;
+    }
+    .event-title {
+      font-size: 1.5rem;
+    }
+    .event-image {
+      max-height: 150px;
+    }
+    .form-label {
+      font-size: 1rem;
+    }
+    .btn-lg {
+      padding: 10px;
+    }
+  }
+</style>
+
 <h1 class="event-title">Edit Event: <%= event.eventName %></h1>
 
 <form
   action="/<%= club.ClubName %>/event/<%= event._id %>/edit?_method=PUT"
   method="POST"
   enctype="multipart/form-data"
-  class="container mt-4 registration-form-container needs-validation"
+  class="event-form needs-validation"
   novalidate
+  id="eventEditForm"
 >
   <!-- Event Name -->
   <div class="mb-3">
-    <label for="eventName" class="form-label"><b>Event Name</b></label>
+    <label for="eventName" class="form-label">Event Name</label>
     <input type="text" id="eventName" name="eventName" class="form-control" value="<%= event.eventName %>" required />
-    <div class="invalid-feedback">Event name is required.</div>
+    <div id="eventNameError" class="error-message"></div>
   </div>
 
   <!-- Event Details -->
   <div class="mb-3">
-    <label for="eventDetails" class="form-label"><b>Event Details</b></label>
+    <label for="eventDetails" class="form-label">Event Details</label>
     <textarea id="eventDetails" name="eventDetails" class="form-control" rows="3" required><%= event.eventDetails %></textarea>
-    <div class="invalid-feedback">Event details are required.</div>
+    <div id="eventDetailsError" class="error-message"></div>
   </div>
 
   <!-- Event Image -->
   <div class="mb-3">
-    <label for="eventImage" class="form-label"><b>Event Image</b></label>
-    <input type="file" name="eventImage" class="form-control" />
+    <label for="eventImage" class="form-label">Event Image</label>
+    <input type="file" name="eventImage" id="eventImage" class="form-control" />
+    <div id="eventImageError" class="error-message"></div>
     <% if (event.image && event.image.url) { %>
     <div class="event-image-container mt-2">
       <img src="<%= event.image.url %>" alt="Event Image" class="event-image" />
@@ -36,27 +168,27 @@
 
   <!-- Mode -->
   <div class="mb-3">
-    <label for="mode" class="form-label"><b>Mode</b></label>
+    <label for="mode" class="form-label">Mode</label>
     <select class="form-select" id="mode" name="mode" required>
       <option value="">Select mode</option>
       <option value="Online" <%= event.mode === 'Online' ? 'selected' : '' %>>Online</option>
       <option value="Offline" <%= event.mode === 'Offline' ? 'selected' : '' %>>Offline</option>
     </select>
-    <div class="invalid-feedback">Please select a mode.</div>
+    <div id="modeError" class="error-message"></div>
   </div>
 
   <!-- Venue -->
   <div class="mb-3">
-    <label for="venue" class="form-label"><b>Venue</b></label>
+    <label for="venue" class="form-label">Venue</label>
     <input type="text" id="venue" name="venue" class="form-control" value="<%= event.venue %>" required />
-    <div class="invalid-feedback">Venue is required.</div>
+    <div id="venueError" class="error-message"></div>
   </div>
 
- <!-- Coordinators -->
-<div class="mb-3">
-  <label class="form-label"><b>Coordinators</b></label>
-  <div id="coordinatorContainer">
-    <% event.coordinators.forEach((coordinator, index) => { %>
+  <!-- Coordinators -->
+  <div class="mb-3">
+    <label class="form-label">Coordinators</label>
+    <div id="coordinatorContainer">
+      <% event.coordinators.forEach((coordinator, index) => { %>
       <div class="row g-2 mb-2 align-items-center coordinator-row">
         <div class="col-md-5">
           <input type="text" name="coordinators[<%= index %>][name]" class="form-control" value="<%= coordinator.name %>" required placeholder="Coordinator Name" />
@@ -65,78 +197,78 @@
           <input type="text" name="coordinators[<%= index %>][contact]" class="form-control" value="<%= coordinator.contact %>" required placeholder="Contact" />
         </div>
         <div class="col-md-2 text-end">
-          <span class="remove-coordinator text-danger fs-4" style="cursor: pointer;">&times;</span>
+          <button type="button" class="btn btn-danger btn-sm remove-coordinator">Remove</button>
         </div>
       </div>
-    <% }) %>
+      <% }) %>
+    </div>
+    <button type="button" id="addCoordinatorBtn" class="btn btn-sm btn-outline-primary mt-2">+ Add Coordinator</button>
   </div>
-  <button type="button" id="addCoordinatorBtn" class="btn btn-outline-secondary btn-sm mt-2">+ Add Coordinator</button>
-</div>
-
 
   <!-- Branch Name -->
   <div class="mb-3">
-    <label for="branchName" class="form-label"><b>Eligible Branch</b> (Optional)</label>
+    <label for="branchName" class="form-label">Eligible Branch (Optional)</label>
     <input type="text" id="branchName" name="branchName" class="form-control" value="<%= event.branchName %>" placeholder="Eg: CSE, ECE" />
   </div>
 
   <!-- Eligibility -->
   <div class="mb-3">
-    <label for="eligibility" class="form-label"><b>Eligibility</b></label>
+    <label for="eligibility" class="form-label">Eligibility</label>
     <input type="text" id="eligibility" name="eligibility" class="form-control" value="<%= event.eligibility %>" required />
-    <div class="invalid-feedback">Eligibility is required.</div>
+    <div id="eligibilityError" class="error-message"></div>
   </div>
 
   <!-- Team Size -->
   <div class="mb-3">
-    <label class="form-label"><b>Team Size</b></label>
+    <label class="form-label">Team Size</label>
     <div class="row g-2">
       <div class="col">
-        <input type="number" name="teamSize[min]" class="form-control" placeholder="Min" min="1" value="<%= event.teamSize.min %>" required />
+        <input type="number" name="teamSize[min]" id="teamSizeMin" class="form-control" placeholder="Min" min="1" value="<%= event.teamSize.min %>" required />
+        <div id="teamSizeMinError" class="error-message"></div>
       </div>
       <div class="col">
-        <input type="number" name="teamSize[max]" class="form-control" placeholder="Max" min="1" value="<%= event.teamSize.max %>" required />
+        <input type="number" name="teamSize[max]" id="teamSizeMax" class="form-control" placeholder="Max" min="1" value="<%= event.teamSize.max %>" required />
+        <div id="teamSizeMaxError" class="error-message"></div>
       </div>
     </div>
-    <div class="invalid-feedback">Team size is required.</div>
   </div>
 
   <!-- Rewards -->
   <div class="mb-3">
-    <label for="rewards" class="form-label"><b>Rewards</b></label>
+    <label for="rewards" class="form-label">Rewards</label>
     <input type="text" id="rewards" name="rewards" class="form-control" value="<%= event.rewards %>" required />
-    <div class="invalid-feedback">Rewards are required.</div>
+    <div id="rewardsError" class="error-message"></div>
   </div>
 
   <!-- Agenda -->
   <div class="mb-3">
-    <label for="agenda" class="form-label"><b>Agenda</b></label>
+    <label for="agenda" class="form-label">Agenda</label>
     <textarea id="agenda" name="agenda" class="form-control" rows="3" required><%= event.agenda %></textarea>
-    <div class="invalid-feedback">Agenda is required.</div>
+    <div id="agendaError" class="error-message"></div>
   </div>
 
   <!-- Dates -->
   <div class="mb-3">
-    <label for="startDate" class="form-label"><b>Starting Date</b></label>
+    <label for="startDate" class="form-label">Starting Date</label>
     <input type="date" id="startDate" name="startDate" class="form-control" value="<%= event.startDate.toISOString().split('T')[0] %>" required />
-    <div class="invalid-feedback">Start date is required.</div>
+    <div id="startDateError" class="error-message"></div>
   </div>
 
   <div class="mb-3">
-    <label for="endDate" class="form-label"><b>Ending Date</b></label>
+    <label for="endDate" class="form-label">Ending Date</label>
     <input type="date" id="endDate" name="endDate" class="form-control" value="<%= event.endDate.toISOString().split('T')[0] %>" required />
-    <div class="invalid-feedback">End date is required.</div>
+    <div id="endDateError" class="error-message"></div>
   </div>
 
   <div class="mb-3">
-    <label for="registrationDeadline" class="form-label"><b>Registration Deadline</b></label>
+    <label for="registrationDeadline" class="form-label">Registration Deadline</label>
     <input type="date" id="registrationDeadline" name="registrationDeadline" class="form-control" value="<%= event.registrationDeadline.toISOString().split('T')[0] %>" required />
-    <div class="invalid-feedback">Registration deadline is required.</div>
+    <div id="registrationDeadlineError" class="error-message"></div>
   </div>
 
   <!-- Visibility -->
   <div class="mb-3">
-    <label class="form-label"><b>Visibility</b></label>
+    <label class="form-label">Visibility</label>
     <div class="form-check">
       <input class="form-check-input" type="radio" name="visibility" value="collegeExclusive" id="collegeExclusive" <%= event.visibility === 'collegeExclusive' ? 'checked' : '' %> required />
       <label class="form-check-label" for="collegeExclusive">College Exclusive</label>
@@ -145,11 +277,11 @@
       <input class="form-check-input" type="radio" name="visibility" value="openToAll" id="openToAll" <%= event.visibility === 'openToAll' ? 'checked' : '' %> />
       <label class="form-check-label" for="openToAll">Open to All</label>
     </div>
-    <div class="invalid-feedback">Please select a visibility option.</div>
+    <div id="visibilityError" class="error-message"></div>
   </div>
 
   <div class="mb-3">
-    <label class="form-label"><b>Branch Visibility</b></label>
+    <label class="form-label">Branch Visibility</label>
     <div class="form-check">
       <input class="form-check-input" type="radio" name="branchVisibility" value="branchExclusive" id="branchExclusive" <%= event.branchVisibility === 'branchExclusive' ? 'checked' : '' %> required />
       <label class="form-check-label" for="branchExclusive">Branch Exclusive</label>
@@ -158,7 +290,7 @@
       <input class="form-check-input" type="radio" name="branchVisibility" value="openToAllBranches" id="openToAllBranches" <%= event.branchVisibility === 'openToAllBranches' ? 'checked' : '' %> />
       <label class="form-check-label" for="openToAllBranches">Open to All Branches</label>
     </div>
-    <div class="invalid-feedback">Please select a visibility option.</div>
+    <div id="branchVisibilityError" class="error-message"></div>
   </div>
 
   <hr />
@@ -167,11 +299,11 @@
     <% event.formFields.forEach((field, index) => { %>
       <div class="form-field mb-3" data-label="<%= field.label %>">
         <input type="hidden" name="formFields[originalLabel][]" value="<%= field.label %>">
-        <label class="form-label"><b>Field Label</b></label>
+        <label class="form-label">Field Label</label>
         <input type="text" name="formFields[label][]" class="form-control" placeholder="Field Label" value="<%= field.label %>" required />
-        <div class="invalid-feedback">This field is required.</div>
+        <div class="error-message"></div>
 
-        <label class="form-label mt-2"><b>Field Type</b></label>
+        <label class="form-label mt-2">Field Type</label>
         <select name="formFields[type][]" class="form-select">
           <option value="text" <%= field.type === 'text' ? 'selected' : '' %>>Text</option>
           <option value="email" <%= field.type === 'email' ? 'selected' : '' %>>Email</option>
@@ -189,17 +321,15 @@
     <% }) %>
   </div>
 
-  <button type="button" class="btn btn-secondary mt-3" onclick="addFormField()">Add Form Field</button>
+  <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="addFormField()">Add Form Field</button>
   <input type="hidden" name="deletedFields" id="deletedFields" value="" />
 
   <!-- Submit -->
   <div class="back-button-container">
-    <button type="submit" class="btn btn-success add-btn mt-4">Update Event</button>
+    <button type="submit" class="btn btn-success btn-lg w-100 mt-4">Update Event</button>
   </div>
 </form>
 
-
-<!-- JavaScript for Adding & Removing Fields -->
 <script>
   let deletedFields = [];
 
@@ -209,13 +339,12 @@
 
     let fieldHTML = `
       <div class="form-field mb-3" data-label="">
-        <!-- No originalLabel for new fields -->
         <input type="hidden" name="formFields[originalLabel][]" value="">
-        <label class="form-label"><b>Field Label</b></label>
+        <label class="form-label">Field Label</label>
         <input type="text" name="formFields[label][]" class="form-control" placeholder="Field Label" required />
-        <div class="invalid-feedback">This field is required.</div>
+        <div class="error-message"></div>
         
-        <label class="form-label mt-2"><b>Field Type</b></label>
+        <label class="form-label mt-2">Field Type</label>
         <select name="formFields[type][]" class="form-select">
           <option value="text">Text</option>
           <option value="email">Email</option>
@@ -240,7 +369,7 @@
       button.onclick = function () {
         const fieldDiv = this.parentElement;
         const originalLabel = fieldDiv.querySelector('input[name="formFields[originalLabel][]"]').value;
-        if (originalLabel) { // Only add to deletedFields if it was an existing field
+        if (originalLabel) {
           deletedFields.push(originalLabel);
           document.getElementById("deletedFields").value = deletedFields.join(",");
         }
@@ -248,12 +377,6 @@
       };
     });
   }
-
-  attachRemoveFieldListeners();
-  document.querySelector('form').addEventListener('submit', function(e) {
-    const formData = new FormData(this);
-    console.log('Form Data:', Object.fromEntries(formData));
-  });
 
   let coordinatorIndex = Number("<%= event.coordinators.length %>");
 
@@ -266,7 +389,6 @@
     });
   }
 
-  // Add remove functionality to existing buttons
   document.querySelectorAll(".remove-coordinator").forEach(addRemoveFunctionality);
 
   addBtn.addEventListener("click", function () {
@@ -280,7 +402,7 @@
         <input type="text" name="coordinators[${coordinatorIndex}][contact]" class="form-control" placeholder="Contact" required />
       </div>
       <div class="col-md-2 text-end">
-        <span class="remove-coordinator text-danger fs-4" style="cursor: pointer;">&times;</span>
+        <button type="button" class="btn btn-danger btn-sm remove-coordinator">Remove</button>
       </div>
     `;
 
@@ -289,6 +411,197 @@
     coordinatorIndex++;
   });
 
+  document.getElementById("eventEditForm").addEventListener("submit", function (event) {
+    let isValid = true;
+
+    // Get input fields
+    const eventNameInput = document.getElementById("eventName");
+    const eventDetailsInput = document.getElementById("eventDetails");
+    const modeInput = document.getElementById("mode");
+    const venueInput = document.getElementById("venue");
+    const eligibilityInput = document.getElementById("eligibility");
+    const teamSizeMinInput = document.getElementById("teamSizeMin");
+    const teamSizeMaxInput = document.getElementById("teamSizeMax");
+    const rewardsInput = document.getElementById("rewards");
+    const agendaInput = document.getElementById("agenda");
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+    const registrationDeadlineInput = document.getElementById("registrationDeadline");
+    const visibilityInputs = document.getElementsByName("visibility");
+    const branchVisibilityInputs = document.getElementsByName("branchVisibility");
+
+    // Get error message elements
+    const eventNameError = document.getElementById("eventNameError");
+    const eventDetailsError = document.getElementById("eventDetailsError");
+    const modeError = document.getElementById("modeError");
+    const venueError = document.getElementById("venueError");
+    const eligibilityError = document.getElementById("eligibilityError");
+    const teamSizeMinError = document.getElementById("teamSizeMinError");
+    const teamSizeMaxError = document.getElementById("teamSizeMaxError");
+    const rewardsError = document.getElementById("rewardsError");
+    const agendaError = document.getElementById("agendaError");
+    const startDateError = document.getElementById("startDateError");
+    const endDateError = document.getElementById("endDateError");
+    const registrationDeadlineError = document.getElementById("registrationDeadlineError");
+    const visibilityError = document.getElementById("visibilityError");
+    const branchVisibilityError = document.getElementById("branchVisibilityError");
+
+    // Reset errors and styles
+    eventNameError.textContent = "";
+    eventDetailsError.textContent = "";
+    modeError.textContent = "";
+    venueError.textContent = "";
+    eligibilityError.textContent = "";
+    teamSizeMinError.textContent = "";
+    teamSizeMaxError.textContent = "";
+    rewardsError.textContent = "";
+    agendaError.textContent = "";
+    startDateError.textContent = "";
+    endDateError.textContent = "";
+    registrationDeadlineError.textContent = "";
+    visibilityError.textContent = "";
+    branchVisibilityError.textContent = "";
+    eventNameInput.classList.remove("error-border");
+    eventDetailsInput.classList.remove("error-border");
+    modeInput.classList.remove("error-border");
+    venueInput.classList.remove("error-border");
+    eligibilityInput.classList.remove("error-border");
+    teamSizeMinInput.classList.remove("error-border");
+    teamSizeMaxInput.classList.remove("error-border");
+    rewardsInput.classList.remove("error-border");
+    agendaInput.classList.remove("error-border");
+    startDateInput.classList.remove("error-border");
+    endDateInput.classList.remove("error-border");
+    registrationDeadlineInput.classList.remove("error-border");
+
+    // Validate Event Name
+    if (eventNameInput.value.trim() === "") {
+      eventNameError.textContent = "Event name is required.";
+      eventNameInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Event Details
+    if (eventDetailsInput.value.trim() === "") {
+      eventDetailsError.textContent = "Event details are required.";
+      eventDetailsInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Mode
+    if (modeInput.value === "") {
+      modeError.textContent = "Please select a mode.";
+      modeInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Venue
+    if (venueInput.value.trim() === "") {
+      venueError.textContent = "Venue is required.";
+      venueInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Eligibility
+    if (eligibilityInput.value.trim() === "") {
+      eligibilityError.textContent = "Eligibility is required.";
+      eligibilityInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Team Size
+    if (teamSizeMinInput.value === "" || teamSizeMinInput.value < 1) {
+      teamSizeMinError.textContent = "Minimum team size is required and must be at least 1.";
+      teamSizeMinInput.classList.add("error-border");
+      isValid = false;
+    }
+    if (teamSizeMaxInput.value === "" || teamSizeMaxInput.value < 1) {
+      teamSizeMaxError.textContent = "Maximum team size is required and must be at least 1.";
+      teamSizeMaxInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Rewards
+    if (rewardsInput.value.trim() === "") {
+      rewardsError.textContent = "Rewards are required.";
+      rewardsInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Agenda
+    if (agendaInput.value.trim() === "") {
+      agendaError.textContent = "Agenda is required.";
+      agendaInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Dates
+    if (startDateInput.value === "") {
+      startDateError.textContent = "Start date is required.";
+      startDateInput.classList.add("error-border");
+      isValid = false;
+    }
+    if (endDateInput.value === "") {
+      endDateError.textContent = "End date is required.";
+      endDateInput.classList.add("error-border");
+      isValid = false;
+    }
+    if (registrationDeadlineInput.value === "") {
+      registrationDeadlineError.textContent = "Registration deadline is required.";
+      registrationDeadlineInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Visibility
+    let visibilitySelected = false;
+    visibilityInputs.forEach(input => {
+      if (input.checked) visibilitySelected = true;
+    });
+    if (!visibilitySelected) {
+      visibilityError.textContent = "Please select a visibility option.";
+      isValid = false;
+    }
+
+    // Validate Branch Visibility
+    let branchVisibilitySelected = false;
+    branchVisibilityInputs.forEach(input => {
+      if (input.checked) branchVisibilitySelected = true;
+    });
+    if (!branchVisibilitySelected) {
+      branchVisibilityError.textContent = "Please select a branch visibility option.";
+      isValid = false;
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input, select, textarea").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.type === "file") {
+        // File input validation
+        if (this.files.length > 0) {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      } else if (this.type === "radio") {
+        // Radio input validation
+        if (this.checked) {
+          document.getElementById(this.name + "Error").textContent = "";
+        }
+      } else {
+        // Text, select, textarea validation
+        if (this.value.trim() !== "") {
+          this.classList.remove("error-border");
+          document.getElementById(this.id + "Error").textContent = "";
+        }
+      }
+    });
+  });
+
+  // Bootstrap validation
   (() => {
     'use strict';
     const forms = document.querySelectorAll('.needs-validation');
@@ -303,86 +616,3 @@
     });
   })();
 </script>
-
-<style>
-  .event-title {
-    text-align: center;
-    font-size: 2rem;
-    margin-top: 30px;
-    color: #4b6cb7;
-  }
-  .event-image-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-  }
-  .event-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 200px;
-  }
-  .registration-form-container {
-    max-width: 500px;
-    margin: 20px auto;
-  }
-  .form-label {
-    color: #555;
-    font-size: 1.1rem;
-  }
-  .form-control, .form-select {
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  .btn {
-    border-radius: 5px;
-    padding: 8px 20px;
-  }
-  .btn-success.add-btn {
-    background-color: #28a745;
-    border: none;
-  }
-  .btn-success.add-btn:hover {
-    background-color: #218838;
-  }
-  .btn-secondary {
-    background-color: #6c757d;
-    border: none;
-  }
-  .btn-secondary:hover {
-    background-color: #5a6268;
-  }
-  .btn-danger {
-    background-color: #dc3545;
-    border: none;
-  }
-  .btn-danger:hover {
-    background-color: #c82333;
-  }
-  .back-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-  }
-  hr {
-    margin: 30px 0;
-    border-color: #ddd;
-  }
-  h3 {
-    text-align: center;
-    color: #4b6cb7;
-    margin-bottom: 20px;
-  }
-  @media (max-width: 768px) {
-    .event-title {
-      font-size: 1.5rem;
-    }
-    .event-image {
-      max-height: 150px;
-    }
-    .form-label {
-      font-size: 1rem;
-    }
-  }
-</style>

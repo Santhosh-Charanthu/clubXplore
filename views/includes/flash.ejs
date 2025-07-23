@@ -1,27 +1,177 @@
-<% if(success && success.length){ %>
-<div
-  class="alert alert-success alert-dismissible fade show col-6 offset-3 mt-3"
-  role="alert"
->
-  <%= success %>
-  <button
-    type="button"
-    class="btn-close"
-    data-bs-dismiss="alert"
-    aria-label="Close"
-  ></button>
+<% if (success && success.length) { %>
+<div id="flash-success" class="toast-box glass success">
+  <div class="toast-left">
+    <div class="toast-icon-circle">
+      <span class="toast-check">✔</span>
+    </div>
+  </div>
+  <div class="toast-body">
+    <div class="toast-title">Success!</div>
+    <div class="toast-msg"><%= success %></div>
+    <div class="toast-bar"></div>
+  </div>
+  <button class="toast-close" onclick="closeToast('flash-success')">×</button>
 </div>
-<% } %> <% if(error && error.length){ %>
-<div
-  class="alert alert-danger alert-dismissible fade show col-6 offset-3 mt-3"
-  role="alert"
->
-  <%= error %>
-  <button
-    type="button"
-    class="btn-close"
-    data-bs-dismiss="alert"
-    aria-label="Close"
-  ></button>
+<% } %> <% if (error && error.length) { %>
+<div id="flash-error" class="toast-box glass error">
+  <div class="toast-left">
+    <div class="toast-icon-circle error-icon">
+      <span class="toast-check">✖</span>
+    </div>
+  </div>
+  <div class="toast-body">
+    <div class="toast-title">Error!</div>
+    <div class="toast-msg"><%= error %></div>
+    <div class="toast-bar error-bar"></div>
+  </div>
+  <button class="toast-close" onclick="closeToast('flash-error')">×</button>
 </div>
 <% } %>
+
+<style>
+  .toast-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    min-width: 300px;
+    max-width: 350px;
+    animation: fadeIn 0.3s ease-out;
+    overflow: hidden;
+    z-index: 9999;
+  }
+
+  .toast-left {
+    margin-right: 10px;
+  }
+
+  .toast-icon-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #2bd47d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #2bd47d;
+    margin-top: 2px;
+  }
+
+  .toast-icon-circle.error-icon {
+    border-color: #ff4444;
+    color: #ff4444;
+  }
+
+  .toast-check {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .toast-body {
+    flex-grow: 1;
+  }
+
+  .toast-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .toast-msg {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .toast-bar {
+    height: 3px;
+    margin-top: 8px;
+    border-radius: 6px;
+    background: linear-gradient(to right, #2bd47d, #2196f3);
+    animation: shrink 3s linear forwards;
+  }
+
+  .toast-bar.error-bar {
+    background: linear-gradient(to right, #ff4444, #e91e63);
+  }
+
+  .toast-close {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .toast-close:hover {
+    color: #fff;
+  }
+
+  @keyframes shrink {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  @media (max-width: 768px) {
+    .toast-box {
+      right: 10px;
+      left: 10px;
+      max-width: calc(100% - 20px);
+    }
+  }
+  @media (max-width: 480px) {
+    .toast-box {
+      right: 10px;
+      left: 60px;
+      max-width: calc(100% - 0%);
+    }
+  }
+</style>
+
+<script>
+  function closeToast(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.animation = "fadeOut 0.4s forwards";
+      setTimeout(() => el.remove(), 400);
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("flash-success")) {
+      setTimeout(() => closeToast("flash-success"), 3000);
+    }
+    if (document.getElementById("flash-error")) {
+      setTimeout(() => closeToast("flash-error"), 3000);
+    }
+  });
+</script>
