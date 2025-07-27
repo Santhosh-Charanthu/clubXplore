@@ -67,6 +67,7 @@ module.exports.handleLogin = async (req, res) => {
       req.flash("error", "College not found!");
       return res.redirect("/collegeRegistration/login");
     }
+    req.flash("success", `Welcome to ${college.college} profile`);
     res.redirect(`/collegeProfile/${req.user._id}`);
   } catch (e) {
     console.error("Login error:", e);
@@ -92,7 +93,8 @@ module.exports.showRegistrationLink = async (req, res) => {
       );
     }
     const registrationLink = `http://localhost:8080/college/${id}/studentRegistration/signup`;
-    req.flash("success", "link copied successfully");
+    req.session.registrationLink = registrationLink;
+    req.flash("success", "Link copied successfully");
     res.redirect(`/collegeProfile/${id}`);
   } catch (err) {
     console.error("Error in showRegistrationLink:", err);

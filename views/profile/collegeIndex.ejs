@@ -514,3 +514,21 @@
   <p>No clubs available.</p>
   <% } %>
 </div>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const linkInput = document.getElementById("registration-link");
+    if (linkInput && linkInput.value) {
+      navigator.clipboard
+        .writeText(linkInput.value)
+        .then(() => {
+          console.log("Link copied to clipboard");
+          // Optional toast/alert
+          // alert("Registration link copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy link:", err);
+        });
+    }
+  });
+</script>
