@@ -12,11 +12,13 @@
   </div>
   <button class="toast-close" onclick="closeToast('flash-success')">×</button>
 </div>
-<% } %> <% if (error && error.length) { %>
+<% } %>
+
+<% if (error && error.length) { %>
 <div id="flash-error" class="toast-box glass error">
   <div class="toast-left">
     <div class="toast-icon-circle error-icon">
-      <span class="toast-check">✖</span>
+      <span class="toast-check">❌</span>
     </div>
   </div>
   <div class="toast-body">
@@ -49,30 +51,30 @@
 
   .toast-left {
     margin-right: 10px;
+        margin-top: 10px;
+
   }
 
   .toast-icon-circle {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    border: 2px solid #2bd47d;
+    background: rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    color: #2bd47d;
-    margin-top: 2px;
-  }
-
-  .toast-icon-circle.error-icon {
-    border-color: #812e2e;
-    color: #5f1111;
   }
 
   .toast-check {
     font-weight: bold;
     font-size: 14px;
   }
+
+  .success .toast-check {
+    color: #2bd47d; /* green check */
+  }
+
+  
 
   .toast-body {
     flex-grow: 1;
@@ -141,6 +143,7 @@
       opacity: 0;
     }
   }
+
   @media (max-width: 768px) {
     .toast-box {
       right: 10px;
@@ -148,6 +151,7 @@
       max-width: calc(100% - 20px);
     }
   }
+
   @media (max-width: 480px) {
     .toast-box {
       right: 10px;
