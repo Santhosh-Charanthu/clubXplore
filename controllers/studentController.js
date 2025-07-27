@@ -43,6 +43,7 @@ module.exports.showStudentLogin = (req, res) => {
 
 module.exports.handleStudentLogin = async (req, res) => {
   let redirectUrl = res.locals.redirectUrl || "/index";
+  req.flash("success", "Welcome back to Club Management!");
   res.redirect(redirectUrl);
 };
 

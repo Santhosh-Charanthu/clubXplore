@@ -436,6 +436,12 @@
     }
   };
 </script>
+<!-- Display flash messages -->
+<% if (messages.error) { %>
+<div style="color: red"><%= messages.error %></div>
+<% } %> <% if (messages.success) { %>
+<div style="color: green"><%= messages.success %></div>
+<% } %>
 
 <!-- Student registration button -->
 <div class="student-registration-form-link">
@@ -448,11 +454,32 @@
       Get Registration Link
     </button>
   </form>
-  <!-- Hidden input to store registration link for copying -->
-  <% if (registrationLink) { %>
-  <input type="hidden" id="registration-link" value="<%= registrationLink %>" />
+  <!-- Hidden input for registration link -->
+  <% if (messages.registrationLink) { %>
+  <input
+    type="hidden"
+    id="registration-link"
+    value="<%= messages.registrationLink %>"
+  />
   <% } %>
 </div>
+
+<script>
+  // Automatically copy the link if it exists on page load
+  window.onload = function () {
+    const linkInput = document.getElementById("registration-link");
+    if (linkInput) {
+      navigator.clipboard
+        .writeText(linkInput.value)
+        .then(() => {
+          console.log("Link copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy link:", err);
+        });
+    }
+  };
+</script>
 
 <div class="college-header">
   <div class="college-logo">
