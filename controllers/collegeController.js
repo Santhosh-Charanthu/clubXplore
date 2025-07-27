@@ -94,7 +94,6 @@ module.exports.showRegistrationLink = async (req, res) => {
     }
 
     const registrationLink = `http://localhost:8080/college/${id}/studentRegistration/signup`;
-    console.log("Generated registration link:", registrationLink);
 
     // Store the link and success message in flash
     req.flash("registrationLink", registrationLink);
@@ -111,10 +110,12 @@ module.exports.showCollegeProfile = async (req, res) => {
   try {
     const { id } = req.params;
     const college = await College.findById(id).populate("clubs");
+
     if (!college) {
       req.flash("error", "College not found!");
       return res.redirect("/collegeRegistration/login");
     }
+
     if (!req.user || !req.user._id.equals(college._id)) {
       req.flash(
         "error",
@@ -126,10 +127,19 @@ module.exports.showCollegeProfile = async (req, res) => {
           : "/collegeRegistration/login"
       );
     }
-    console.log("Rendering collegeIndex for profile:", college._id); // Debugging
+
+    // Get all flash messages
+    const success = req.flash("success");
+    const error = req.flash("error");
+    const registrationLink = req.flash("registrationLink");
+
     res.render("profile/collegeIndex", {
       college,
-      messages: req.flash("success", "welcome to club"), // Pass flash messages
+      messages: {
+        success: success[0],
+        error: error[0],
+        registrationLink: registrationLink[0],
+      },
     });
   } catch (err) {
     console.error("Error in showCollegeProfile:", err);
@@ -137,6 +147,7 @@ module.exports.showCollegeProfile = async (req, res) => {
     res.redirect("/collegeRegistration/login");
   }
 };
+
 module.exports.showEditForm = async (req, res) => {
   try {
     const college = await College.findById(req.params.id);
