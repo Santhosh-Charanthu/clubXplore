@@ -99,9 +99,6 @@ module.exports.showRegistrationLink = async (req, res) => {
     // Store the link and success message in flash
     req.flash("registrationLink", registrationLink);
     req.flash("success", "Link copied to clipboard!");
-
-    // Redirect to the same college profile page
-    res.redirect(`/collegeProfile/${id}`);
     res.redirect(`/collegeProfile/${id}`);
   } catch (err) {
     console.error("Error in showRegistrationLink:", err);
