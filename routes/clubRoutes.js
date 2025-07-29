@@ -67,4 +67,9 @@ router
   .route("/:clubName/event/:eventId/viewRegistration")
   .get(clubController.showRegistrations);
 
+router.post(
+  "/:clubName/event/:eventId/announce-winners",
+  clubController.annouceWinners
+);
+
 module.exports = router;
