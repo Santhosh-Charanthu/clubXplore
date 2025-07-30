@@ -152,10 +152,157 @@
       height: 250px;
     }
   }
+  .announcements{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  .winners {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .winners {
+    background: #4f46e5;
+  }
+
+  .winner-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
+}
+
+.modal-content label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-content button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-content button:hover {
+  background-color: #0056b3;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  color: #555;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
 </style>
 
 
 <h1 class="event-title"><%= event.eventName %></h1>
+<% const winnersExist = event.winners && event.winners.first && event.winners.second && event.winners.third; %>
+
+<div class="announcements">
+  <% if (user.role !== "student") { %>
+    <% if (!winnersExist) { %>
+      <button class="winners" onclick="openModal()">Announce Winners</button>
+    <% } else { %>
+      <button class="winners" onclick="openWinnerModal()">🏆 Winners</button>
+      <button class="winners edit-btn" onclick="openModal()">✏️ Edit Winners</button>
+    <% } %>
+  <% } else { %>
+    <% if (winnersExist) { %>
+      <button class="winners" onclick="openWinnerModal()">🏆 Winners</button>
+    <% } %>
+  <% } %>
+</div>
+
+
+
+<div class="winner-modal" id="studentModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeWinnerModal()">&times;</span>
+    <h2>🏆 Winners</h2>
+    <p>🥇<strong>1st Prize:</strong> <%= event.winners.first %></p>
+    <p>🥈<strong>2nd Prize:</strong> <%= event.winners.second %></p>
+    <p>🥉<strong>3rd Prize:</strong> <%= event.winners.third %></p>
+    <% if (event.winners.announcedAt) { %>
+  <p class="timestamp">Announced On: <%= new Date(event.winners.announcedAt).toDateString() %></p>
+<% } %>
+
+  </div>
+</div>
+
+<div class="winner-modal" id="winnerModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h2><%= event.winners ? "Edit Winners" : "Announce Winners" %></h2>
+
+    <form action="/<%= event.author.ClubName %>/event/<%= event._id %>/announce-winners" method="POST">
+      <label>1st Prize Winner:</label>
+      <input type="text" name="first" value="<%= event.winners?.first || '' %>" placeholder="Enter name" required />
+
+      <label>2nd Prize Winner:</label>
+      <input type="text" name="second" value="<%= event.winners?.second || '' %>" placeholder="Enter name" required />
+
+      <label>3rd Prize Winner:</label>
+      <input type="text" name="third" value="<%= event.winners?.third || '' %>" placeholder="Enter name" required />
+
+      <button type="submit"><%= event.winners ? "Update Winners" : "Submit" %></button>
+    </form>
+  </div>
+</div>
+
 
 <div class="event-card-container">
   <div class="event-card">
@@ -336,4 +483,30 @@
   function submitEventDelete() {
     document.getElementById("deleteEventForm").submit();
   }
+
+  //winners
+  function openModal() {
+    document.getElementById("winnerModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("winnerModal").style.display = "none";
+  }
+
+  function openWinnerModal() {
+    document.getElementById("studentModal").style.display = "flex";
+  }
+
+  function closeWinnerModal() {
+    document.getElementById("studentModal").style.display = "none";
+  }
+
+  // Optional: Close on outside click
+  window.onclick = function (event) {
+    const adminModal = document.getElementById("winnerModal");
+    const studentModal = document.getElementById("studentModal");
+
+    if (event.target === adminModal) adminModal.style.display = "none";
+    if (event.target === studentModal) studentModal.style.display = "none";
+  };
 </script>

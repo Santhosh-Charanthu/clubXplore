@@ -2,6 +2,7 @@ let College = require("../models/college");
 let Club = require("../models/club");
 let Event = require("../models/Event");
 let Registration = require("../models/registration");
+const club = require("../models/club");
 
 module.exports.showRegistrationForm = (req, res) => {
   res.render("club/clubform.ejs");
@@ -672,5 +673,34 @@ module.exports.showRegistrations = async (req, res) => {
     console.error("Error fetching registrations:", error);
     req.flash("error", `Something went wrong: ${error.message}`);
     res.redirect("/clubRegistration");
+  }
+};
+
+module.exports.annouceWinners = async (req, res) => {
+  const { eventId } = req.params;
+  const { first, second, third } = req.body;
+
+  try {
+    const event = await Event.findById(eventId).populate("author");
+    const clubName = event.author.ClubName;
+
+    if (!event) return res.status(404).send("Event not found");
+
+    event.winners = {
+      first,
+      second,
+      third,
+      announcedAt: new Date(),
+    };
+
+    console.log("📦 Winners to be saved:", event.winners);
+    await event.save();
+    req.flash("success", "🎉 Winners announced and saved to the event.");
+
+    res.redirect(`/${clubName}/event/${eventId}`);
+  } catch (err) {
+    req.flash("errror", "Something went wrong!");
+    res.redirect(`/${clubName}/event/${eventId}`);
+    res.status(500).send("Internal Server Error");
   }
 };

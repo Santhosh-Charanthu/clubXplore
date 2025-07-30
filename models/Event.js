@@ -86,6 +86,12 @@ const eventSchema = new Schema(
         isRequired: { type: Boolean, default: false },
       },
     ],
+    winners: {
+      first: { type: String },
+      second: { type: String },
+      third: { type: String },
+      announcedAt: { type: Date },
+    },
   },
   { timestamps: true }
 );
