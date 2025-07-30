@@ -112,7 +112,6 @@
     transition: 0.3s;
   }
 
-  /* Suggestions Dropdown */
   .suggestions {
     position: absolute;
     top: 105%;
@@ -140,84 +139,237 @@
   .suggestion-item:hover {
     background-color: #f8f8f8;
   }
+
   .navbar {
     margin-top: -20px;
+    position: relative;
+  }
+
+  .profile-icon {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgb(160, 237, 216);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 20px;
+    transition: background 0.3s ease;
+  }
+
+  .profile-icon:hover {
+    background: rgb(140, 217, 196);
+  }
+
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 350px;
+    height: 100%;
+    background: linear-gradient(180deg, #f8f9fa, #ffffff);
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+    transition: right 0.3s ease-in-out;
+    z-index: 2000;
+    overflow-y: auto;
+    border-left: 1px solid #e0e0e0;
+  }
+
+  .drawer.open {
+    right: 0;
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgb(160, 237, 216);
+    color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .drawer-close {
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+    transition: color 0.2s ease;
+  }
+
+  .drawer-close:hover {
+    color: #e0e0e0;
+  }
+
+  .drawer-content {
+    padding: 25px;
+  }
+
+  .profile-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    padding-left: 100px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid rgb(160, 237, 216);
+  }
+
+  .profile-img-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgb(160, 237, 216);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    border: 3px solid rgb(160, 237, 216);
+  }
+
+  .profile-name {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .profile-email {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 15px;
+  }
+
+  .edit-details-btn {
+    background: rgb(160, 237, 216);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .edit-details-btn:hover {
+    background: rgb(140, 217, 196);
+    transform: scale(1.05);
+  }
+
+  .drawer-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .drawer-nav li {
+    padding: 15px 20px;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+
+  .drawer-nav li:hover {
+    background: rgb(160, 237, 216);
+    color: white;
+  }
+
+  .logout-btn {
+    color: #ff4d4d;
+    font-weight: 500;
+  }
+
+  .logout-btn:hover {
+    background: #ffe6e6;
+    color: #cc0000;
   }
 </style>
 
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand"></a>
-    <form
-      class="d-flex col-4"
-      style="margin-right: 500px; position: relative"
-      role="search"
-    >
+    <form class="d-flex col-4" style="margin-right: 50px; position: relative" role="search">
       <div class="search-container">
         <div class="search-box">
-          <svg
-            class="search-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input
-            placeholder="Search for a college.."
-            id="searchedCollege"
-            class="input"
-            name="searchedCollege"
-            type="text"
-            autocomplete="off"
-          />
+          <input placeholder="Search for a college.." id="searchedCollege" class="input" name="searchedCollege" type="text" autocomplete="off" />
           <ul id="suggestions" class="suggestions"></ul>
         </div>
-
         <button class="search-button" onclick="handleSubmit(event)">
-          <svg
-            class="search-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </button>
       </div>
     </form>
+    <div class="profile-icon" onclick="toggleDrawer()">
+      <%= user && user.studentName ? user.studentName.charAt(0).toUpperCase() : 'U' %>
+    </div>
   </div>
 </nav>
 
+<div class="drawer" id="profileDrawer">
+  <div class="drawer-header">
+    <h3>Profile</h3>
+    <span class="drawer-close" onclick="toggleDrawer()">✕</span>
+  </div>
+  <div class="drawer-content">
+    <!-- Debug user object -->
+    <pre style="font-size: 12px; background: #f8f8f8; padding: 10px; border-radius: 5px;">
+    </pre>
+    <div class="profile-section">
+      <% if (user && user.profileImage) { %>
+        <img src="<%= user.profileImage %>" alt="Profile Image" class="profile-img" />
+      <% } else { %>
+        <div class="profile-img-placeholder">
+          <%= user && user.studentName ? user.studentName.charAt(0).toUpperCase() : 'U' %>
+        </div>
+      <% } %>
+      <div class="profile-name"><%= user && user.studentName ? user.studentName : 'Guest' %></div>
+      <div class="profile-email"><%= user && user.email ? user.email : 'No email available' %></div>
+      <button class="edit-details-btn">Edit Details</button>
+    </div>
+    <ul class="drawer-nav">
+      <li>Participations</li>
+      <li>Registrations</li>
+      <li>Settings</li>
+      <li class="logout-btn">Logout</li>
+    </ul>
+  </div>
+</div>
+
 <div style="display: flex; flex-direction: row">
-  <img
-    src="<%= college.collegeLogo.url%>"
-    alt="College Logo"
-    style="
-      height: 140px;
-      width: 140px;
-      margin-top: 20px;
-      margin-left: 50px;
-      border: 1px solid rgb(0, 0, 0);
-      border-radius: 50%;
-    "
-  />
+  <img src="<%= college && college.collegeLogo ? college.collegeLogo.url : 'https://via.placeholder.com/140' %>" alt="College Logo" style="height: 140px; width: 140px; margin-top: 20px; margin-left: 50px; border: 1px solid rgb(0, 0, 0); border-radius: 50%;" />
   <h1 class="col-6" style="margin-top: 70px; margin-left: 0px">
-    <%= college.college %>
+    <%= college && college.college ? college.college : 'No College' %>
   </h1>
 </div>
 
@@ -226,22 +378,20 @@
 </div>
 
 <div class="club-container">
-  <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
-  <a href="/<%= club.ClubName %>/profile" class="club-link">
-    <div class="club-card">
-      <img
-        src="<%= club.ClubLogo.url %>"
-        class="card-img-top"
-        alt="<%= club.ClubName %>"
-      />
-      <div class="card-body">
-        <h3 class="card-title"><%= club.ClubName %></h3>
-        <p><strong>Total Events:</strong> <%= club.events.length %></p>
-      </div>
-    </div>
-  </a>
-  <% }) %> <% } else { %>
-  <p>No clubs available.</p>
+  <% if (college && college.clubs && college.clubs.length > 0) { %>
+    <% college.clubs.forEach(club => { %>
+      <a href="/<%= club.ClubName %>/profile" class="club-link">
+        <div class="club-card">
+          <img src="<%= club.ClubLogo.url %>" class="card-img-top" alt="<%= club.ClubName %>" />
+          <div class="card-body">
+            <h3 class="card-title"><%= club.ClubName %></h3>
+            <p><strong>Total Events:</strong> <%= club.events.length %></p>
+          </div>
+        </div>
+      </a>
+    <% }) %>
+  <% } else { %>
+    <p>No clubs available.</p>
   <% } %>
 </div>
 
@@ -275,6 +425,7 @@
             searchInput.value = college.name;
             suggestionsBox.innerHTML = "";
             suggestionsBox.style.display = "none";
+            document.querySelector('form').submit();
           });
 
           suggestionsBox.appendChild(listItem);
@@ -285,13 +436,23 @@
     });
 
     document.addEventListener("click", function (e) {
-      if (
-        !searchInput.contains(e.target) &&
-        !suggestionsBox.contains(e.target)
-      ) {
+      if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.innerHTML = "";
         suggestionsBox.style.display = "none";
       }
     });
   });
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const query = document.getElementById("searchedCollege").value.trim();
+    if (query) {
+      window.location.href = `/college?q=${encodeURIComponent(query)}`;
+    }
+  }
+
+  function toggleDrawer() {
+    const drawer = document.getElementById("profileDrawer");
+    drawer.classList.toggle("open");
+  }
 </script>

@@ -46,27 +46,35 @@ module.exports.handleStudentLogin = async (req, res) => {
   req.flash("success", "Welcome back to Club Management!");
   res.redirect(redirectUrl);
 };
-
 module.exports.showCollegeProfile = async (req, res) => {
-  let { searchedCollege } = req.query;
-  if (!req.user) {
-    return res.redirect("/studentRegistration/login");
-  }
-  let college;
-  if (searchedCollege) {
-    college = await College.findOne({ college: searchedCollege }).populate({
-      path: "clubs",
-      populate: { path: "events" },
-    });
-  } else {
-    let user = req.user;
-    college = await College.findById(user.author).populate({
-      path: "clubs",
-      populate: { path: "events" },
-    });
-  }
+  try {
+    let { searchedCollege } = req.query;
+    if (!req.user) {
+      return res.redirect("/studentRegistration/login");
+    }
+    let college;
+    if (searchedCollege) {
+      college = await College.findOne({ college: searchedCollege }).populate({
+        path: "clubs",
+        populate: { path: "events" },
+      });
+    } else {
+      let user = req.user;
+      college = await College.findById(user.author).populate({
+        path: "clubs",
+        populate: { path: "events" },
+      });
+    }
 
-  res.render("studentDashboard/index", { college });
+    if (!college) {
+      return res.status(404).send("College not found");
+    }
+
+    res.render("studentDashboard/index", { college, user: req.user });
+  } catch (error) {
+    console.error("Error in showCollegeProfile:", error);
+    res.status(500).send("Server Error");
+  }
 };
 
 module.exports.searchColleges = async (req, res) => {
