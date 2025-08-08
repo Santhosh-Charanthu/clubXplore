@@ -1,0 +1,255 @@
+```ejs
+<%- include("../layouts/boilerplate") %>
+
+<style>
+  body {
+    background-color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .edit-form-container {
+    max-width: 70%; /* Changed from 900px to 70% */
+    margin: 60px auto;
+    padding: 40px;
+    background: #fff;
+    border: 1px solid #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+
+
+  .edit-form-container:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .edit-form-container h1 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 35px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 8px 18px;
+    border: 1px solid #d2d2d2;
+    border-radius: 10px;
+    font-size: 17px;
+    background-color: #fff;
+    transition: border 0.3s ease;
+  }
+
+  .form-group input:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+    background-color: #fff;
+    outline: none;
+  }
+
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    text-align: left;
+  }
+
+  .success-message {
+    color: green;
+    font-size: 0.875rem;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .form-buttons button {
+    padding: 14px 28px;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .submit-btn {
+    background-color: #28a745;
+    color: white;
+    width: 20%;
+  }
+
+  .submit-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+    width: 20%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .cancel-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .edit-form-container {
+      padding: 20px;
+      margin: 30px auto;
+    }
+    .edit-form-container h1 {
+      font-size: 28px;
+    }
+    .form-group input {
+      padding: 12px;
+      font-size: 16px;
+    }
+    .form-buttons button {
+      padding: 12px 20px;
+      font-size: 16px;
+    }
+  }
+</style>
+
+<div class="edit-form-container">
+  <h1>Edit Profile</h1>
+
+  <% if (error && error.length) { %>
+    <div class="error-message"><%= error %></div>
+  <% } %>
+  <% if (success && success.length) { %>
+    <div class="success-message"><%= success %></div>
+  <% } %>
+
+  <form action="/edit-profile" method="POST" class="needs-validation" novalidate id="editProfileForm">
+    <div class="form-group">
+      <label for="studentName">Name</label>
+      <input type="text" id="studentName" name="studentName" value="<%= student.studentName %>" required>
+      <div id="studentNameError" class="error-message"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="<%= student.email %>" required>
+      <div id="emailError" class="error-message"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="regNo">Registration Number</label>
+      <input type="text" id="regNo" name="regNo" value="<%= student.regNo %>" required>
+      <div id="regNoError" class="error-message"></div>
+    </div>
+
+    <div class="form-buttons">
+      <button type="submit" class="submit-btn">Save Changes</button>
+      <a href="/studentDashboard/events" class="cancel-btn">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById("editProfileForm").addEventListener("submit", function (event) {
+    let isValid = true;
+
+    // Get input fields
+    const studentNameInput = document.getElementById("studentName");
+    const emailInput = document.getElementById("email");
+    const regNoInput = document.getElementById("regNo");
+
+    // Get error message elements
+    const studentNameError = document.getElementById("studentNameError");
+    const emailError = document.getElementById("emailError");
+    const regNoError = document.getElementById("regNoError");
+
+    // Reset errors and styles
+    studentNameError.textContent = "";
+    emailError.textContent = "";
+    regNoError.textContent = "";
+    studentNameInput.classList.remove("error-border");
+    emailInput.classList.remove("error-border");
+    regNoInput.classList.remove("error-border");
+
+    // Validate Name
+    if (studentNameInput.value.trim() === "") {
+      studentNameError.textContent = "Name is required.";
+      studentNameInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Email
+    if (emailInput.value.trim() === "") {
+      emailError.textContent = "Email is required.";
+      emailInput.classList.add("error-border");
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+      emailError.textContent = "Please enter a valid email address.";
+      emailInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    // Validate Registration Number
+    if (regNoInput.value.trim() === "") {
+      regNoError.textContent = "Registration Number is required.";
+      regNoInput.classList.add("error-border");
+      isValid = false;
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+
+  // Real-time Validation - Remove Error on Input
+  document.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", function () {
+      if (this.value.trim() !== "") {
+        this.classList.remove("error-border");
+        document.getElementById(this.id + "Error").textContent = "";
+      }
+    });
+  });
+
+  // Bootstrap validation
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
+```

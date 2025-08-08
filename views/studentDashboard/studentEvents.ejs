@@ -1,0 +1,150 @@
+<%- include("../layouts/boilerplate") %>
+
+<style>
+  body {
+    background: linear-gradient(to bottom, #f4f6f8, #e8ecef);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 40px 0;
+    color: #2c3e50;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .event-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 30px;
+  }
+
+  .event-card {
+    width: 30%;
+    min-width: 300px;
+    max-width: 350px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .event-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .event-card img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .event-card-body {
+    padding: 20px;
+  }
+
+  .event-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+
+  .event-card-text {
+    font-size: 1rem;
+    color: #34495e;
+    margin-bottom: 8px;
+  }
+
+  .event-card-text strong {
+    color: #2c3e50;
+  }
+
+  .no-events {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 1200px) {
+    .event-card {
+      width: 45%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .event-card {
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page-title {
+      font-size: 1.8rem;
+    }
+
+    .container {
+      padding: 20px;
+    }
+  }
+</style>
+
+<div class="container">
+  <h1 class="page-title">Your Event Registrations</h1>
+
+  <% if (error && error.length > 0) { %>
+    <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% } %>
+  <% if (success && success.length > 0) { %>
+    <div class="alert alert-success" role="alert"><%= success %></div>
+  <% } %>
+
+  <% if (events && events.length > 0) { %>
+    <div class="event-container">
+      <% events.forEach(event => { %>
+        <a href="/<%= encodeURIComponent(event.author.ClubName) %>/event/<%= encodeURIComponent(event._id) %>" class="event-card">
+          <img src="<%= event.image && event.image.url ? event.image.url : 'https://via.placeholder.com/300x200' %>" alt="<%= event.eventName %>" />
+          <div class="event-card-body">
+            <h3 class="event-card-title"><%= event.eventName %></h3>
+            <p class="event-card-text"><strong>Start Date:</strong> <%= new Date(event.startDate).toLocaleDateString() %></p>
+            <p class="event-card-text"><strong>End Date:</strong> <%= new Date(event.endDate).toLocaleDateString() %></p>
+            <p class="event-card-text"><strong>Mode:</strong> <%= event.mode.charAt(0).toUpperCase() + event.mode.slice(1) %></p>
+            <% if (event.mode === 'offline' || event.mode === 'hybrid') { %>
+              <p class="event-card-text"><strong>Venue:</strong> <%= event.venue || 'TBD' %></p>
+            <% } %>
+            <% if (event.mode === 'online' || event.mode === 'hybrid') { %>
+              <p class="event-card-text"><strong>Meeting Link:</strong> <%= event.meetingLink ? `<a href="${event.meetingLink}" target="_blank">Join</a>` : 'TBD' %></p>
+            <% } %>
+            <% if (teamNameMap[event._id.toString()]) { %>
+              <p class="event-card-text"><strong>Team Name:</strong> <%= teamNameMap[event._id.toString()] %></p>
+            <% } %>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p class="no-events">You have not registered for any events.</p>
+  <% } %>
+</div>
+```

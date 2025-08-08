@@ -26,6 +26,9 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
+
+  // 👇 Add this line
+  registeredEvents: [{ type: Schema.Types.ObjectId, ref: "Event" }],
 });
 
 studentSchema.plugin(passportLocalMongoose, { usernameField: "regNo" });
