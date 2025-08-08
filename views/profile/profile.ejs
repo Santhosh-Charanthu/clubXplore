@@ -109,12 +109,11 @@
     transform: translateY(-1px);
   }
 
-  .event-section-title {
-    font-size: 36px;
-    font-weight: 600;
-    text-align: center;
+  .section-title {
+    text-align: start;
     margin-top: 80px;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
+    text-align: center;
   }
 
   .card-container {
@@ -189,10 +188,6 @@
     .club-details h1 {
       font-size: 36px;
     }
-
-    .event-section-title {
-      font-size: 28px;
-    }
   }
 
   .club-logo {
@@ -234,129 +229,276 @@
     right: 0;
     display: none;
     flex-direction: column;
-    background: #1f1f1f;
-    border: 1px solid #2c2c2c;
+    background: #ffffff; /* White background */
+    border: 1px solid #e5e7eb; /* Light gray border */
     padding: 6px 0;
     border-radius: 10px;
     z-index: 999;
     width: 200px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   }
 
   .popup-item {
     display: flex;
-    align-items: center; /* ✅ Vertically centers SVG and text */
+    align-items: center;
     gap: 10px;
     padding: 10px 16px;
     font-size: 14px;
-    color: #d1d5db;
+    color: #111827; /* Dark text */
     background-color: transparent;
     text-decoration: none;
     cursor: pointer;
     transition: background 0.2s;
-    line-height: 1; /* ✅ Prevent uneven vertical spacing */
-    border-radius: 6px; /* ✅ Rounded corners */
+    line-height: 1;
+    border-radius: 6px;
     margin: 0 7px;
   }
 
   .popup-item:hover {
-    background-color: #2a2a2a;
+    background-color: #f3f4f6; /* Light hover background */
   }
 
   .popup-item svg {
     width: 18px;
     height: 18px;
-    stroke: #9ca3af;
-    flex-shrink: 0; /* ✅ Prevent SVG from shrinking */
-    display: block; /* ✅ Removes extra space below SVG */
+    stroke: #374151; /* Dark gray icon stroke */
+    flex-shrink: 0;
+    display: block;
   }
 
   .popup-item span {
     flex: 1;
     text-align: left;
     display: block;
-    line-height: 1; /* ✅ Aligns text height properly with icon */
+    line-height: 1;
   }
 
   .popup-item.delete {
-    color: #ef4444;
+    color: #dc2626; /* Red for delete text */
   }
 
   .popup-item.delete svg {
-    stroke: #ef4444;
+    stroke: #dc2626; /* Red for delete icon */
   }
 
   .divider {
     height: 1px;
-    background-color: #2f2f2f;
+    background-color: #e5e7eb;
     margin: 4px 0;
   }
-  .navbar {
-    position: relative;
-    top: -3.5%;
-  }
 
-  /* Toggle container */
-  .theme-toggle {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 30px;
+  /* Event Card Styles */
+  .event-card {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    gap: 5px;
+    margin: auto;
   }
 
-  .navbar .nav-link {
-    text-decoration: none;
-    color: inherit;
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(240px, 1fr)
+    ); /* lowered from 280px */
+    gap: 32px;
   }
 
-  /* Hide checkbox */
-  .theme-toggle input {
-    display: none;
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 
-  /* Icon container */
-  .toggle-icon {
+  .card-image-container {
     position: relative;
+    overflow: hidden;
+  }
+
+  .card-image {
     width: 100%;
-    height: 100%;
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
+    height: 192px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
   }
 
-  .toggle-icon .bi-sun,
-  .toggle-icon .bi-moon {
+  .event-card:hover .card-image {
+    transform: scale(1.05);
+  }
+
+  .card-badge {
     position: absolute;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    top: 16px;
+    right: 16px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
-  /* Default: show moon, hide sun */
-  .theme-toggle input:not(:checked) ~ .toggle-icon .bi-sun {
-    opacity: 0;
-    transform: scale(0.5) rotate(-90deg);
+  .badge-college {
+    background-color: #3b82f6;
   }
 
-  .theme-toggle input:not(:checked) ~ .toggle-icon .bi-moon {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
+  .badge-college:hover {
+    background-color: #2563eb;
   }
 
-  /* When checked: show sun, hide moon */
-  .theme-toggle input:checked ~ .toggle-icon .bi-sun {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
+  .badge-open {
+    background-color: #10b981;
   }
 
-  .theme-toggle input:checked ~ .toggle-icon .bi-moon {
-    opacity: 0;
-    transform: scale(0.5) rotate(90deg);
+  .badge-open:hover {
+    background-color: #059669;
+  }
+
+  .badge-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .card-content {
+    padding: 24px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+  }
+
+  .event-card:hover .card-title {
+    color: #2563eb;
+  }
+
+  .card-description {
+    color: #6b7280;
+    margin-bottom: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .learn-more-btn {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    transition: color 0.2s ease;
+  }
+
+  .learn-more-btn:hover {
+    color: #1d4ed8;
+  }
+
+  .arrow-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  .learn-more-btn:hover .arrow-icon {
+    transform: translateX(4px);
+  }
+
+  /* Load More Section */
+  .load-more-section {
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 640px) {
+    .container {
+      padding: 0 16px;
+    }
+
+    .header-content {
+      padding: 32px 0;
+    }
+
+    .events-section {
+      padding: 48px 0;
+    }
+
+    .events-grid {
+      gap: 24px;
+    }
+  }
+
+  /* Ensuring the card doesn't break below 300px */
+  @media (max-width: 320px) {
+    .event-card {
+      min-width: auto; /* let it shrink naturally */
+    }
+    .card-image {
+      height: 150px; /* smaller image */
+    }
+    .card-content {
+      padding: 16px; /* tighter padding */
+    }
+    .card-title {
+      font-size: 1rem;
+    }
+    .card-description {
+      font-size: 0.875rem;
+    }
+    .card-badge {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      gap: 2px;
+    }
+    .badge-icon {
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  /* .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+  } */
+
+  @media (min-width: 640px) {
+    /* .section-title {
+      font-size: 2.5rem;
+    } */
+  }
+
+  .section-description {
+    font-size: 1.125rem;
+    color: #6b7280;
+    max-width: 512px;
+    margin: 30px auto;
+    text-align: center;
   }
 
   body.dark-mode {
@@ -470,110 +612,817 @@
     width: 50px;
     height: 30px;
   }
+
+  /* Base reset */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+      Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, Apple Color Emoji,
+      Segoe UI Emoji;
+    color: #0f172a; /* slate-900 */
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Design tokens: values mirror Tailwind utilities used in the React version */
+  :root {
+    --border: rgba(0, 0, 0, 0.08); /* ring-black/5 approximation for borders */
+    --ring: rgba(0, 0, 0, 0.05); /* ring-black/5 */
+    --muted: #6b7280; /* gray-500 for text-muted-foreground */
+    --emerald-600: #059669;
+    --emerald-600-90: rgba(5, 150, 105, 0.9);
+    --emerald-soft-1: rgba(16, 185, 129, 0.15); /* from-emerald-500/15 */
+    --teal-soft: rgba(20, 184, 166, 0.1); /* via-teal-500/10 */
+    --emerald-soft-2: rgba(16, 185, 129, 0.1); /* to-emerald-600/10 */
+    --emerald-700a-20: rgba(4, 120, 87, 0.2);
+    --emerald-300a-20: rgba(110, 231, 183, 0.2);
+    --red-600: #dc2626;
+    --red-600-90: rgba(220, 38, 38, 0.9);
+
+    --radius-xl: 0.75rem; /* rounded-xl */
+    --radius-2xl: 1rem; /* rounded-2xl */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Page padding aligning with p-4 sm:p-6 md:p-8 */
+  .page {
+    min-height: 100dvh;
+    padding: 1rem;
+    margin-bottom: 100px;
+  }
+  @media (min-width: 640px) {
+    .page {
+      padding: 1.5rem;
+    }
+  }
+  @media (min-width: 768px) {
+    .page {
+      padding: 2rem;
+    }
+  }
+  /* Tokens mapped to Tailwind/shadcn used by the original */
+  :root {
+    --border: rgba(15, 23, 42, 0.12); /* border */
+    --ring: rgba(0, 0, 0, 0.05); /* ring-black/5 */
+    --muted: #6b7280; /* text-muted-foreground */
+    --emerald-600: #059669;
+    --emerald-600-90: rgba(5, 150, 105, 0.9);
+    --emerald-700a-20: rgba(4, 120, 87, 0.2); /* ring-emerald-700/20 */
+    --emerald-400a-20: rgba(52, 211, 153, 0.2);
+    --teal-400a-10: rgba(20, 184, 166, 0.1);
+    --emerald-500a-15: rgba(16, 185, 129, 0.15);
+    --emerald-600a-10: rgba(16, 185, 129, 0.1);
+    --red-600: #dc2626;
+    --red-600-90: rgba(220, 38, 38, 0.9);
+
+    --radius-md: 0.375rem; /* rounded-md */
+    --radius-xl: 0.75rem; /* rounded-xl */
+    --radius-2xl: 1rem; /* rounded-2xl */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Spacing like p-4 sm:p-6 md:p-8 */
+  .page {
+    min-height: 100dvh;
+    padding: 1rem;
+  }
+  @media (min-width: 640px) {
+    .page {
+      padding: 1.5rem;
+    }
+  }
+  @media (min-width: 768px) {
+    .page {
+      padding: 2rem;
+    }
+  }
+
+  /* Header panel: border + ring + gradient bg */
+  .club-header {
+    position: relative;
+    overflow: visible;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    background: linear-gradient(
+      135deg,
+      var(--emerald-500a-15) 0%,
+      var(--teal-400a-10) 50%,
+      var(--emerald-600a-10) 100%
+    );
+    padding: 1rem;
+    box-shadow: 0 0 0 1px var(--ring) inset;
+  }
+  @media (min-width: 640px) {
+    .club-header {
+      padding: 1.5rem;
+    }
+  }
+  @media (min-width: 768px) {
+    .club-header {
+      padding: 2rem;
+    }
+  }
+
+  .decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .decor--radials {
+    opacity: 0.6;
+    background-image: radial-gradient(
+        16rem 12rem at 20% -10%,
+        rgba(16, 185, 129, 0.2),
+        transparent 60%
+      ),
+      radial-gradient(
+        18rem 14rem at 120% 30%,
+        rgba(45, 212, 191, 0.22),
+        transparent 60%
+      ),
+      radial-gradient(
+        12rem 10rem at 40% 120%,
+        rgba(16, 185, 129, 0.18),
+        transparent 60%
+      );
+  }
+  .decor--grid {
+    background-image: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px
+    );
+    background-size: 18px 18px;
+    -webkit-mask-image: radial-gradient(
+      100% 100% at 0 0,
+      black 60%,
+      transparent
+    );
+    mask-image: radial-gradient(100% 100% at 0 0, black 60%, transparent);
+  }
+
+  .club-header__grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: stacked layout */
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Mobile layout */
+  @media (max-width: 767px) {
+    .logo-tile {
+      grid-row: 1;
+      justify-self: center;
+    }
+    .club-copy {
+      grid-row: 2;
+      justify-self: start;
+      width: 100%;
+    }
+    .club-copy h1,
+    p {
+      text-align: start;
+    }
+    .actions {
+      grid-row: 3;
+      justify-self: end;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  /* Desktop layout: all in single row */
+  @media (min-width: 768px) {
+    .club-header__grid {
+      grid-template-columns: auto 1fr auto; /* Logo | Text | Actions */
+      align-items: center;
+    }
+
+    .logo-tile {
+      grid-column: 1;
+      justify-self: start;
+    }
+
+    .club-copy {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .club-copy h1 {
+      text-align: start;
+    }
+
+    .actions {
+      grid-column: 3;
+      justify-self: end;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  /* Logo tile: bg-white/40, ring-emerald-700/20, hover scale, inner ring-black/5 */
+  .logo-tile {
+    position: relative;
+    height: 6rem;
+    width: 6rem; /* h-24 w-24 */
+    border-radius: var(--radius-2xl);
+    background: rgba(255, 255, 255, 0.4);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--emerald-700a-20); /* ring-emerald-700/20 */
+    box-shadow: var(--shadow-sm);
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .logo-tile:focus-visible {
+    outline: 2px solid var(--emerald-600);
+    outline-offset: 3px;
+  }
+  .logo-tile:hover {
+    transform: scale(1.02);
+  }
+  @media (min-width: 640px) {
+    .logo-tile {
+      height: 7rem;
+      width: 7rem;
+    }
+  } /* sm:h-28 w-28 */
+
+  .logo-tile__glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: calc(var(--radius-2xl) + 6px);
+    background: linear-gradient(
+      135deg,
+      var(--emerald-400a-20),
+      var(--teal-400a-10)
+    );
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .logo-tile:hover .logo-tile__glow {
+    opacity: 1;
+  }
+
+  .logo-tile__frame {
+    position: absolute;
+    inset: 0.25rem; /* m-1 */
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05) inset; /* ring-black/5 */
+  }
+  .logo-tile__frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .logo-tile__badge {
+    position: absolute;
+    right: 0.375rem;
+    bottom: 0.375rem;
+    background: var(--emerald-600);
+    color: #fff;
+    padding: 0.375rem;
+    border-radius: 0.375rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .icon {
+    display: block;
+    fill: none;
+    stroke: currentColor;
+  }
+  .icon--16 {
+    width: 16px;
+    height: 16px;
+  }
+  .icon--20 {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Typography: text-2xl sm:text-3xl md:text-4xl tracking-tight font-bold */
+  .club-copy {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .club-title {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  @media (min-width: 640px) {
+    .club-title {
+      font-size: 1.875rem;
+      line-height: 1.2;
+    }
+  }
+  @media (min-width: 768px) {
+    .club-title {
+      font-size: 2.25rem;
+      line-height: 1.2;
+    }
+  }
+
+  .club-desc {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-width: 65ch;
+  }
+  @media (min-width: 640px) {
+    .club-desc {
+      font-size: 1rem;
+    }
+  }
+
+  /* Actions alignment: justify-self-end like original */
+  .actions {
+    justify-self: end;
+  }
+  .actions__desktop {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .actions__mobile {
+    display: flex;
+    position: relative;
+  }
+  @media (min-width: 768px) {
+    .actions__desktop {
+      display: flex;
+    }
+    .actions__mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .event-section {
+      position: relative;
+      top: -60px;
+    }
+  }
+  /* Buttons (shadcn Button styles) */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem; /* h-9 */
+    padding: 0 0.75rem; /* px-3 */
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    background: #f8fafc;
+    color: #0f172a;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      color 0.15s ease, transform 0.08s ease;
+  }
+  .btn:focus-visible {
+    outline: 2px solid rgba(5, 150, 105, 0.45);
+    outline-offset: 2px;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn--icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+
+  .btn--primary {
+    background: var(--emerald-600);
+    color: #fff;
+    border-color: transparent;
+  }
+  .btn--primary:hover {
+    background: var(--emerald-600-90);
+  }
+  .btn--outline {
+    background: #fff;
+    color: #0f172a;
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+  .btn--outline:hover {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.18);
+  }
+  .btn--destructive {
+    background: var(--red-600);
+    color: #fff;
+    border-color: transparent;
+  }
+  .btn--destructive:hover {
+    background: var(--red-600-90);
+  }
+
+  /* Dropdown Menu (mobile) — align end, w-48, item hover and danger variant */
+  .menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 12rem; /* w-48 */
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 0.25rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 50;
+    display: none;
+  }
+  .menu.is-open {
+    display: block;
+    animation: menu-in 0.12s ease-out;
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .menu__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0.25rem;
+    color: #0f172a;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    cursor: pointer;
+  }
+  .menu__item:hover,
+  .menu__item:focus {
+    background: rgba(15, 23, 42, 0.06);
+    outline: 0;
+  }
+  .menu__item .icon {
+    width: 16px;
+    height: 16px;
+  }
+  .menu__item--danger {
+    color: var(--red-600);
+  }
+  .menu__item--danger:hover,
+  .menu__item--danger:focus {
+    background: rgba(220, 38, 38, 0.08);
+  }
+
+  /* A11y */
+  .sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .create-svg {
+    stroke: white !important;
+  }
+  svg span {
+    color: white !important;
+  }
+  .action-btns {
+    color: white;
+  }
+  .btn--destructive:hover {
+    color: white;
+  }
+
+  .event-section {
+  padding-bottom: 3rem; /* 48px gap from the bottom */
+}
+
+.events-section {
+  margin-bottom: 3rem; /* alternative way */
+}
+
 </style>
 
-<nav class="navbar bg-body-tertiary">
-  <div class="container-fluid d-flex flex-row-reverse align-items-center gap-3">
-    <!-- Toggle Button -->
-    <label class="theme-toggle">
-      <input type="checkbox" id="theme-checkbox" />
-      <span class="toggle-icon">
-        <i class="bi bi-sun"></i>
-        <i class="bi bi-moon"></i>
-      </span>
-    </label>
-    <label for="profile-icon">
-      <i class="bi bi-person-circle"></i>
-    </label>
-  </div>
-</nav>
+<main class="page">
+  <section class="club-header" aria-labelledby="club-title">
+    <div class="decor decor--radials" aria-hidden="true"></div>
+    <div class="decor decor--grid" aria-hidden="true"></div>
 
-<div class="club-header">
-  <div class="club-logo">
-    <img src="<%= club.ClubLogo.url %>" alt="Club Logo" />
+    <div class="club-header__grid">
+      <!-- Logo tile (visual only) -->
+      <button type="button" class="logo-tile" aria-label="Change club logo">
+        <span class="logo-tile__glow" aria-hidden="true"></span>
+        <span class="logo-tile__frame">
+          <img src="<%- club.ClubLogo.url %>" alt=" logo" />
+        </span>
+      </button>
 
-    <% if(user.role !== "student") { %>
-    <div class="edit-icon-wrapper">
-      <i class="fa fa-pencil edit-icon" onclick="togglePopup(event)"></i>
+      <!-- Copy -->
+      <div class="club-copy">
+        <h1 id="club-title" class="club-title"><%- club.ClubName %></h1>
+        <p class="club-desc"><%- club.clubDescription %></p>
+      </div>
 
-      <div class="popup-menu" id="popupMenu">
-        <a href="/<%= club.ClubName %>/createpost" class="popup-item">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      <!-- Actions -->
+      <div class="actions">
+        <!-- Desktop (md+): full buttons -->
+        <div class="actions__desktop" role="group" aria-label="Club actions">
+            <button
+              class="btn btn--primary"
+              type="button"
+              onclick="window.location.href='/<%= club.ClubName %>/createpost'"
+            >
+              <svg
+                class="create-svg"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <path
+                  d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"
+                ></path>
+                <path d="M3 10h18"></path>
+                <path d="M16 19h6"></path>
+                <path d="M19 16v6"></path>
+              </svg>
+              <span class="action-btns">Create event</span>
+            </button>
+          </a>
+          <button
+            class="btn btn--outline"
+            type="button"
+            onclick="window.location.href='/<%= club.ClubName %>/edit'"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          <span>Create Event</span>
-        </a>
-
-        <a href="/<%= club.ClubName %>/edit" class="popup-item">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            {...props}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              {...props}
+            >
+              <path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+              />
+              <path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+              />
+            </svg>
+            <span>Edit</span>
+          </button>
+          <button
+            class="btn btn--destructive"
+            type="button"
+            onclick="confirmDeletion()"
           >
-            <path
-              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-            />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-          <span>Edit</span>
-        </a>
+            <svg
+              class="icon icon--16 create-svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="action-btns">Delete</span>
+          </button>
+        </div>
 
-        <div class="divider"></div>
-
-        <div class="popup-item delete" onclick="confirmDeletion()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <!-- Mobile (< md): kebab button with dropdown menu -->
+        <% if(user.role !== "student") { %>
+        <div
+          class="actions__mobile"
+          data-menu-root
+          onclick="togglePopup(event)"
+        >
+          <button
+            class="btn btn--outline btn--icon"
+            type="button"
+            id="mobile-menu-button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            aria-label="Open actions menu"
           >
-            <polyline points="3 6 5 6 21 6" />
-            <path
-              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+            <svg class="icon icon--20" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="19" r="1.5" fill="currentColor" />
+            </svg>
+            <span class="sr-only">More</span>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div class="popup-menu" id="popupMenu">
+            <a href="/<%= club.ClubName %>/createpost" class="popup-item">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                {...props}
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <path
+                  d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"
+                ></path>
+                <path d="M3 10h18"></path>
+                <path d="M16 19h6"></path>
+                <path d="M19 16v6"></path>
+              </svg>
+              <span>Create Event</span>
+            </a>
+
+            <a href="/<%= club.ClubName %>/edit" class="popup-item">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                {...props}
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+              <span>Edit</span>
+            </a>
+
+            <div class="divider"></div>
+
+            <div class="popup-item delete" onclick="confirmDeletion()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
              m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-            />
-          </svg>
-          <span>Delete</span>
+                />
+              </svg>
+              <span>Delete</span>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <section class="event-section">
+    <!-- Event Section -->
+    <div class="events-section">
+      <div class="container">
+        <div class="events-content">
+          <!-- Section Header -->
+          <div class="section-header">
+            <h2 class="section-title">Events by <%= club.ClubName %></h2>
+            <p class="section-description">
+              Join us for exciting workshops, networking sessions, and hands-on
+              learning experiences.
+            </p>
+          </div>
+
+          <!-- Event Cards Grid -->
+          <div class="events-grid">
+            <% if (club.events.length > 0) { %> <%
+            club.events.forEach(function(event) { %>
+            <a
+              href="/<%= club.ClubName %>/event/<%= event._id %>"
+              style="text-decoration: none; color: inherit"
+            >
+              <div class="event-card" data-event-id="<%= event._id %>">
+                <div class="card-image-container">
+                  <img
+                    src="<%= event.image.url %>"
+                    alt="<%= event.eventName %>"
+                    class="card-image"
+                  />
+                  <div
+                    class="card-badge <%= event.visibility === 'collegeExclusive' ? 'badge-college' : 'badge-open' %>"
+                  >
+                    <% if (event.visibility === 'collegeExclusive') { %>
+                    <svg
+                      class="badge-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"
+                      />
+                    </svg>
+                    College Only <% } else { %>
+                    <svg
+                      class="badge-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
+                      />
+                    </svg>
+                    Open to All <% } %>
+                  </div>
+                </div>
+
+                <div class="card-content">
+                  <h3 class="card-title"><%= event.eventName %></h3>
+                  <p class="card-description"><%= event.eventDetails %></p>
+
+                  <div class="card-footer">
+                    <button class="learn-more-btn">
+                      Learn More
+                      <svg
+                        class="arrow-icon"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path
+                          d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </a>
+            <% }); %> <% } else { %>
+            <p class="no-events">No events created yet.</p>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>
-    <% } %>
-  </div>
+  </section>
+</main>
 
-  <div class="club-details">
-    <h1><%= club.ClubName.toUpperCase() %></h1>
-    <p><%= club.clubDescription %></p>
-  </div>
-
-  <% if(user.role !== "student") { %>
-  <div class="create-event">
-    <a href="/<%= club.ClubName %>/createpost">
-      <button class="create-event-button">Create Event</button>
-    </a>
-  </div>
-  <% } else{ %>
-  <span><b>Events: </b> <%= club.events.length%></span>
-  <% } %>
-</div>
-
-<!-- Modal -->
 <div
   id="confirmModal"
   style="
@@ -648,46 +1497,16 @@
       popup.style.display = "none";
     }
   });
-  const checkbox = document.getElementById("theme-checkbox");
+  // const checkbox = document.getElementById("theme-checkbox");
 
-  // Set initial state based on saved theme
-  const currentTheme = localStorage.getItem("theme") || "light";
-  document.body.classList.toggle("dark-mode", currentTheme === "dark");
-  checkbox.checked = currentTheme === "dark";
+  // // Set initial state based on saved theme
+  // const currentTheme = localStorage.getItem("theme") || "light";
+  // document.body.classList.toggle("dark-mode", currentTheme === "dark");
+  // checkbox.checked = currentTheme === "dark";
 
-  checkbox.addEventListener("change", () => {
-    const isDark = checkbox.checked;
-    document.body.classList.toggle("dark-mode", isDark);
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
+  // checkbox.addEventListener("change", () => {
+  //   const isDark = checkbox.checked;
+  //   document.body.classList.toggle("dark-mode", isDark);
+  //   localStorage.setItem("theme", isDark ? "dark" : "light");
+  // });
 </script>
-
-<!-- Event Section -->
-<div class="event-section-title">Events by <%= club.ClubName %></div>
-
-<div class="card-container">
-  <% if (club.events.length > 0) { %> <% club.events.forEach(event => { %>
-  <a
-    href="/<%= club.ClubName %>/event/<%= event._id %>"
-    style="text-decoration: none; color: inherit"
-  >
-    <div class="card">
-      <img
-        src="<%= event.image.url %>"
-        class="card-img-top"
-        alt="Event Image"
-      />
-      <h3 class="card-title"><%= event.eventName %></h3>
-      <p class="card-text"><%= event.eventDetails %></p>
-      <p class="card-text">
-        <small
-          ><%= event.visibility === 'collegeExclusive' ? 'College Exclusive' :
-          'Open to All' %></small
-        >
-      </p>
-    </div>
-  </a>
-  <% }) %> <% } else { %>
-  <p class="no-events">No events created yet.</p>
-  <% } %>
-</div>

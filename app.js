@@ -127,5 +127,5 @@ app.get("/interface", async (req, res) => {
 });
 
 app.listen(8080, () => {
-  console.log("Listening on port 8080");
+  console.log("Listening to port http://localhost:8080/interface");
 });

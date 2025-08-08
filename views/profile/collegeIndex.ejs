@@ -27,9 +27,9 @@
 
   /* Student registration button in top-right */
   .student-registration-form-link {
-    position: fixed;
-    top: 20px;
-    right: 20px;
+    position: absolute;
+    top: 15px;
+    right: 120px;
     z-index: 1000;
   }
 
@@ -77,6 +77,8 @@
 
   /* Main college header section */
   .college-header {
+    position: relative;
+    top: -22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -255,6 +257,10 @@
     text-decoration: none;
   }
 
+  .college-name {
+    color: black;
+  }
+
   /* Responsive adjustments */
   @media (max-width: 1400px) {
     .college-header {
@@ -358,7 +364,7 @@
 
     .student-registration-form-link {
       top: 15px;
-      right: 20px;
+      right: 120px;
     }
 
     #get-link {
@@ -495,50 +501,59 @@
     background-color: #2f2f2f;
     margin: 4px 0;
   }
+
+  body.dark-mode {
+    background-color: #121212;
+    color: white;
+  }
+
+  body.dark-mode {
+    background-color: #121212;
+    color: #f1f5f9;
+  }
+
+  body.dark-mode .college-header {
+    background-color: rgba(
+      0,
+      0,
+      0,
+      0.5
+    ) !important; /* semi-transparent black */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* for Safari */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  body.dark-mode .club-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.05);
+  }
+
+  body.dark-mode .club-card:hover {
+    background: #334155;
+    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.1);
+  }
+  /* 
+  body.dark-mode .college-details h1 {
+    color: #94a3b8;
+  }
+
+  body.navbar.dark-mode .club-count span {
+    color: #94a3b8;
+  }
+  body.dark-mode p strong {
+    color: #94a3b8;
+  }
+  body.dark-mode .card-title {
+    color: #94a3b8;
+  } */
+  body.dark-mode .clubs-heading {
+    color: #94a3b8 !important;
+  }
 </style>
 
-<script>
-  // Function to copy link to clipboard
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        // Flash message is handled server-side
-      },
-      (err) => {
-        console.error("Failed to copy: ", err);
-        alert("Failed to copy link. Please try again.");
-      }
-    );
-  }
-
-  // Auto-copy link if present (runs on page load)
-  window.onload = function () {
-    const linkInput = document.getElementById("registration-link");
-    if (linkInput && linkInput.value) {
-      copyToClipboard(linkInput.value);
-    }
-  };
-
-  function togglePopup(event) {
-    event.stopPropagation(); // Prevent triggering outside click
-    const popup = document.getElementById("popupMenu");
-    popup.style.display = popup.style.display === "flex" ? "none" : "flex";
-  }
-
-  // Hide popup when clicking outside
-  document.addEventListener("click", function (event) {
-    const popup = document.getElementById("popupMenu");
-    const icon = document.querySelector(".edit-icon");
-
-    if (
-      popup &&
-      !popup.contains(event.target) &&
-      !icon.contains(event.target)
-    ) {
-      popup.style.display = "none";
-    }
-  });
-</script>
 <!-- Display flash messages -->
 <% if (messages.error) { %>
 <div style="color: red"><%= messages.error %></div>
@@ -654,7 +669,7 @@
   </div>
 
   <div class="college-details">
-    <h1><%= college.college %></h1>
+    <h1 class="college-name"><%= college.college %></h1>
     <div class="college-buttons">
       <button
         class="edit-button"
@@ -679,7 +694,7 @@
 </div>
 
 <div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
-  <p>Clubs in this college are:</p>
+  <p class="clubs-heading">Clubs in this college are:</p>
 </div>
 
 <div class="club-container">
@@ -707,6 +722,47 @@
 </div>
 
 <script>
+  // Function to copy link to clipboard
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        // Flash message is handled server-side
+      },
+      (err) => {
+        console.error("Failed to copy: ", err);
+        alert("Failed to copy link. Please try again.");
+      }
+    );
+  }
+
+  // Auto-copy link if present (runs on page load)
+  window.onload = function () {
+    const linkInput = document.getElementById("registration-link");
+    if (linkInput && linkInput.value) {
+      copyToClipboard(linkInput.value);
+    }
+  };
+
+  function togglePopup(event) {
+    event.stopPropagation(); // Prevent triggering outside click
+    const popup = document.getElementById("popupMenu");
+    popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+  }
+
+  // Hide popup when clicking outside
+  document.addEventListener("click", function (event) {
+    const popup = document.getElementById("popupMenu");
+    const icon = document.querySelector(".edit-icon");
+
+    if (
+      popup &&
+      !popup.contains(event.target) &&
+      !icon.contains(event.target)
+    ) {
+      popup.style.display = "none";
+    }
+  });
+
   window.addEventListener("DOMContentLoaded", () => {
     const linkInput = document.getElementById("registration-link");
     if (linkInput && linkInput.value) {

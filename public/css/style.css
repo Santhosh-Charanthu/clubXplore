@@ -129,3 +129,104 @@ h1 {
   text-align: center;
   margin-top: 50px;
 }
+
+/* navbar */
+.navbar {
+  display: flex;
+  justify-content: end;
+}
+
+.navbar {
+  position: relative;
+  top: -3.5%;
+}
+
+/* Toggle container */
+.theme-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.navbar .nav-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hide checkbox */
+.theme-toggle input {
+  display: none;
+}
+
+/* Icon container */
+.toggle-icon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-icon .bi-sun,
+.toggle-icon .bi-moon {
+  position: absolute;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Default: show moon, hide sun */
+.theme-toggle input:not(:checked) ~ .toggle-icon .bi-sun {
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
+}
+
+.theme-toggle input:not(:checked) ~ .toggle-icon .bi-moon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* When checked: show sun, hide moon */
+.theme-toggle input:checked ~ .toggle-icon .bi-sun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.theme-toggle input:checked ~ .toggle-icon .bi-moon {
+  opacity: 0;
+  transform: scale(0.5) rotate(90deg);
+}
+
+body.dark-mode .navbar {
+  background-color: #1e1e1e !important;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #f1f5f9;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode p,
+body.dark-mode b,
+body.dark-mode span,
+body.dark-mode strong {
+  color: #94a3b8;
+}
+
+body.dark-mode .navbar {
+  background-color: rgba(0, 0, 0, 0.5) !important; /* semi-transparent black */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* for Safari */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
