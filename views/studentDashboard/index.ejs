@@ -1,6 +1,7 @@
 <%- include("../layouts/boilerplate") %>
 
 <style>
+  /* Existing styles (unchanged parts skipped for brevity) */
   .club-container {
     display: flex;
     flex-wrap: wrap;
@@ -44,24 +45,12 @@
     margin-bottom: 10px;
   }
 
-  @media (max-width: 1200px) {
-    .club-card {
-      width: 33.33%;
-    }
-  }
+  /* Responsive cards */
+  @media (max-width: 1200px) { .club-card { width: 33.33%; } }
+  @media (max-width: 900px)  { .club-card { width: 50%; } }
+  @media (max-width: 600px)  { .club-card { width: 100%; } }
 
-  @media (max-width: 900px) {
-    .club-card {
-      width: 50%;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .club-card {
-      width: 100%;
-    }
-  }
-
+  /* Search styles */
   .search-container {
     display: flex;
     align-items: center;
@@ -112,7 +101,6 @@
     transition: 0.3s;
   }
 
-  /* Suggestions Dropdown */
   .suggestions {
     position: absolute;
     top: 105%;
@@ -140,84 +128,159 @@
   .suggestion-item:hover {
     background-color: #f8f8f8;
   }
+
   .navbar {
     margin-top: -20px;
+    position: relative;
+  }
+
+  .profile-icon {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgb(160, 237, 216);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 20px;
+    transition: background 0.3s ease;
+  }
+
+  .profile-icon:hover {
+    background: rgb(140, 217, 196);
+  }
+
+  /* ===== New Dropdown Styles ===== */
+  .profile-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 5px;
+    width: 280px;
+    background: #1e1e1e;
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    padding: 20px 0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .profile-dropdown.show {
+    display: flex;
+  }
+
+  .profile-dropdown .profile-header {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .profile-dropdown .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #3bd2ad;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 12px;
+  }
+
+  .profile-dropdown .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .profile-dropdown .profile-info span:first-child {
+    font-weight: 600;
+  }
+
+  .profile-dropdown ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+  }
+
+  .profile-dropdown ul li {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .profile-dropdown ul li:hover {
+    background: #2e2e2e;
+  }
+
+  .logout-btn {
+    color: #ff4d4d;
+  }
+
+  .logout-btn:hover {
+    background: #3a1a1a;
+    color: #ff9999;
   }
 </style>
 
+<!-- Navbar -->
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand"></a>
-    <form
-      class="d-flex col-4"
-      style="margin-right: 500px; position: relative"
-      role="search"
-    >
+    <form class="d-flex col-4" style="margin-right: 50px; position: relative" role="search">
       <div class="search-container">
         <div class="search-box">
-          <svg
-            class="search-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input
-            placeholder="Search for a college.."
-            id="searchedCollege"
-            class="input"
-            name="searchedCollege"
-            type="text"
-            autocomplete="off"
-          />
+          <input placeholder="Search for a college.." id="searchedCollege" class="input" name="searchedCollege" type="text" autocomplete="off" />
           <ul id="suggestions" class="suggestions"></ul>
         </div>
-
         <button class="search-button" onclick="handleSubmit(event)">
-          <svg
-            class="search-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </button>
       </div>
     </form>
+
+    <div class="profile-icon" onclick="toggleDropdown()">
+      <%= user && user.studentName ? user.studentName.charAt(0).toUpperCase() : 'U' %>
+    </div>
+
+    <!-- Dropdown menu -->
+    <div class="profile-dropdown" id="profileDropdown">
+      <div class="profile-header">
+        <div class="avatar"><%= user && user.studentName ? user.studentName.charAt(0).toUpperCase() : 'U' %></div>
+        <div class="profile-info">
+          <span><%= user && user.studentName ? user.studentName : 'Guest' %></span>
+          <small><%= user && user.email ? user.email : 'No email' %></small>
+        </div>
+      </div>
+  <a href="/edit-profile" class="dropdown-link">Edit Profile</a>
+<a href="/event-registrations" class="dropdown-link">Event Registrations</a>
+
+        <button class="logout-btn">Sign Out</button>
+     
+    </div>
   </div>
 </nav>
 
+<!-- College Section -->
 <div style="display: flex; flex-direction: row">
-  <img
-    src="<%= college.collegeLogo.url%>"
-    alt="College Logo"
-    style="
-      height: 140px;
-      width: 140px;
-      margin-top: 20px;
-      margin-left: 50px;
-      border: 1px solid rgb(0, 0, 0);
-      border-radius: 50%;
-    "
-  />
+  <img src="<%= college && college.collegeLogo ? college.collegeLogo.url : 'https://via.placeholder.com/140' %>" alt="College Logo" style="height: 140px; width: 140px; margin-top: 20px; margin-left: 50px; border: 1px solid rgb(0, 0, 0); border-radius: 50%;" />
   <h1 class="col-6" style="margin-top: 70px; margin-left: 0px">
-    <%= college.college %>
+    <%= college && college.college ? college.college : 'No College' %>
   </h1>
 </div>
 
@@ -226,26 +289,46 @@
 </div>
 
 <div class="club-container">
-  <% if (college.clubs.length > 0) { %> <% college.clubs.forEach(club => { %>
-  <a href="/<%= club.ClubName %>/profile" class="club-link">
-    <div class="club-card">
-      <img
-        src="<%= club.ClubLogo.url %>"
-        class="card-img-top"
-        alt="<%= club.ClubName %>"
-      />
-      <div class="card-body">
-        <h3 class="card-title"><%= club.ClubName %></h3>
-        <p><strong>Total Events:</strong> <%= club.events.length %></p>
-      </div>
-    </div>
-  </a>
-  <% }) %> <% } else { %>
-  <p>No clubs available.</p>
+  <% if (college && college.clubs && college.clubs.length > 0) { %>
+    <% college.clubs.forEach(club => { %>
+      <a href="/<%= club.ClubName %>/profile" class="club-link">
+        <div class="club-card">
+          <img src="<%= club.ClubLogo.url %>" class="card-img-top" alt="<%= club.ClubName %>" />
+          <div class="card-body">
+            <h3 class="card-title"><%= club.ClubName %></h3>
+            <p><strong>Total Events:</strong> <%= club.events.length %></p>
+          </div>
+        </div>
+      </a>
+    <% }) %>
+  <% } else { %>
+    <p>No clubs available.</p>
   <% } %>
 </div>
 
+<!-- Scripts -->
 <script>
+  function toggleDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    dropdown.classList.toggle("show");
+  }
+
+  document.addEventListener("click", function (e) {
+    const dropdown = document.getElementById("profileDropdown");
+    const icon = document.querySelector(".profile-icon");
+    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+      dropdown.classList.remove("show");
+    }
+  });
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const query = document.getElementById("searchedCollege").value.trim();
+    if (query) {
+      window.location.href = `/college?q=${encodeURIComponent(query)}`;
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchedCollege");
     const suggestionsBox = document.getElementById("suggestions");
@@ -275,6 +358,7 @@
             searchInput.value = college.name;
             suggestionsBox.innerHTML = "";
             suggestionsBox.style.display = "none";
+            document.querySelector('form').submit();
           });
 
           suggestionsBox.appendChild(listItem);
@@ -285,13 +369,16 @@
     });
 
     document.addEventListener("click", function (e) {
-      if (
-        !searchInput.contains(e.target) &&
-        !suggestionsBox.contains(e.target)
-      ) {
+      if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.innerHTML = "";
         suggestionsBox.style.display = "none";
       }
     });
   });
 </script>
+
+
+
+
+
+
