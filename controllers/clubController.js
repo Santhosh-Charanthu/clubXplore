@@ -80,13 +80,13 @@ module.exports.handleRegistration = async (req, res) => {
 };
 
 module.exports.showLoginForm = (req, res) => {
-  res.render("club/clubformLogin.ejs");
+  const { clubName } = req.query; // Get from URL
+  res.render("club/clubformLogin.ejs", { clubName });
 };
-
-module.exports.handleLogin = async (req, res) => {
-  let { ClubName } = req.body;
-  let redirectUrl = res.locals.redirectUrl || `/${ClubName}/profile`;
-  res.redirect(redirectUrl);
+module.exports.handleLogin = (req, res) => {
+  // User is already authenticated by Passport
+  const ClubName = req.user.ClubName;
+  res.redirect(`/${encodeURIComponent(ClubName)}/profile`);
 };
 
 module.exports.showClubProfile = async (req, res) => {
@@ -131,23 +131,6 @@ module.exports.showClubProfile = async (req, res) => {
     console.log("Error loading profile:", e);
     req.flash("error", "Something went wrong!");
     res.redirect("clubRegistration/login");
-  }
-};
-
-module.exports.handleClubPassword = async (req, res) => {
-  try {
-    const { ClubName } = req.body;
-    const club = await Club.findOne({ ClubName });
-    if (!club) {
-      req.flash("error", "Club not found!");
-      return res.redirect("/collegeRegistration/login");
-    }
-    req.flash("success", `Welcome to ${ClubName}'s profile!`);
-    res.redirect(`/${ClubName}/profile`);
-  } catch (e) {
-    console.error("Club verification error:", e);
-    req.flash("error", "Something went wrong during verification.");
-    res.redirect("/collegeRegistration/login");
   }
 };
 

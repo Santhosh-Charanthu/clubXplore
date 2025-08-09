@@ -31,13 +31,16 @@ router
 
 router.route("/:clubName/profile").get(clubController.showClubProfile);
 
-router.route("/club/verify-password").post(
-  passport.authenticate("club", {
-    failureRedirect: "/collegeRegistration/login",
-    failureFlash: true,
-  }),
-  clubController.handleClubPassword
-);
+router
+  .route("/clubRegistration/login")
+  .get(clubController.showLoginForm)
+  .post(
+    passport.authenticate("club", {
+      failureRedirect: "/clubRegistration/login",
+      failureFlash: true,
+    }),
+    clubController.handleLogin // No manual password check here
+  );
 
 router
   .route("/:clubName/createpost")

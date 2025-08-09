@@ -18,7 +18,7 @@ router
     }),
     studentController.handleStudentLogin
   );
-
+router.route("/logout").get(studentController.studentLogOut);
 router.route("/index").get(studentController.showCollegeProfile);
 
 router

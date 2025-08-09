@@ -700,7 +700,7 @@
 <div class="club-container">
   <% if (college.clubs && college.clubs.length > 0) { %> <%
   college.clubs.forEach(club => { %>
-  <a href="/clubRegistration/login" class="club-navigation">
+<a href="/clubRegistration/login?clubName=<%= encodeURIComponent(club.ClubName) %>" class="club-navigation">
     <div class="club-card">
       <img
         src="<%= club.ClubLogo.url %>"

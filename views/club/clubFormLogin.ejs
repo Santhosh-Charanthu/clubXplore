@@ -12,19 +12,22 @@
         novalidate
         class="needs-validation event-form shadow p-4 rounded"
       >
-        <!-- Club Name -->
-        <div class="mb-4">
-          <label for="ClubName" class="form-label fw-bold">Club Name</label>
-          <input
-            type="text"
-            id="ClubName"
-            name="ClubName"
-            placeholder="Enter Club Name"
-            class="form-control form-control-lg"
-            required
-          />
-          <div class="error-message" id="ClubNameError"></div>
-        </div>
+<div class="mb-4">
+  <label for="ClubName" class="form-label fw-bold">Club Name</label>
+  <input
+    type="text"
+    id="ClubName"
+    name="ClubName"
+    value="<%= typeof clubName !== 'undefined' ? clubName : '' %>"
+    placeholder="Enter Club Name"
+    class="form-control form-control-lg"
+    <%= typeof clubName !== 'undefined' ? 'readonly' : '' %>
+    required
+  />
+  <div class="error-message" id="ClubNameError"></div>
+</div>
+
+
 
         <!-- Password -->
         <div class="mb-4">
