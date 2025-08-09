@@ -28,7 +28,7 @@ module.exports.handleStudentRegistration = async (req, res) => {
     req.login(registeredStudent, (err) => {
       if (err) return next(err);
       req.flash("success", "Welcome to Club Management!");
-      res.redirect("/index");
+      res.redirect("/collegeIndex", { college });
     });
   } catch (e) {
     req.flash("error", e.message);
@@ -45,21 +45,31 @@ module.exports.handleStudentLogin = async (req, res) => {
   req.flash("success", "Welcome back to Club Management!");
   res.redirect(redirectUrl);
 };
+
 module.exports.showCollegeProfile = async (req, res) => {
   try {
-    let { searchedCollege } = req.query;
+    const { searchedCollege } = req.query;
+
+    // If no login, redirect to login
     if (!req.user) {
       return res.redirect("/studentRegistration/login");
     }
+
     let college;
+
     if (searchedCollege) {
-      college = await College.findOne({ college: searchedCollege }).populate({
+      const cleanSearch = searchedCollege.trim();
+
+      // Case-insensitive exact match
+      college = await College.findOne({
+        college: { $regex: new RegExp(`^${cleanSearch}$`, "i") },
+      }).populate({
         path: "clubs",
         populate: { path: "events" },
       });
     } else {
-      let user = req.user;
-      college = await College.findById(user.author).populate({
+      // Show logged-in user's college
+      college = await College.findById(req.user.author).populate({
         path: "clubs",
         populate: { path: "events" },
       });
@@ -69,6 +79,7 @@ module.exports.showCollegeProfile = async (req, res) => {
       return res.status(404).send("College not found");
     }
 
+    // Render directly
     res.render("studentDashboard/index", { college, user: req.user });
   } catch (error) {
     console.error("Error in showCollegeProfile:", error);
@@ -118,14 +129,16 @@ module.exports.handleEditProfile = async (req, res) => {
 
 module.exports.searchColleges = async (req, res) => {
   try {
-    const query = req.query.q;
+    const query = req.query.q?.trim(); // Remove extra spaces
     if (!query) return res.json([]);
 
     const colleges = await College.find({
-      college: { $regex: query, $options: "i" }, // Case-insensitive search
-    }).limit(5);
+      college: { $regex: query, $options: "i" }, // Case-insensitive partial match
+    })
+      .limit(5)
+      .lean(); // Lean for performance since we just need plain objects
 
-    res.json(colleges.map((college) => ({ name: college.college }))); // Send only names
+    res.json(colleges.map((c) => ({ name: c.college }))); // Send only names
   } catch (error) {
     console.error("Error fetching colleges:", error);
     res.status(500).json({ error: "Server error" });

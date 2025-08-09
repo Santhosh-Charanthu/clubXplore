@@ -27,7 +27,6 @@ const studentSchema = new Schema({
     required: true,
   },
 
-  // 👇 Add this line
   registeredEvents: [{ type: Schema.Types.ObjectId, ref: "Event" }],
 });
 

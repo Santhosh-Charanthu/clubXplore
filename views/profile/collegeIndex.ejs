@@ -49,508 +49,8 @@
     background: #4f46e5;
   }
 
-  /* Flash message */
-  .flash-message {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .flash-message.success {
-    background: #e6f3ff;
-    border: 1px solid #93c5fd;
-    color: #1e3a8a;
-  }
-
-  .flash-message.error {
-    background: #fee2e2;
-    border: 1px solid #f87171;
-    color: #991b1b;
-  }
-
-  /* Main college header section */
-  .college-header {
-    position: relative;
-    top: -22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 80px 100px 60px 100px;
-    background: #ffffff;
-  }
-
-  /* College logo */
-  .college-logo {
-    flex: 0 0 auto;
-  }
-
-  .college-logo img {
-    width: 160px;
-    height: 160px;
-    object-fit: contain;
-  }
-
-  /* College name and buttons in center */
-  .college-details {
-    flex: 1;
-    text-align: center;
-    margin: 0 60px;
-  }
-
-  .college-details h1 {
-    font-size: 52px;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 35px;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-  }
-
-  .college-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .edit-button {
-    background: transparent;
-    border: 2px solid #6366f1;
-    color: #6366f1;
-    padding: 14px 28px;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .edit-button:hover {
-    background: #6366f1;
-    color: white;
-  }
-
-  .create-club-button {
-    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-    border: none;
-    color: white;
-    padding: 14px 28px;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-
-  .create-club-button:hover {
-    transform: translateY(-1px);
-  }
-
-  /* Club count on the right */
-  .club-count {
-    flex: 0 0 auto;
-    font-size: 28px;
-    font-weight: 600;
-    color: #000000;
-  }
-
-  .club-count b {
-    font-weight: 700;
-  }
-
-  /* Section heading */
-  div[style*="margin-top: 40px"] {
-    margin-top: 80px !important;
-    margin-left: 100px !important;
-    margin-bottom: 50px !important;
-  }
-
-  div[style*="margin-top: 40px"] p {
-    font-size: 36px !important;
-    font-weight: 600 !important;
-    color: #000000 !important;
-    margin: 0 !important;
-  }
-
-  /* Club container */
-  .club-container {
-    display: flex;
-    gap: 50px;
-    padding: 0 100px 80px 100px;
-    flex-wrap: wrap;
-  }
-
-  /* Individual club cards */
-  .club-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    padding: 50px 40px;
-    width: 320px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  }
-
-  .club-card:hover {
-    background: #f1f5f9;
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    border-color: #cbd5e1;
-  }
-
-  /* Club logo in card */
-  .card-img-top {
-    width: 100%;
-    height: 180px;
-    border-radius: 12px;
-    object-fit: cover;
-    margin-bottom: 20px;
-    display: block;
-  }
-
-  /* Card body */
-  .card-body {
-    padding: 0;
-  }
-
-  .card-title {
-    font-size: 32px;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-
-  .card-body p {
-    font-size: 18px;
-    color: #64748b;
-    font-weight: 500;
-    margin: 0;
-  }
-
-  .card-body strong {
-    color: #475569;
-    font-weight: 600;
-  }
-
-  /* No clubs message */
-  .club-container > p {
-    width: 100%;
-    text-align: center;
-    font-size: 20px;
-    color: #64748b;
-    margin: 50px 0;
-    font-weight: 500;
-  }
-
-  .club-navigation {
+  a {
     text-decoration: none;
-  }
-
-  .college-name {
-    color: black;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 1400px) {
-    .college-header {
-      padding: 60px 80px 50px 80px;
-    }
-
-    .college-details h1 {
-      font-size: 46px;
-    }
-
-    div[style*="margin-left: 50px"] {
-      margin-left: 80px !important;
-    }
-
-    .club-container {
-      padding: 0 80px 60px 80px;
-    }
-  }
-
-  @media (max-width: 1200px) {
-    .college-header {
-      padding: 50px 60px 40px 60px;
-    }
-
-    .college-details {
-      margin: 0 40px;
-    }
-
-    .college-details h1 {
-      font-size: 40px;
-    }
-
-    div[style*="margin-left: 50px"] {
-      margin-left: 60px !important;
-    }
-
-    div[style*="margin-left: 50px"] p {
-      font-size: 32px !important;
-    }
-
-    .club-container {
-      padding: 0 60px 60px 60px;
-      gap: 40px;
-    }
-
-    .club-card {
-      width: 300px;
-    }
-  }
-
-  @media (max-width: 968px) {
-    .college-header {
-      flex-direction: column;
-      gap: 40px;
-      text-align: center;
-      padding: 40px 40px 30px 40px;
-    }
-
-    .college-details {
-      margin: 0;
-      order: 1;
-    }
-
-    .club-count {
-      order: 2;
-      font-size: 24px;
-    }
-
-    .college-logo {
-      order: 0;
-    }
-
-    .college-logo img {
-      width: 120px;
-      height: 120px;
-    }
-
-    .college-details h1 {
-      font-size: 36px;
-      margin-bottom: 25px;
-    }
-
-    div[style*="margin-left: 50px"] {
-      margin-left: 40px !important;
-    }
-
-    div[style*="margin-left: 50px"] p {
-      font-size: 28px !important;
-    }
-
-    .club-container {
-      padding: 0 40px 60px 40px;
-      justify-content: center;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .navbar {
-      padding: 15px 20px;
-    }
-
-    .student-registration-form-link {
-      top: 15px;
-      right: 120px;
-    }
-
-    #get-link {
-      padding: 8px 12px;
-      font-size: 12px;
-    }
-
-    .flash-message {
-      top: 60px;
-      right: 10px;
-      padding: 10px 15px;
-      font-size: 12px;
-      max-width: 90%;
-    }
-
-    .college-header {
-      padding: 30px 20px 20px 20px;
-      gap: 30px;
-    }
-
-    .college-buttons {
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-    }
-
-    .edit-button,
-    .create-club-button {
-      width: 200px;
-    }
-
-    .college-details h1 {
-      font-size: 28px;
-    }
-
-    .club-card {
-      width: 100%;
-      max-width: 300px;
-      padding: 40px 30px;
-    }
-
-    div[style*="margin-left: 50px"] {
-      margin-left: 20px !important;
-    }
-
-    div[style*="margin-left: 50px"] p {
-      font-size: 24px !important;
-    }
-
-    .club-container {
-      padding: 0 20px 60px 20px;
-    }
-  }
-  .edit-icon-wrapper {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-  }
-
-  .edit-icon {
-    font-size: 22px;
-    color: white;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 8px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  .edit-icon:hover {
-    background: rgba(0, 0, 0, 0.8);
-  }
-
-  .popup-menu {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    display: none;
-    flex-direction: column;
-    background: #1f1f1f;
-    border: 1px solid #2c2c2c;
-    padding: 6px 0;
-    border-radius: 10px;
-    z-index: 999;
-    width: 200px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  }
-
-  .popup-item {
-    display: flex;
-    align-items: center; /* ✅ Vertically centers SVG and text */
-    gap: 10px;
-    padding: 10px 16px;
-    font-size: 14px;
-    color: #d1d5db;
-    background-color: transparent;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s;
-    line-height: 1; /* ✅ Prevent uneven vertical spacing */
-    border-radius: 6px; /* ✅ Rounded corners */
-    margin: 0 7px;
-  }
-
-  .popup-item:hover {
-    background-color: #2a2a2a;
-  }
-
-  .popup-item svg {
-    width: 18px;
-    height: 18px;
-    stroke: #9ca3af;
-    flex-shrink: 0; /* ✅ Prevent SVG from shrinking */
-    display: block; /* ✅ Removes extra space below SVG */
-  }
-
-  .popup-item span {
-    flex: 1;
-    text-align: left;
-    display: block;
-    line-height: 1; /* ✅ Aligns text height properly with icon */
-  }
-
-  .popup-item.delete {
-    color: #ef4444;
-  }
-
-  .popup-item.delete svg {
-    stroke: #ef4444;
-  }
-
-  .divider {
-    height: 1px;
-    background-color: #2f2f2f;
-    margin: 4px 0;
-  }
-
-  body.dark-mode {
-    background-color: #121212;
-    color: white;
-  }
-
-  body.dark-mode {
-    background-color: #121212;
-    color: #f1f5f9;
-  }
-
-  body.dark-mode .college-header {
-    background-color: rgba(
-      0,
-      0,
-      0,
-      0.5
-    ) !important; /* semi-transparent black */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* for Safari */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  }
-
-  body.dark-mode .club-card {
-    background: #1e293b;
-    border: 1px solid #334155;
-    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.05);
-  }
-
-  body.dark-mode .club-card:hover {
-    background: #334155;
-    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.1);
-  }
-  /* 
-  body.dark-mode .college-details h1 {
-    color: #94a3b8;
-  }
-
-  body.navbar.dark-mode .club-count span {
-    color: #94a3b8;
-  }
-  body.dark-mode p strong {
-    color: #94a3b8;
-  }
-  body.dark-mode .card-title {
-    color: #94a3b8;
-  } */
-  body.dark-mode .clubs-heading {
-    color: #94a3b8 !important;
   }
 </style>
 
@@ -599,127 +99,249 @@
   };
 </script>
 
-<div class="college-header">
-  <div class="college-logo">
-    <img
-      src="<%= college.collegeLogo.url %>"
-      alt="Logo of <%= college.college %>"
-    />
-    <div class="edit-icon-wrapper">
-      <i class="fa fa-pencil edit-icon" onclick="togglePopup(event)"></i>
+<main class="page">
+  <section class="club-header" aria-labelledby="club-title">
+    <div class="decor decor--radials" aria-hidden="true"></div>
+    <div class="decor decor--grid" aria-hidden="true"></div>
 
-      <div class="popup-menu" id="popupMenu">
-        <a href="/clubRegistration" class="popup-item">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+    <div class="club-header__grid">
+      <!-- Logo tile -->
+      <button type="button" class="logo-tile" aria-label="Change college logo">
+        <span class="logo-tile__glow" aria-hidden="true"></span>
+        <span class="logo-tile__frame">
+          <img
+            src="<%= college.collegeLogo.url %>"
+            alt="Logo of <%= college.college %>"
+          />
+        </span>
+      </button>
+
+      <!-- Copy -->
+      <div class="club-copy">
+        <h1 id="club-title" class="club-title"><%= college.college %></h1>
+        <p class="club-desc">
+          <b>Clubs:</b> <%= college.clubs ? college.clubs.length : 0 %>
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <!-- Desktop buttons -->
+        <div class="actions__desktop" role="group" aria-label="College actions">
+          <button
+            class="club-btn club-btn--primary"
+            type="button"
+            onclick="location.href='/clubRegistration'"
           >
-            <path
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              {...props}
+            >
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <path
+                d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"
+              ></path>
+              <path d="M3 10h18"></path>
+              <path d="M16 19h6"></path>
+              <path d="M19 16v6"></path>
+            </svg>
+            <span class="action-btns">Create Club</span>
+          </button>
+
+          <button
+            class="club-btn club-btn--outline"
+            type="button"
+            onclick="location.href='/college/edit/<%= college._id %>'"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
               stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          <span>Create Club</span>
-        </a>
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+              />
+              <path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+              />
+            </svg>
+            <span>Edit</span>
+          </button>
 
-        <a href="/college/edit/<%= college._id %>" class="popup-item">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            {...props}
+          <button
+            class="club-btn club-btn--destructive"
+            type="button"
+            onclick="confirmDeletion()"
           >
-            <path
-              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-            />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-          <span>Edit</span>
-        </a>
+            <svg
+              class="icon icon--16 create-svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
 
-        <div class="divider"></div>
+            <span class="action-btns">Delete</span>
+          </button>
+        </div>
 
-        <div class="popup-item delete" onclick="confirmDeletion()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <!-- Mobile kebab menu -->
+        <div
+          class="actions__mobile"
+          data-menu-root
+          onclick="togglePopup(event)"
+        >
+          <button
+            class="btn btn--outline btn--icon"
+            type="button"
+            id="mobile-menu-button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            aria-label="Open actions menu"
           >
-            <polyline points="3 6 5 6 21 6" />
-            <path
-              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
-             m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-            />
-          </svg>
-          <span>Delete</span>
+            <svg class="icon icon--20" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="19" r="1.5" fill="currentColor" />
+            </svg>
+            <span class="sr-only">More</span>
+          </button>
+
+          <div class="popup-menu" id="popupMenu">
+            <a href="/clubRegistration" class="popup-item">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                {...props}
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <path
+                  d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"
+                ></path>
+                <path d="M3 10h18"></path>
+                <path d="M16 19h6"></path>
+                <path d="M19 16v6"></path>
+              </svg>
+              <span>Create Club</span>
+            </a>
+
+            <a href="/college/edit/<%= college._id %>" class="popup-item">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+              <span>Edit</span>
+            </a>
+
+            <div class="divider"></div>
+
+            <div class="popup-item delete" onclick="confirmDeletion()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+                  m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                />
+              </svg>
+              <span>Delete</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="college-details">
-    <h1 class="college-name"><%= college.college %></h1>
-    <div class="college-buttons">
-      <button
-        class="edit-button"
-        onclick="location.href='/college/edit/<%= college._id %>'"
-        aria-label="Edit college profile"
-      >
-        Edit
-      </button>
-      <button
-        class="create-club-button"
-        onclick="location.href='/clubRegistration'"
-        aria-label="Create a new club"
-      >
-        Create Club
-      </button>
-    </div>
-  </div>
+  <!-- Section for Clubs -->
+  <section class="event-section">
+    <div class="events-section">
+      <div class="container">
+        <div class="events-content">
+          <div class="section-header">
+            <h2 class="section-title">Clubs in <%= college.college %></h2>
+            <p class="section-description">
+              Explore all the active clubs in our college.
+            </p>
+          </div>
 
-  <div class="club-count">
-    <span><b>Clubs:</b> <%= college.clubs ? college.clubs.length : 0 %></span>
-  </div>
-</div>
-
-<div style="margin-top: 40px; margin-left: 50px; font-size: 30px">
-  <p class="clubs-heading">Clubs in this college are:</p>
-</div>
-
-<div class="club-container">
-  <% if (college.clubs && college.clubs.length > 0) { %> <%
-  college.clubs.forEach(club => { %>
-  <a href="/clubRegistration/login" class="club-navigation">
-    <div class="club-card">
-      <img
-        src="<%= club.ClubLogo.url %>"
-        class="card-img-top"
-        alt="Logo of <%= club.ClubName %>"
-      />
-      <div class="card-body">
-        <h3 class="card-title"><%= club.ClubName %></h3>
-        <p>
-          <strong>Total Events:</strong> <%= club.events ? club.events.length :
-          0 %>
-        </p>
+          <div class="events-grid">
+            <% if (college.clubs && college.clubs.length > 0) { %> <%
+            college.clubs.forEach(club => { %>
+            <a href="/clubRegistration/login" class="club-navigation">
+              <div class="event-card">
+                <div class="card-image-container">
+                  <img
+                    src="<%= club.ClubLogo.url %>"
+                    alt="Logo of <%= club.ClubName %>"
+                    class="card-image"
+                  />
+                </div>
+                <div class="card-content">
+                  <h3 class="card-title"><%= club.ClubName %></h3>
+                  <p class="card-description">
+                    <strong>Total Events:</strong>
+                    <%= club.events ? club.events.length : 0 %>
+                  </p>
+                </div>
+              </div>
+            </a>
+            <% }); %> <% } else { %>
+            <p class="no-events">No clubs available.</p>
+            <% } %>
+          </div>
+        </div>
       </div>
     </div>
-  </a>
-  <% }) %> <% } else { %>
-  <p>No clubs available.</p>
-  <% } %>
-</div>
+  </section>
+</main>
 
 <script>
   // Function to copy link to clipboard

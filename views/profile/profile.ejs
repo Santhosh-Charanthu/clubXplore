@@ -1,13 +1,13 @@
 <%- include("../layouts/boilerplate") %>
 
-<style>
-  body {
+<!-- <style>
+  /* body {
     font-family: "Inter", sans-serif;
     background: #ffffff;
     color: #000000;
     margin: 0;
     padding: 0;
-  }
+  } */
 
   .club-header {
     display: flex;
@@ -20,7 +20,7 @@
     flex-wrap: wrap;
   }
 
-  .club-logo {
+  /* .club-logo {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -58,9 +58,9 @@
     justify-content: center;
     gap: 15px;
     margin-top: 20px;
-  }
+  } */
 
-  .edit-button {
+  /* .edit-button {
     background: transparent;
     border: 2px solid #6366f1;
     color: #6366f1;
@@ -107,7 +107,7 @@
 
   .create-event-button:hover {
     transform: translateY(-1px);
-  }
+  } */
 
   .section-title {
     text-align: start;
@@ -116,7 +116,7 @@
     text-align: center;
   }
 
-  .card-container {
+  /* .card-container {
     display: flex;
     gap: 50px;
     padding: 0 100px 80px 100px;
@@ -149,9 +149,9 @@
     object-fit: cover;
     margin-bottom: 20px;
     display: block;
-  }
+  } */
 
-  .card-title {
+  /* .card-title {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 12px;
@@ -171,10 +171,10 @@
     text-align: center;
     margin-top: 60px;
     color: #94a3b8;
-  }
+  } */
 
   /* Responsive adjustments */
-  @media (max-width: 968px) {
+  /* @media (max-width: 968px) {
     .club-header {
       flex-direction: column;
       gap: 40px;
@@ -221,7 +221,7 @@
 
   .edit-icon:hover {
     background: rgba(0, 0, 0, 0.8);
-  }
+  } */
 
   .popup-menu {
     position: absolute;
@@ -590,7 +590,7 @@
   }
 
   /* Modal dark mode */
-  body.dark-mode #confirmModal > div {
+  /* body.dark-mode #confirmModal > div {
     background-color: #1e1e1e;
     color: #f1f5f9;
   }
@@ -605,7 +605,7 @@
   .navbar {
     display: flex;
     justify-content: end;
-  }
+  } */
   .profile-icon {
     position: relative;
     display: inline-block;
@@ -1136,7 +1136,7 @@
   margin-bottom: 3rem; /* alternative way */
 }
 
-</style>
+</style> -->
 
 <main class="page">
   <section class="club-header" aria-labelledby="club-title">
@@ -1163,7 +1163,7 @@
         <!-- Desktop (md+): full buttons -->
         <div class="actions__desktop" role="group" aria-label="Club actions">
             <button
-              class="btn btn--primary"
+              class="club-btn club-btn--primary"
               type="button"
               onclick="window.location.href='/<%= club.ClubName %>/createpost'"
             >
@@ -1175,7 +1175,7 @@
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="white"
-                stroke-width="1.5"
+                stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
@@ -1192,7 +1192,7 @@
             </button>
           </a>
           <button
-            class="btn btn--outline"
+            class="club-btn club-btn--outline"
             type="button"
             onclick="window.location.href='/<%= club.ClubName %>/edit'"
           >
@@ -1218,7 +1218,7 @@
             <span>Edit</span>
           </button>
           <button
-            class="btn btn--destructive"
+            class="club-btn club-btn--destructive"
             type="button"
             onclick="confirmDeletion()"
           >

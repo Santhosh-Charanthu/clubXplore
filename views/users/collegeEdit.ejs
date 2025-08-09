@@ -143,88 +143,175 @@
       font-size: 16px;
     }
   }
+
+  img{
+    height: 150px;
+    width: 150px;
+  }
+
+  .btn-success-bright {
+  background-color: #28a745 !important;
+  border: none;
+}
+
+.btn-success-bright:hover {
+  background-color: #198754 !important;
+}
+
 </style>
 
-<div class="edit-form-container">
-  <h1>Edit College Details</h1>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h3 class="text-center mb-4">Edit College Details</h3>
 
-  <% if (error && error.length) { %>
-    <div class="error-message"><%= error %></div>
-  <% } %>
-  <% if (success && success.length) { %>
-    <div class="success-message"><%= success %></div>
-  <% } %>
-
-  <form action="/college/edit/<%= college._id %>?_method=PUT" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate id="editCollegeForm">
-    <div class="form-group">
-      <label for="college">College Name</label>
-      <input type="text" id="college" name="college" value="<%= college.college %>" required>
-      <div id="collegeError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" value="<%= college.email %>" required>
-      <div id="emailError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="collegeId">College ID</label>
-      <input type="text" id="collegeId" name="collegeId" value="<%= college.collegeId %>" required>
-      <div id="collegeIdError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="principalName">Principal Name</label>
-      <input type="text" id="principalName" name="principalName" value="<%= college.principalName %>">
-      <div id="principalNameError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="establishedYear">Established Year</label>
-      <input type="number" id="establishedYear" name="establishedYear" value="<%= college.establishedYear %>">
-      <div id="establishedYearError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="address">Address</label>
-      <textarea id="address" name="address" rows="3"><%= college.address %></textarea>
-      <div id="addressError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="collegeType">College Type</label>
-      <select id="collegeType" name="collegeType">
-        <option value="Government" <%= college.collegeType === 'Government' ? 'selected' : '' %>>Government</option>
-        <option value="Private" <%= college.collegeType === 'Private' ? 'selected' : '' %>>Private</option>
-        <option value="Autonomous" <%= college.collegeType === 'Autonomous' ? 'selected' : '' %>>Autonomous</option>
-      </select>
-      <div id="collegeTypeError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="affiliatedUniversity">Affiliated University</label>
-      <input type="text" id="affiliatedUniversity" name="affiliatedUniversity" value="<%= college.affiliatedUniversity %>">
-      <div id="affiliatedUniversityError" class="error-message"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="collegeLogo">College Logo</label>
-      <input type="file" id="collegeLogo" name="collegeLogo" accept="image/*">
-      <div id="collegeLogoError" class="error-message"></div>
-      <% if (college.collegeLogo && college.collegeLogo.url) { %>
-        <p>Current Logo:</p>
-        <img src="<%= college.collegeLogo.url %>" alt="Current Logo">
+      <% if (error && error.length) { %>
+        <div class="error-message"><%= error %></div>
       <% } %>
-    </div>
+      <% if (success && success.length) { %>
+        <div class="success-message"><%= success %></div>
+      <% } %>
 
-    <div class="form-buttons">
-      <button type="submit" class="submit-btn">Save Changes</button>
-      <!-- Optional Cancel Button -->
-      <!-- <a href="/college/dashboard" class="cancel-btn" style="text-decoration: none; display: inline-block;">Cancel</a> -->
+      <form
+        action="/college/edit/<%= college._id %>?_method=PUT"
+        method="POST"
+        enctype="multipart/form-data"
+        class="needs-validation event-form shadow p-4 rounded"
+        novalidate
+        id="editCollegeForm"
+      >
+        <div class="mb-3">
+          <label for="college" class="form-label fw-bold">College Name</label>
+          <input
+            type="text"
+            id="college"
+            name="college"
+            value="<%= college.college %>"
+            class="form-control"
+            required
+          />
+          <div id="collegeError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label fw-bold">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="<%= college.email %>"
+            class="form-control"
+            required
+          />
+          <div id="emailError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="collegeId" class="form-label fw-bold">College ID</label>
+          <input
+            type="text"
+            id="collegeId"
+            name="collegeId"
+            value="<%= college.collegeId %>"
+            class="form-control"
+            required
+          />
+          <div id="collegeIdError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="principalName" class="form-label fw-bold">Principal Name</label>
+          <input
+            type="text"
+            id="principalName"
+            name="principalName"
+            value="<%= college.principalName %>"
+            class="form-control"
+          />
+          <div id="principalNameError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="establishedYear" class="form-label fw-bold">Established Year</label>
+          <input
+            type="number"
+            id="establishedYear"
+            name="establishedYear"
+            value="<%= college.establishedYear %>"
+            class="form-control"
+          />
+          <div id="establishedYearError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="address" class="form-label fw-bold">Address</label>
+          <textarea
+            id="address"
+            name="address"
+            rows="3"
+            class="form-control"
+          ><%= college.address %></textarea>
+          <div id="addressError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="collegeType" class="form-label fw-bold">College Type</label>
+          <select
+            id="collegeType"
+            name="collegeType"
+            class="form-select"
+          >
+            <option value="Government" <%= college.collegeType === 'Government' ? 'selected' : '' %>>
+              Government
+            </option>
+            <option value="Private" <%= college.collegeType === 'Private' ? 'selected' : '' %>>
+              Private
+            </option>
+            <option value="Autonomous" <%= college.collegeType === 'Autonomous' ? 'selected' : '' %>>
+              Autonomous
+            </option>
+          </select>
+          <div id="collegeTypeError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="affiliatedUniversity" class="form-label fw-bold">Affiliated University</label>
+          <input
+            type="text"
+            id="affiliatedUniversity"
+            name="affiliatedUniversity"
+            value="<%= college.affiliatedUniversity %>"
+            class="form-control"
+          />
+          <div id="affiliatedUniversityError" class="error-message"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="collegeLogo" class="form-label fw-bold">College Logo</label>
+          <input
+            type="file"
+            id="collegeLogo"
+            name="collegeLogo"
+            accept="image/*"
+            class="form-control"
+          />
+          <div id="collegeLogoError" class="error-message"></div>
+          <% if (college.collegeLogo && college.collegeLogo.url) { %>
+            <p class="mt-2">Current Logo:</p>
+            <img src="<%= college.collegeLogo.url %>" alt="Current Logo" class="img-fluid" />
+          <% } %>
+        </div>
+
+        <div class="mb-4 text-center">
+          <button type="submit" class="btn btn-success btn-lg w-100 btn-success-bright">
+            Save Changes
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 </div>
+
 
 <script>
   document.getElementById("editCollegeForm").addEventListener("submit", function (event) {
