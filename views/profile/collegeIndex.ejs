@@ -72,7 +72,6 @@
       Get Registration Link
     </button>
   </form>
-  <!-- Hidden input for registration link -->
   <% if (messages.registrationLink) { %>
   <input
     type="hidden"
@@ -128,82 +127,93 @@
       <div class="actions">
         <!-- Desktop buttons -->
         <div class="actions__desktop" role="group" aria-label="College actions">
-          <button
-            class="club-btn club-btn--primary"
-            type="button"
-            onclick="location.href='/clubRegistration'"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              {...props}
+          <!-- Create Club -->
+          <div class="tooltip-container">
+            <button
+              class="club-btn club-btn--primary"
+              type="button"
+              onclick="location.href='/clubRegistration'"
             >
-              <path d="M8 2v4"></path>
-              <path d="M16 2v4"></path>
-              <path
-                d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"
-              ></path>
-              <path d="M3 10h18"></path>
-              <path d="M16 19h6"></path>
-              <path d="M19 16v6"></path>
-            </svg>
-            <span class="action-btns">Create Club</span>
-          </button>
+              <!-- SVG -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <path
+                  d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"
+                ></path>
+                <path d="M3 10h18"></path>
+                <path d="M16 19h6"></path>
+                <path d="M19 16v6"></path>
+              </svg>
+              <span class="action-btns">Create Club</span>
+            </button>
+            <span class="tooltip">Plan a club</span>
+          </div>
 
-          <button
-            class="club-btn club-btn--outline"
-            type="button"
-            onclick="location.href='/college/edit/<%= college._id %>'"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <!-- Edit -->
+          <div class="tooltip-container">
+            <button
+              class="club-btn club-btn--outline"
+              type="button"
+              onclick="location.href='/college/edit/<%= college._id %>'"
             >
-              <path
-                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-              />
-              <path
-                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-              />
-            </svg>
-            <span>Edit</span>
-          </button>
-
-          <button
-            class="club-btn club-btn--destructive"
-            type="button"
-            onclick="confirmDeletion()"
-          >
-            <svg
-              class="icon icon--16 create-svg"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              />
-            </svg>
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+              <span>Edit</span>
+            </button>
+            <span class="tooltip">Edit college details</span>
+          </div>
 
-            <span class="action-btns">Delete</span>
-          </button>
+          <!-- Delete -->
+          <div class="tooltip-container">
+            <button
+              class="club-btn club-btn--destructive"
+              type="button"
+              onclick="confirmDeletion()"
+            >
+              <svg
+                class="icon icon--16 create-svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="action-btns">Delete</span>
+            </button>
+            <span class="tooltip">Delete this college</span>
+          </div>
         </div>
 
         <!-- Mobile kebab menu -->

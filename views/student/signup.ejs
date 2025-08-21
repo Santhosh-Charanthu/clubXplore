@@ -1,4 +1,4 @@
-<%- include("../layouts/boilerplate") %>
+<%- include("../layouts/boilerplateWN") %>
 
 <style>
   .event-form {
@@ -50,6 +50,10 @@
       padding: 10px;
     }
   }
+
+  .btn-sm {
+    margin-bottom: 10px;
+  }
 </style>
 
 <div class="container mt-5">
@@ -91,6 +95,41 @@
           />
           <div class="invalid-feedback">Please enter a valid email.</div>
         </div>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          onclick="sendOtp()"
+        >
+          Send OTP
+        </button>
+
+        <div id="email-message" class="email-message"></div>
+
+        <div class="mb-3">
+          <label class="form-label">Enter OTP</label>
+          <input
+            id="otp"
+            name="otp"
+            type="text"
+            class="form-control"
+            required
+            maxlength="6"
+            pattern="\d{6}"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6)"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          onclick="verifyOtpBeforeSubmit()"
+        >
+          Verify OTP
+        </button>
+
+        <div id="email-otp-message" class="email-otp-message"></div>
 
         <!-- Registration Number -->
         <div class="mb-3">
@@ -170,4 +209,114 @@
       }
     });
   });
+</script>
+
+<script>
+  const apiBase = "http://localhost:8080";
+
+  function showMessage(id, message, isSuccess = true) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.className = `message ${isSuccess ? "success-message" : "error-message"}`;
+    el.style.display = "block";
+
+    setTimeout(() => {
+      el.style.display = "none";
+    }, 4000); // auto-hide after 4s
+  }
+
+  async function sendOtp() {
+    const email = document.getElementById("email").value;
+    if (!email) {
+      showMessage("email-message", "Please enter email first", false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiBase}/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      showMessage("email-message", data.message, res.ok);
+    } catch (err) {
+      console.error(err);
+      showMessage("email-message", "Error sending OTP", false);
+    }
+  }
+
+  async function verifyOtpBeforeSubmit() {
+    const email = document.getElementById("email").value;
+    const otp = document.getElementById("otp").value;
+    const otpInput = document.getElementById("otp");
+    const otpBtn = document.querySelector(
+      "button[onclick='verifyOtpBeforeSubmit()']"
+    );
+
+    if (!otp) {
+      showMessage("email-otp-message", "Please enter the OTP", false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiBase}/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showMessage("email-otp-message", "OTP verified ✅", true);
+
+        // Disable OTP input & button
+        otpInput.disabled = true;
+        otpBtn.disabled = true;
+        otpBtn.textContent = "Verified ✅";
+      } else {
+        showMessage("email-otp-message", data.message, false);
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage("email-otp-message", "Error verifying OTP", false);
+    }
+  }
+
+  document
+    .getElementById("studentSignupForm")
+    .addEventListener("submit", function (event) {
+      const otpBtn = document.querySelector(
+        "button[onclick='verifyOtpBeforeSubmit()']"
+      );
+
+      // If OTP button is not disabled → OTP not verified
+      if (!otpBtn.disabled) {
+        event.preventDefault();
+        showMessage(
+          "email-otp-message",
+          "Please verify OTP before signing up",
+          false
+        );
+        return;
+      }
+
+      // Existing required field validation
+      let isValid = true;
+      const inputs = this.querySelectorAll("input[required]");
+      inputs.forEach((input) => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.classList.add("is-invalid");
+        } else {
+          input.classList.remove("is-invalid");
+        }
+      });
+
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
 </script>

@@ -1357,3 +1357,61 @@ svg span {
 .events-section {
   margin-bottom: 3rem; /* alternative way */
 }
+
+/* Tooltip hover */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 125%; /* Above the button */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 10;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Arrow below the tooltip */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip {
+  opacity: 1;
+}
+
+/* Flash messages in forms */
+.message {
+  padding: 10px;
+  margin-top: 10px;
+  text-align: center;
+  display: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.error-message {
+  background-color: #ffdddd;
+  border-left: 6px solid #d9534f;
+  color: #d9534f;
+}
+.success-message {
+  background-color: #ddffdd;
+  border-left: 6px solid #5cb85c;
+  color: #5cb85c;
+}

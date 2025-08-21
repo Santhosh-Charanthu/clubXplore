@@ -62,6 +62,6 @@ const collegeSchema = new Schema({
   },
 });
 
-collegeSchema.plugin(passportLocalMongoose, { usernameField: "college" });
+collegeSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 
 module.exports = mongoose.model("College", collegeSchema);

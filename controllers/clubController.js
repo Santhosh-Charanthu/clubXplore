@@ -89,6 +89,17 @@ module.exports.handleLogin = async (req, res) => {
   res.redirect(redirectUrl);
 };
 
+// module.exports.showLoginForm = (req, res) => {
+//   const { clubName } = req.query;
+//   res.render("club/clubformLogin.ejs", { clubName });
+// };
+
+// module.exports.handleLogin = (req, res) => {
+//   // User is already authenticated by Passport
+//   const ClubName = req.user.ClubName;
+//   res.redirect(`/${encodeURIComponent(ClubName)}/profile`);
+// };
+
 module.exports.showClubProfile = async (req, res) => {
   if (!req.user) {
     return res.redirect("/interface");

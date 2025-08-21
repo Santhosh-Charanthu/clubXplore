@@ -1,4 +1,4 @@
-<%- include("../layouts/boilerplate") %>
+<%- include("../layouts/boilerplateWN") %>
 
 <style>
   .event-form {
@@ -34,6 +34,10 @@
 
   a {
     text-decoration: none;
+  }
+
+  .btn-sm {
+    margin-bottom: 10px;
   }
 
   @media (max-width: 768px) {
@@ -98,13 +102,47 @@
         <div class="mb-3">
           <label class="form-label">Official Email</label>
           <input
-            placeholder="Email"
+            id="email"
             name="email"
             type="email"
             class="form-control"
             required
           />
         </div>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          onclick="sendOtp()"
+        >
+          Send OTP
+        </button>
+
+        <div id="email-message" class="email-message"></div>
+
+        <div class="mb-3">
+          <label class="form-label">Enter OTP</label>
+          <input
+            id="otp"
+            name="otp"
+            type="text"
+            class="form-control"
+            required
+            maxlength="6"
+            pattern="\d{6}"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6)"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          onclick="verifyOtpBeforeSubmit()"
+        >
+          Verify OTP
+        </button>
+
+        <div id="email-otp-message" class="email-otp-message"></div>
 
         <!-- Established Year -->
         <div class="mb-3">
@@ -195,3 +233,78 @@
     </div>
   </div>
 </div>
+
+<script>
+  const apiBase = "http://localhost:8080";
+
+  function showMessage(id, message, isSuccess = true) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.className = `message ${isSuccess ? "success-message" : "error-message"}`;
+    el.style.display = "block";
+
+    setTimeout(() => {
+      el.style.display = "none";
+    }, 4000); // auto-hide after 4s
+  }
+
+  async function sendOtp() {
+    const email = document.getElementById("email").value;
+    if (!email) {
+      showMessage("email-message", "Please enter email first", false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiBase}/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      showMessage("email-message", data.message, res.ok);
+    } catch (err) {
+      console.error(err);
+      showMessage("email-message", "Error sending OTP", false);
+    }
+  }
+
+  async function verifyOtpBeforeSubmit() {
+    const email = document.getElementById("email").value;
+    const otp = document.getElementById("otp").value;
+    const otpInput = document.getElementById("otp");
+    const otpBtn = document.querySelector(
+      "button[onclick='verifyOtpBeforeSubmit()']"
+    );
+
+    if (!otp) {
+      showMessage("email-otp-message", "Please enter the OTP", false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiBase}/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showMessage("email-otp-message", "OTP verified ✅", true);
+
+        // Disable OTP input & button
+        otpInput.disabled = true;
+        otpBtn.disabled = true;
+        otpBtn.textContent = "Verified ✅";
+      } else {
+        showMessage("email-otp-message", data.message, false);
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage("email-otp-message", "Error verifying OTP", false);
+    }
+  }
+</script>

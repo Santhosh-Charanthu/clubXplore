@@ -2,6 +2,8 @@ let College = require("../models/college");
 let Club = require("../models/club");
 let Student = require("../models/student");
 let Registration = require("../models/registration");
+const passport = require("passport");
+
 const college = require("../models/college");
 module.exports.showStudentRegistration = (req, res) => {
   let { id: collegeId } = req.params;
@@ -44,6 +46,26 @@ module.exports.handleStudentLogin = async (req, res) => {
   let redirectUrl = res.locals.redirectUrl || "/index";
   req.flash("success", "Welcome back to Club Management!");
   res.redirect(redirectUrl);
+};
+
+module.exports.studentLogOut = async (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "You have logged out successfully.");
+    res.redirect("/studentRegistration/login");
+  });
+};
+
+module.exports.studentLogOut = async (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "You have logged out successfully.");
+    res.redirect("/studentRegistration/login"); // Redirect to student login
+  });
 };
 
 module.exports.showCollegeProfile = async (req, res) => {

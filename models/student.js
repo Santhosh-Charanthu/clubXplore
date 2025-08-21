@@ -30,6 +30,6 @@ const studentSchema = new Schema({
   registeredEvents: [{ type: Schema.Types.ObjectId, ref: "Event" }],
 });
 
-studentSchema.plugin(passportLocalMongoose, { usernameField: "regNo" });
+studentSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 
 module.exports = mongoose.model("Student", studentSchema);

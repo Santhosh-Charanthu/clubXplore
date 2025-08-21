@@ -32,6 +32,7 @@ const methodoverride = require("method-override");
 const collegeRouter = require("./routes/collegeRoutes.js");
 const clubRouter = require("./routes/clubRoutes.js");
 const studentRouter = require("./routes/studentRoutes.js");
+const authRoutes = require("./routes/auth.js");
 const college = require("./models/college");
 
 app.engine("ejs", ejsMate);
@@ -61,7 +62,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(
   "college",
-  new LocalStrategy({ usernameField: "college" }, College.authenticate())
+  new LocalStrategy({ usernameField: "email" }, College.authenticate())
 );
 
 passport.use(
@@ -70,7 +71,7 @@ passport.use(
 );
 passport.use(
   "student",
-  new LocalStrategy({ usernameField: "regNo" }, Student.authenticate())
+  new LocalStrategy({ usernameField: "email" }, Student.authenticate())
 );
 
 //Middleware
@@ -121,6 +122,7 @@ mongoose
 app.use("/", collegeRouter);
 app.use("/", clubRouter);
 app.use("/", studentRouter);
+app.use("/", authRoutes);
 
 app.get("/interface", async (req, res) => {
   res.render("profile/interface");

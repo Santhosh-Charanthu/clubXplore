@@ -1,6 +1,7 @@
 <%- include("../layouts/boilerplate") %>
 
 <!-- <style>
+  
   /* body {
     font-family: "Inter", sans-serif;
     background: #ffffff;
@@ -1136,6 +1137,8 @@
   margin-bottom: 3rem; /* alternative way */
 }
 
+
+
 </style> -->
 
 <main class="page">
@@ -1162,6 +1165,8 @@
       <div class="actions">
         <!-- Desktop (md+): full buttons -->
         <div class="actions__desktop" role="group" aria-label="Club actions">
+          <!-- Create Event -->
+          <div class="tooltip-container">
             <button
               class="club-btn club-btn--primary"
               type="button"
@@ -1190,53 +1195,63 @@
               </svg>
               <span class="action-btns">Create event</span>
             </button>
-          </a>
-          <button
-            class="club-btn club-btn--outline"
-            type="button"
-            onclick="window.location.href='/<%= club.ClubName %>/edit'"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              {...props}
+            <span class="tooltip">Plan an event</span>
+          </div>
+
+          <!-- Edit -->
+          <div class="tooltip-container">
+            <button
+              class="club-btn club-btn--outline"
+              type="button"
+              onclick="window.location.href='/<%= club.ClubName %>/edit'"
             >
-              <path
-                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-              />
-              <path
-                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-              />
-            </svg>
-            <span>Edit</span>
-          </button>
-          <button
-            class="club-btn club-btn--destructive"
-            type="button"
-            onclick="confirmDeletion()"
-          >
-            <svg
-              class="icon icon--16 create-svg"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              />
-            </svg>
-            <span class="action-btns">Delete</span>
-          </button>
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+              <span>Edit</span>
+            </button>
+            <span class="tooltip">Edit club details</span>
+          </div>
+
+          <!-- Delete -->
+          <div class="tooltip-container">
+            <button
+              class="club-btn club-btn--destructive"
+              type="button"
+              onclick="confirmDeletion()"
+            >
+              <svg
+                class="icon icon--16 create-svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="action-btns">Delete</span>
+            </button>
+            <span class="tooltip">Delete this club</span>
+          </div>
         </div>
 
         <!-- Mobile (< md): kebab button with dropdown menu -->
