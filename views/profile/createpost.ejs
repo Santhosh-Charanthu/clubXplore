@@ -112,6 +112,33 @@
       width: 100%;
     }
   }
+
+  .field-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.field-row .form-control,
+.field-row .form-check-label {
+  flex: 1;
+}
+
+@media (max-width: 990px) {
+  .field-item .col-md-4,
+  .field-item .col-md-3,
+  .field-item .col-md-2 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .field-item .text-end {
+    text-align: left !important;
+    margin-top: 5px;
+  }
+}
+
+
 </style>
 
 <div class="container mt-5">
@@ -480,28 +507,41 @@
 
 <script>
   document.getElementById("addField").addEventListener("click", () => {
-    const fieldDiv = document.createElement("div");
-    fieldDiv.classList.add("field-item");
-    fieldDiv.innerHTML = `
-      <input type="text" name="formFields[label][]" placeholder="Field Name" class="form-control" required style="width: 100%;">
-      <select name="formFields[type][]" class="form-control" required style="width: 100%;">
+  const fieldDiv = document.createElement("div");
+  fieldDiv.classList.add("row", "g-2", "align-items-center", "mb-2", "field-item");
+
+  fieldDiv.innerHTML = `
+    <div class="col-md-4">
+      <input type="text" name="formFields[label][]" placeholder="Field Name" class="form-control" required>
+    </div>
+    <div class="col-md-3">
+      <select name="formFields[type][]" class="form-select" required>
         <option value="text">Text</option>
         <option value="email">Email</option>
         <option value="number">Number</option>
         <option value="checkbox">Checkbox</option>
       </select>
-      <label class="form-check-label">
-        <input type="checkbox" name="formFields[isRequired][]" value="true" class="form-check-input"> Required
-      </label>
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+      <div class="form-check">
+        <input type="checkbox" name="formFields[isRequired][]" value="true" class="form-check-input">
+        <label class="form-check-label">Required</label>
+      </div>
+    </div>
+    <div class="text-start">
       <button type="button" class="btn btn-danger btn-sm remove-field">Remove</button>
-    `;
-    document.getElementById("formFieldsContainer").appendChild(fieldDiv);
+    </div>
+  `;
 
-    // Add remove functionality to the Remove button
-    fieldDiv.querySelector(".remove-field").addEventListener("click", () => {
-      fieldDiv.remove();
-    });
+  document.getElementById("formFieldsContainer").appendChild(fieldDiv);
+
+  // Remove functionality
+  fieldDiv.querySelector(".remove-field").addEventListener("click", () => {
+    fieldDiv.remove();
   });
+});
+
+
 
   let coordinatorIndex = 1;
 

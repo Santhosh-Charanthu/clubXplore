@@ -110,7 +110,6 @@ module.exports.showCollegeProfile = async (req, res) => {
   try {
     const { id } = req.params;
     const college = await College.findById(id).populate("clubs");
-
     if (!college) {
       req.flash("error", "College not found!");
       return res.redirect("/collegeRegistration/login");
@@ -220,5 +219,40 @@ module.exports.updateProfile = async (req, res) => {
     console.error("Error updating college:", e);
     req.flash("error", "Failed to update college details.");
     res.redirect(`/college/edit/${id}`);
+  }
+};
+
+module.exports.deleteCollege = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the college
+    const college = await College.findById(id)
+      .populate("clubs")
+      .populate("students");
+    if (!college) {
+      req.flash("error", "College not found!");
+      return res.redirect("/colleges");
+    }
+
+    // Optional: delete all clubs associated with this college
+    if (college.clubs && college.clubs.length > 0) {
+      await Club.deleteMany({ _id: { $in: college.clubs } });
+    }
+
+    // Optional: delete all students associated with this college
+    if (college.students && college.students.length > 0) {
+      await Student.deleteMany({ _id: { $in: college.students } });
+    }
+
+    // Finally, delete the college
+    await College.findByIdAndDelete(id);
+
+    req.flash("success", "College and associated data deleted successfully!");
+    res.redirect("/collegeRegistration/login");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong while deleting the college.");
+    res.redirect("/colleges");
   }
 };

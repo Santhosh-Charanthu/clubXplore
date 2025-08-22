@@ -30,7 +30,7 @@ module.exports.handleStudentRegistration = async (req, res) => {
     req.login(registeredStudent, (err) => {
       if (err) return next(err);
       req.flash("success", "Welcome to Club Management!");
-      res.redirect("/collegeIndex", { college });
+      res.redirect("/index");
     });
   } catch (e) {
     req.flash("error", e.message);
@@ -98,7 +98,8 @@ module.exports.showCollegeProfile = async (req, res) => {
     }
 
     if (!college) {
-      return res.status(404).send("College not found");
+      req.flash("error", "College not found");
+      return res.redirect("/index");
     }
 
     // Render directly

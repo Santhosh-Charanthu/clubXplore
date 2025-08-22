@@ -2,65 +2,6 @@
 
 <style>
   /* Existing styles (unchanged parts skipped for brevity) */
-  .club-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 70px;
-    padding: 40px;
-  }
-
-  .club-container a {
-    text-decoration: none;
-    color: black;
-  }
-
-  .club-card {
-    width: 25%;
-    min-width: 300px;
-    max-width: 300px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-
-  .club-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .card-img-top {
-    height: 200px;
-    width: 100%;
-    object-fit: cover;
-  }
-
-  .card-body {
-    padding: 15px;
-    text-align: center;
-  }
-
-  .card-title {
-    margin-bottom: 10px;
-  }
-
-  /* Responsive cards */
-  @media (max-width: 1200px) {
-    .club-card {
-      width: 33.33%;
-    }
-  }
-  @media (max-width: 900px) {
-    .club-card {
-      width: 50%;
-    }
-  }
-  @media (max-width: 600px) {
-    .club-card {
-      width: 100%;
-    }
-  }
 
   /* Search styles */
   .search-container {
@@ -70,23 +11,23 @@
     position: relative;
   }
 
-/* Keep search box size consistent */
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border: 2px solid #ccc;
-  border-radius: 30px;
-  background: white;
-  transition: 0.3s;
-  width: 350px;
-  max-width: 100%;
-  padding-right: 45px; /* space for button */
-}
+  /* Keep search box size consistent */
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    background: white;
+    transition: 0.3s;
+    width: 350px;
+    max-width: 100%;
+    padding-right: 45px; /* space for button */
+  }
 
-.search-box:hover {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
+  .search-box:hover {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
 
   .search-icon {
     color: #666;
@@ -101,28 +42,28 @@
     background: transparent;
   }
 
-.search-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgb(160, 237, 216);
-  color: white;
-  border: none;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: 0.3s;
-  padding: 0;
-}
+  .search-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(160, 237, 216);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: 0.3s;
+    padding: 0;
+  }
 
-.search-button svg {
-  width: 22px;
-  height: 22px;
-  display: block; /* remove extra bottom gap */
-  color: rgb(112, 109, 109);
-}
+  .search-button svg {
+    width: 22px;
+    height: 22px;
+    display: block; /* remove extra bottom gap */
+    color: rgb(112, 109, 109);
+  }
 
   .suggestions {
     position: absolute;
@@ -158,601 +99,616 @@
   }
 
   .profile-icon {
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3bd2ad, #28a98a);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin-right: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.profile-icon:hover {
-  background: linear-gradient(135deg, #32c4a0, #23947d);
-  transform: scale(1.05);
-}
-
-/* ===== Modern Dropdown Styles ===== */
-.profile-dropdown {
-  position: absolute;
-  top: 60px;
-  right: 5px;
-  width: 280px;
-  background: rgba(30, 30, 30, 0.95);
-  backdrop-filter: blur(10px);
-  color: white;
-  border-radius: 14px;
-  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
-  z-index: 999;
-  display: none;
-  flex-direction: column;
-  padding: 16px 0;
-  font-family: "Segoe UI", sans-serif;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.25s ease;
-}
-
-.profile-dropdown.show {
-  display: flex;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.profile-dropdown .profile-header {
-  display: flex;
-  align-items: center;
-  padding: 0 20px 15px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.profile-dropdown .avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3bd2ad, #28a98a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-.profile-dropdown .profile-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.profile-dropdown .profile-info span:first-child {
-  font-weight: 600;
-  font-size: 15px;
-}
-
-.profile-dropdown .profile-info small {
-  color: #b3b3b3;
-  font-size: 13px;
-}
-
-.dropdown-link {
-  padding: 12px 20px;
-  color: white;
-  text-decoration: none;
-  display: block;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.dropdown-link:hover {
-  background: linear-gradient(90deg, rgba(59, 210, 173, 0.15), transparent);
-  color: #3bd2ad;
-}
-
-.logout-btn {
-  color: #ff5e5e;
-  font-weight: 500;
-}
-
-.logout-btn:hover {
-  background: linear-gradient(90deg, rgba(255, 94, 94, 0.15), transparent);
-  color: #ff9999;
-}
-
-/* Base navbar styles */
-.navbar {
-  margin-top: -20px;
-  position: relative;
-  padding: 10px 0;
-}
-
-/* Navbar container adjustments */
-.container-fluid {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Space between profile icon and search */
-  padding: 0 20px;
-}
-/* Remove gap pushing elements apart */
-.navbar-content {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex: 1;
-}
-
-/* Center search form */
-.search-form {
-  order: 2; /* Middle */
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-}
-
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  border: 2px solid #ccc;
-  border-radius: 30px;
-  background: white;
-  transition: 0.3s;
-  width: 350px;
-  max-width: 100%;
-}
-
-.search-box:hover {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.search-icon {
-  color: #666;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.input {
-  border: none;
-  outline: none;
-  font-size: 16px;
-  width: 100%;
-  background: transparent;
-  padding: 3px 8px; /* reduced height */
-}
-
-.input::placeholder {
-  font-size: 16px;
-}
-
-.search-button {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.search-button svg {
-  width: 20px;
-  height: 20px;
-  stroke: #666;
-}
-
-/* Suggestions */
-.suggestions {
-  position: absolute;
-  top: 105%;
-  left: 0;
-  width: 100%;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  list-style-type: none;
-  padding: 5px 0;
-  margin-top: 5px;
-  z-index: 1000;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  display: none;
-}
-
-.suggestion-item {
-  padding: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  color: #333;
-  transition: background 0.2s ease;
-}
-
-.suggestion-item:hover {
-  background-color: #f8f8f8;
-}
-
-/* Profile icon on the right */
-.profile-section {
-  order: 3; /* Place it last */
-  margin-left: auto; /* Push it to the right */
-}
-
-.profile-icon {
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3bd2ad, #28a98a);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.profile-icon:hover {
-  background: linear-gradient(135deg, #32c4a0, #23947d);
-  transform: scale(1.05);
-}
-
-/* Profile dropdown */
-.profile-dropdown {
-  position: absolute;
-  top: 60px;
-  right: 0;
-  width: 280px;
-  background: rgba(30, 30, 30, 0.95);
-  backdrop-filter: blur(10px);
-  color: white;
-  border-radius: 14px;
-  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
-  z-index: 999;
-  display: none;
-  flex-direction: column;
-  padding: 16px 0;
-  font-family: "Segoe UI", sans-serif;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.25s ease;
-}
-
-.profile-dropdown.show {
-  display: flex;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.profile-dropdown .profile-header {
-  display: flex;
-  align-items: center;
-  padding: 0 20px 15px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.profile-dropdown .avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3bd2ad, #28a98a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-.profile-dropdown .profile-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.profile-dropdown .profile-info span:first-child {
-  font-weight: 600;
-  font-size: 15px;
-}
-
-.profile-dropdown .profile-info small {
-  color: #b3b3b3;
-  font-size: 13px;
-}
-
-.dropdown-link {
-  padding: 12px 20px;
-  color: white;
-  text-decoration: none;
-  display: block;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.dropdown-link:hover {
-  background: linear-gradient(90deg, rgba(59, 210, 173, 0.15), transparent);
-  color: #3bd2ad;
-}
-
-.logout-btn {
-  color: #ff5e5e;
-  font-weight: 500;
-}
-
-.logout-btn:hover {
-  background: linear-gradient(90deg, rgba(255, 94, 94, 0.15), transparent);
-  color: #ff9999;
-}
-
-/* ===== RESPONSIVE STYLES ===== */
-
-/* Tablet styles */
-@media (max-width: 768px) {
-  .container-fluid {
-    padding: 0 10px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3bd2ad, #28a98a);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
   }
-  
-  .navbar-content {
-    gap: 15px;
+
+  .profile-icon:hover {
+    background: linear-gradient(135deg, #32c4a0, #23947d);
+    transform: scale(1.05);
   }
-  
-  .search-form {
-    margin-right: 15px;
-  }
-  
-  .search-box {
-    width: 280px;
-    padding: 8px 15px;
-  }
-  
+
+  /* ===== Modern Dropdown Styles ===== */
   .profile-dropdown {
-    width: 250px;
+    position: relative;
+    top: 60px;
+    right: 0; /* stick to parent’s right */
+    transform: translateX(-20px); /* move it 20px further left */
+
+    width: 280px;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    border-radius: 14px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    padding: 16px 0;
+    font-family: "Segoe UI", sans-serif;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
   }
 
-    .page {
-    margin-top: 10px; /* adjust as needed */
+  .profile-dropdown.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
   }
-}
 
-/* Small mobile styles */
-@media (max-width: 576px) {
+  .profile-dropdown .profile-header {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .profile-dropdown .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3bd2ad, #28a98a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 12px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .profile-dropdown .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .profile-dropdown .profile-info span:first-child {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .profile-dropdown .profile-info small {
+    color: #b3b3b3;
+    font-size: 13px;
+  }
+
+  .dropdown-link {
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    display: block;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .dropdown-link:hover {
+    background: linear-gradient(90deg, rgba(59, 210, 173, 0.15), transparent);
+    color: #3bd2ad;
+  }
+
+  .logout-btn {
+    color: #ff5e5e;
+    font-weight: 500;
+  }
+
+  .logout-btn:hover {
+    background: linear-gradient(90deg, rgba(255, 94, 94, 0.15), transparent);
+    color: #ff9999;
+  }
+
+  /* Base navbar styles */
+  .navbar {
+    margin-top: -20px;
+    position: relative;
+    padding: 10px 0;
+  }
+
+  /* Navbar container adjustments */
   .container-fluid {
-    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between profile icon and search */
+    padding: 0 20px;
   }
-  
+  /* Remove gap pushing elements apart */
   .navbar-content {
-    gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
   }
-  
-  .search-form {
-    margin-right: 10px;
-  }
-  
-  .search-box {
-    width: 200px;
-    padding: 6px 12px;
-  }
-  
-  .search-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 8px;
-  }
-  
-  .input {
-    font-size: 14px;
-  }
-  
-  .input::placeholder {
-    font-size: 14px;
-  }
-  
-  .search-button {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .search-box:hover {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
 
-  .search-button svg {
-    width: 18px;
-    height: 18px;
+  /* Center search form */
+  .search-form {
+    order: 2; /* Middle */
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
-  
-  .profile-icon {
-    width: 35px;
-    height: 35px;
+
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    background: white;
+    transition: 0.3s;
+    width: 350px;
+    max-width: 100%;
+  }
+
+  .search-box:hover {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-icon {
+    color: #666;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    width: 100%;
+    background: transparent;
+    padding: 3px 8px; /* reduced height */
+  }
+
+  .input::placeholder {
     font-size: 16px;
   }
-  
-  .profile-dropdown {
-    width: 220px;
-    right: -10px;
-  }
-}
 
-/* Very small screens */
-@media (max-width: 400px) {
-  .navbar {
-    padding: 8px 0;
-  }
-  
-  .container-fluid {
-    padding: 0 5px;
-  }
-  
-  .navbar-content {
-    gap: 8px;
-  }
-  
-  .search-form {
-    margin-right: 8px;
-  }
-  
-  .search-box {
-    width: 160px;
-    padding: 5px 10px;
-  }
-  
-  .search-icon {
-    width: 14px;
-    height: 14px;
-    margin-right: 6px;
-  }
-  
-  .input {
-    font-size: 13px;
-  }
-  
-  .input::placeholder {
-    font-size: 13px;
-  }
-  
   .search-button {
-    width: 32px;
-    height: 32px;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
   }
-  
+
   .search-button svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+    stroke: #666;
   }
-  
+
+  /* Suggestions */
+  .suggestions {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    list-style-type: none;
+    padding: 5px 0;
+    margin-top: 5px;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+  }
+
+  .suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: background 0.2s ease;
+  }
+
+  .suggestion-item:hover {
+    background-color: #f8f8f8;
+  }
+
+  /* Profile icon on the right */
+  .profile-section {
+    order: 5; /* Place it last */
+    margin-left: auto; /* Push it to the right */
+  }
+
   .profile-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3bd2ad, #28a98a);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
   }
-  
+
+  .profile-icon:hover {
+    background: linear-gradient(135deg, #32c4a0, #23947d);
+    transform: scale(1.05);
+  }
+
+  /* Profile dropdown */
   .profile-dropdown {
-    width: 200px;
-    right: -20px;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    width: 280px;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    border-radius: 14px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    padding: 16px 0;
+    font-family: "Segoe UI", sans-serif;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
   }
-  
+
+  .profile-dropdown.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .profile-dropdown .profile-header {
-    padding: 0 15px 12px 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
-  
-  .dropdown-link {
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-}
 
-/* Extra small screens (300px) */
-@media (max-width: 320px) {
-  .container-fluid {
-    padding: 0 3px;
-  }
-  
-  .navbar-content {
-    gap: 6px;
-  }
-  
-  .search-form {
-    margin-right: 6px;
-  }
-  
-  .search-box {
-    width: 140px;
-    padding: 4px 8px;
-  }
-  
-  .search-icon {
-    width: 12px;
-    height: 12px;
-    margin-right: 4px;
-  }
-  
-  .input {
-    font-size: 12px;
-  }
-  
-  .input::placeholder {
-    font-size: 12px;
-  }
-  
-  .search-button {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .search-button svg {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .profile-icon {
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
-  }
-  
-  .profile-dropdown {
-    width: 180px;
-    right: -30px;
-  }
-  
   .profile-dropdown .avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3bd2ad, #28a98a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 12px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
   }
-  
+
+  .profile-dropdown .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+
   .profile-dropdown .profile-info span:first-child {
-    font-size: 13px;
+    font-weight: 600;
+    font-size: 15px;
   }
-  
+
   .profile-dropdown .profile-info small {
-    font-size: 11px;
-  }
-  
-  .dropdown-link {
-    padding: 8px 12px;
+    color: #b3b3b3;
     font-size: 13px;
   }
-}
 
-@media (max-width: 640px) {
-  .page {
-    margin-top: 20px; 
-  }
-}
-
-@media (max-width: 400px) {
-  .search-box {
-    width: 160px;
-    padding: 5px 35px 5px 10px; /* right padding for button space */
-  }
-}
-
-@media (max-width: 320px) {
-  .search-box {
-    width: 140px;
-    padding: 4px 35px 4px 8px; /* extra right padding for button space */
-  }
-}
-
-
-  a{
+  .dropdown-link {
+    padding: 12px 20px;
+    color: white;
     text-decoration: none;
+    display: block;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .dropdown-link:hover {
+    background: linear-gradient(90deg, rgba(59, 210, 173, 0.15), transparent);
+    color: #3bd2ad;
+  }
+
+  .logout-btn {
+    color: #ff5e5e;
+    font-weight: 500;
+  }
+
+  .logout-btn:hover {
+    background: linear-gradient(90deg, rgba(255, 94, 94, 0.15), transparent);
+    color: #ff9999;
+  }
+
+  /* ===== RESPONSIVE STYLES ===== */
+
+  /* Tablet styles */
+  @media (max-width: 768px) {
+    .container-fluid {
+      padding: 0 10px;
+    }
+
+    .navbar-content {
+      gap: 15px;
+    }
+
+    .search-form {
+      margin-right: 15px;
+    }
+
+    .search-box {
+      width: 280px;
+      padding: 8px 15px;
+    }
+
+    .profile-dropdown {
+      width: 250px;
+    }
+
+    .page {
+      margin-top: 10px; /* adjust as needed */
+    }
+  }
+
+  /* Small mobile styles */
+  @media (max-width: 576px) {
+    .container-fluid {
+      padding: 0 8px;
+    }
+
+    .navbar-content {
+      gap: 10px;
+    }
+
+    .search-form {
+      margin-right: 10px;
+    }
+
+    .search-box {
+      width: 70%; /* increase width */
+      max-width: none;
+    }
+
+    .search-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+
+    .input {
+      font-size: 14px;
+    }
+
+    .input::placeholder {
+      font-size: 14px;
+    }
+
+    .search-button {
+      width: 38px;
+      height: 38px;
+    }
+
+    .search-box:hover {
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .profile-icon {
+      width: 35px;
+      height: 35px;
+      font-size: 16px;
+    }
+
+    .profile-dropdown {
+      width: 220px;
+    }
+
+    .profile-dropdown .avatar {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+    }
+  }
+
+  /* Very small screens */
+  @media (max-width: 400px) {
+    .container-fluid {
+      padding: 0 5px;
+    }
+
+    .navbar-content {
+      gap: 8px;
+    }
+
+    .search-form {
+      margin-right: 8px;
+    }
+
+    .search-box {
+      width: 160px;
+      padding: 5px 10px;
+    }
+
+    .search-icon {
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+    }
+
+    .input {
+      font-size: 13px;
+    }
+
+    .input::placeholder {
+      font-size: 13px;
+    }
+
+    .search-button {
+      width: 32px;
+      height: 32px;
+    }
+
+    .search-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .profile-icon {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
+
+    .profile-dropdown {
+      width: 200px;
+    }
+
+    .profile-dropdown .profile-header {
+      padding: 0 15px 12px 15px;
+    }
+
+    .dropdown-link {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+  }
+
+  /* Extra small screens (300px) */
+  @media (max-width: 320px) {
+    .container-fluid {
+      padding: 0 3px;
+    }
+
+    .navbar-content {
+      gap: 6px;
+    }
+
+    .search-form {
+      margin-right: 6px;
+    }
+
+    .search-box {
+      width: 140px;
+      padding: 4px 8px;
+    }
+
+    .search-icon {
+      width: 12px;
+      height: 12px;
+      margin-right: 4px;
+    }
+
+    .input {
+      font-size: 12px;
+    }
+
+    .input::placeholder {
+      font-size: 12px;
+    }
+
+    .search-button {
+      width: 28px;
+      height: 28px;
+    }
+
+    .search-button svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .profile-icon {
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+    }
+
+    .profile-dropdown {
+      width: 180px;
+    }
+
+    .profile-dropdown .profile-info span:first-child {
+      font-size: 13px;
+    }
+
+    .profile-dropdown .profile-info small {
+      font-size: 11px;
+    }
+
+    .dropdown-link {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      margin-top: 20px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .search-box {
+      width: 160px;
+      padding: 5px 35px 5px 10px; /* right padding for button space */
+    }
+  }
+
+  @media (max-width: 320px) {
+    .search-box {
+      width: 140px;
+      padding: 4px 35px 4px 8px; /* extra right padding for button space */
+    }
+  }
+
+  @media (max-width: 420px) {
+    .search-box {
+      width: 90%; /* increase width */
+      max-width: none; /* remove previous max-width */
+      margin-left: 0; /* align to the left */
+      margin-right: auto;
+    }
+
+    .search-form {
+      justify-content: flex-start; /* align search box to left */
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .profile-dropdown .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* force circle */
+    aspect-ratio: 1 / 1; /* keep square on resize */
   }
 </style>
 
@@ -760,54 +716,60 @@
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand"></a>
-    
+
     <div class="navbar-content">
       <form class="search-form" role="search" onsubmit="handleSubmit(event)">
-  <div class="search-box">
-    <input
-      placeholder="Search for a college.."
-      id="searchedCollege"
-      class="input"
-      name="searchedCollege"
-      type="text"
-      autocomplete="off"
-    />
-    <button class="search-button" type="submit">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-      </svg>
-    </button>
-    <ul id="suggestions" class="suggestions"></ul>
-  </div>
-</form>
-
+        <div class="search-box">
+          <input
+            placeholder="Search for a college.."
+            id="searchedCollege"
+            class="input"
+            name="searchedCollege"
+            type="text"
+            autocomplete="off"
+          />
+          <button class="search-button" type="submit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+          <ul id="suggestions" class="suggestions"></ul>
+        </div>
+      </form>
 
       <div class="profile-section">
         <div class="profile-icon" onclick="toggleDropdown()">
-          <%= user && user.studentName ? user.studentName.charAt(0).toUpperCase() : 'U' %>
+          <%= user && user.studentName ?
+          user.studentName.charAt(0).toUpperCase() : 'U' %>
         </div>
 
         <div class="profile-dropdown" id="profileDropdown">
           <div class="profile-header">
             <div class="avatar">
-              <%= user && user.studentName ? user.studentName.charAt(0).toUpperCase() : 'U' %>
+              <%= user && user.studentName ?
+              user.studentName.charAt(0).toUpperCase() : 'U' %>
             </div>
             <div class="profile-info">
-              <span><%= user && user.studentName ? user.studentName : 'Guest' %></span>
+              <span
+                ><%= user && user.studentName ? user.studentName : 'Guest'
+                %></span
+              >
               <small><%= user && user.email ? user.email : 'No email' %></small>
             </div>
           </div>
           <a href="/edit-profile" class="dropdown-link">Edit Profile</a>
-          <a href="/event-registrations" class="dropdown-link">Event Registrations</a>
+          <a href="/event-registrations" class="dropdown-link"
+            >Event Registrations</a
+          >
           <a href="/logout" class="dropdown-link logout-btn">Sign Out</a>
         </div>
       </div>
@@ -886,80 +848,77 @@
   </section>
 </main>
 
+<script>
+  function toggleDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    dropdown.classList.toggle("show");
+  }
 
-  <!-- Scripts -->
-  <script>
-    function toggleDropdown() {
-      const dropdown = document.getElementById("profileDropdown");
-      dropdown.classList.toggle("show");
+  document.addEventListener("click", function (e) {
+    const dropdown = document.getElementById("profileDropdown");
+    const icon = document.querySelector(".profile-icon");
+    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+      dropdown.classList.remove("show");
     }
+  });
 
-    document.addEventListener("click", function (e) {
-      const dropdown = document.getElementById("profileDropdown");
-      const icon = document.querySelector(".profile-icon");
-      if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
-        dropdown.classList.remove("show");
+  function handleSubmit(event) {
+    event.preventDefault();
+    const query = document.getElementById("searchedCollege").value.trim();
+    if (query) {
+      window.location.href = `/index?searchedCollege=${encodeURIComponent(
+        query
+      )}`;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchedCollege");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    searchInput.addEventListener("input", async function () {
+      const query = searchInput.value.trim();
+
+      if (query.length === 0) {
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+        return;
+      }
+
+      try {
+        const response = await fetch(`/search-colleges?q=${query}`);
+        const colleges = await response.json();
+
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "block";
+
+        colleges.forEach((college) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = college.name;
+          listItem.classList.add("suggestion-item");
+
+          listItem.addEventListener("click", function () {
+            searchInput.value = college.name;
+            suggestionsBox.innerHTML = "";
+            suggestionsBox.style.display = "none";
+            document.querySelector("form").submit();
+          });
+
+          suggestionsBox.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
       }
     });
 
-    function handleSubmit(event) {
-  event.preventDefault();
-  const query = document.getElementById("searchedCollege").value.trim();
-  if (query) {
-    window.location.href = `/index?searchedCollege=${encodeURIComponent(query)}`;
-  }
-}
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const searchInput = document.getElementById("searchedCollege");
-      const suggestionsBox = document.getElementById("suggestions");
-
-      searchInput.addEventListener("input", async function () {
-        const query = searchInput.value.trim();
-
-        if (query.length === 0) {
-          suggestionsBox.innerHTML = "";
-          suggestionsBox.style.display = "none";
-          return;
-        }
-
-        try {
-          const response = await fetch(`/search-colleges?q=${query}`);
-          const colleges = await response.json();
-
-          suggestionsBox.innerHTML = "";
-          suggestionsBox.style.display = "block";
-
-          colleges.forEach((college) => {
-            const listItem = document.createElement("li");
-            listItem.textContent = college.name;
-            listItem.classList.add("suggestion-item");
-
-            listItem.addEventListener("click", function () {
-              searchInput.value = college.name;
-              suggestionsBox.innerHTML = "";
-              suggestionsBox.style.display = "none";
-              document.querySelector("form").submit();
-            });
-
-            suggestionsBox.appendChild(listItem);
-          });
-        } catch (error) {
-          console.error("Error fetching suggestions:", error);
-        }
-      });
-
-      document.addEventListener("click", function (e) {
-        if (
-          !searchInput.contains(e.target) &&
-          !suggestionsBox.contains(e.target)
-        ) {
-          suggestionsBox.innerHTML = "";
-          suggestionsBox.style.display = "none";
-        }
-      });
+    document.addEventListener("click", function (e) {
+      if (
+        !searchInput.contains(e.target) &&
+        !suggestionsBox.contains(e.target)
+      ) {
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.style.display = "none";
+      }
     });
-
-    
-  </script>
-</main>
+  });
+</script>

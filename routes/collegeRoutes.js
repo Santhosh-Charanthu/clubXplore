@@ -42,4 +42,6 @@ router
     collegeController.updateProfile
   );
 
+router.delete("/colleges/:id", collegeController.deleteCollege);
+
 module.exports = router;

@@ -63,6 +63,10 @@ const clubSchema = new Schema({
       ref: "Event",
     },
   ],
+  role: {
+    type: String,
+    required: true,
+  },
 });
 
 clubSchema.plugin(passportLocalMongoose, { usernameField: "ClubName" });

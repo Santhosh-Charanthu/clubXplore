@@ -16,20 +16,11 @@
     color: #000000;
   }
 
-  /* Top navigation bar */
-  .navbar {
-    background: #ffffff !important;
-    padding: 20px 40px;
-    border-bottom: 1px solid #e5e7eb;
-    position: relative;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
   /* Student registration button in top-right */
   .student-registration-form-link {
     position: absolute;
     top: 15px;
-    right: 120px;
+    right: 30px;
     z-index: 1000;
   }
 
@@ -192,26 +183,32 @@
 
           <!-- Delete -->
           <div class="tooltip-container">
-            <button
-              class="club-btn club-btn--destructive"
-              type="button"
-              onclick="confirmDeletion()"
+            <form
+              id="deleteForm"
+              action="/colleges/<%= college._id %>?_method=DELETE"
+              method="post"
             >
-              <svg
-                class="icon icon--16 create-svg"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+              <button
+                class="club-btn club-btn--destructive"
+                type="button"
+                onclick="confirmDeletion()"
               >
-                <path
-                  d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <span class="action-btns">Delete</span>
-            </button>
+                <svg
+                  class="icon icon--16 create-svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span class="action-btns">Delete</span>
+              </button>
+            </form>
             <span class="tooltip">Delete this college</span>
           </div>
         </div>
@@ -289,21 +286,31 @@
 
             <div class="divider"></div>
 
-            <div class="popup-item delete" onclick="confirmDeletion()">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <form
+              id="deleteForm"
+              action="/colleges/<%= college._id %>?_method=DELETE"
+              method="POST"
+            >
+              <div
+                class="popup-item delete"
+                type="button"
+                onclick="confirmDeletion()"
               >
-                <polyline points="3 6 5 6 21 6" />
-                <path
-                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
-                  m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                />
-              </svg>
-              <span>Delete</span>
-            </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+        m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  />
+                </svg>
+                <span>Delete</span>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -353,8 +360,62 @@
   </section>
 </main>
 
+<div
+  id="confirmModal"
+  style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  "
+>
+  <div
+    style="
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    "
+  >
+    <h4>Are you sure?</h4>
+    <p>
+      You are about to delete the college
+      <strong><%= college.college %></strong>. This action cannot be undone.
+    </p>
+    <button onclick="submitForm()" class="btn btn-danger" style="margin: 5px">
+      Yes, Delete
+    </button>
+    <button
+      onclick="closeModal()"
+      class="btn btn-secondary"
+      style="margin: 5px"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+
 <script>
   // Function to copy link to clipboard
+
+  function confirmDeletion() {
+    document.getElementById("confirmModal").style.display = "flex";
+  }
+  function closeModal() {
+    document.getElementById("confirmModal").style.display = "none";
+  }
+  function submitForm() {
+    document.getElementById("deleteForm").submit();
+  }
+
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(
       () => {

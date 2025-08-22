@@ -52,6 +52,27 @@
       padding: 10px;
     }
   }
+
+  @media (max-width: 590px) {
+    .faculty-entry,
+    .student-entry,
+    .social-entry {
+      flex-direction: column !important;
+    }
+
+    .faculty-entry .col,
+    .student-entry .col,
+    .social-entry .col {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .faculty-entry .col-auto,
+    .student-entry .col-auto,
+    .social-entry .col-auto {
+      align-self: flex-start; /* keep the remove button aligned left */
+    }
+  }
 </style>
 
 <div class="container mt-5">

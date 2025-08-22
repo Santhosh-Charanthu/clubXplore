@@ -12,9 +12,7 @@
   </div>
   <button class="toast-close" onclick="closeToast('flash-success')">×</button>
 </div>
-<% } %>
-
-<% if (error && error.length) { %>
+<% } %> <% if (error && error.length) { %>
 <div id="flash-error" class="toast-box glass error">
   <div class="toast-left">
     <div class="toast-icon-circle error-icon">
@@ -51,8 +49,7 @@
 
   .toast-left {
     margin-right: 10px;
-        margin-top: 10px;
-
+    margin-top: 10px;
   }
 
   .toast-icon-circle {
@@ -73,8 +70,6 @@
   .success .toast-check {
     color: #2bd47d; /* green check */
   }
-
-  
 
   .toast-body {
     flex-grow: 1;
@@ -144,19 +139,30 @@
     }
   }
 
-  @media (max-width: 768px) {
-    .toast-box {
-      right: 10px;
-      left: 10px;
-      max-width: calc(100% - 20px);
-    }
-  }
-
   @media (max-width: 480px) {
     .toast-box {
       right: 10px;
       left: 60px;
       max-width: calc(100% - 0%);
+    }
+  }
+
+  @media (max-width: 384px) {
+    .toast-box {
+      left: 10px;
+      right: 10px;
+      max-width: calc(100% - 20px); /* fits within screen */
+      min-width: auto; /* no fixed min-width */
+      font-size: 13px;
+      padding: 12px 14px;
+    }
+
+    .toast-title {
+      font-size: 14px;
+    }
+
+    .toast-msg {
+      font-size: 12px;
     }
   }
 </style>

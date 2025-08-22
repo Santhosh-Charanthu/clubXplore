@@ -61,6 +61,7 @@ module.exports.handleRegistration = async (req, res) => {
         filename: fileName,
       },
       author: college._id,
+      role: "club",
     });
 
     const registeredClub = await Club.register(newClub, password);
