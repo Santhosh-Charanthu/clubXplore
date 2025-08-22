@@ -1,147 +1,88 @@
-```ejs
 <%- include("../layouts/boilerplate") %>
 
 <style>
-  body {
-    background-color: #fff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  .edit-form-container {
-    max-width: 70%; /* Changed from 900px to 70% */
-    margin: 60px auto;
-    padding: 40px;
+  .profile-form {
     background: #fff;
-    border: 1px solid #fff;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
     transition: box-shadow 0.3s ease;
+    max-width: 50%;      /* Half of page width */
+    margin: 50px auto;
+    padding: 40px;       
+    border-radius: 12px;
+    min-width: 400px;    /* Prevents shrinking too small */
   }
 
-
-  .edit-form-container:hover {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  }
-
-  .edit-form-container h1 {
-    text-align: center;
-    font-size: 32px;
-    font-weight: 700;
-    color: #222;
-    margin-bottom: 35px;
-  }
-
-  .form-group {
-    margin-bottom: 25px;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 600;
-    font-size: 18px;
-    color: #333;
-  }
-
-  .form-group input {
-    width: 100%;
-    padding: 8px 18px;
-    border: 1px solid #d2d2d2;
-    border-radius: 10px;
-    font-size: 17px;
-    background-color: #fff;
-    transition: border 0.3s ease;
-  }
-
-  .form-group input:focus {
-    border-color: #007bff !important;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
-    background-color: #fff;
-    outline: none;
+  .profile-form:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   }
 
   .error-border {
     border: 2px solid red !important;
   }
 
+  .form-control {
+    font-size: 1.1rem;  
+    padding: 14px;      
+  }
+
+  .form-control:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 7px rgba(0, 123, 255, 0.5) !important;
+  }
+
   .error-message {
     color: red;
-    font-size: 0.875rem;
-    margin-top: 5px;
-    text-align: left;
+    font-size: 1rem;
+    margin-top: 6px;
   }
 
   .success-message {
     color: green;
-    font-size: 0.875rem;
-    margin-bottom: 15px;
+    font-size: 1.05rem;
+    margin-bottom: 20px;
     text-align: center;
   }
 
-  .form-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    margin-top: 30px;
+  .btn {
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
   }
 
-  .form-buttons button {
-    padding: 14px 28px;
-    font-size: 17px;
-    font-weight: 600;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-  }
-
-  .submit-btn {
+  .btn-success {
     background-color: #28a745;
-    color: white;
-    width: 20%;
+    border: none;
   }
 
-  .submit-btn:hover {
+  .btn-success:hover {
     background-color: #218838;
     transform: translateY(-2px);
   }
 
-  .cancel-btn {
+  .btn-danger {
     background-color: #dc3545;
-    color: white;
-    width: 20%;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
+    border: none;
   }
 
-  .cancel-btn:hover {
+  .btn-danger:hover {
     background-color: #c82333;
     transform: translateY(-2px);
   }
 
-  @media (max-width: 768px) {
-    .edit-form-container {
-      padding: 20px;
-      margin: 30px auto;
-    }
-    .edit-form-container h1 {
-      font-size: 28px;
-    }
-    .form-group input {
-      padding: 12px;
-      font-size: 16px;
-    }
-    .form-buttons button {
-      padding: 12px 20px;
-      font-size: 16px;
-    }
+  .profile-title {
+    text-align: center;
+    font-size: 2.5rem;   
+    margin-bottom: 35px;
+    color: #4b6cb7;
+    font-weight: 600;
   }
 </style>
 
-<div class="edit-form-container">
-  <h1>Edit Profile</h1>
+<h1 class="profile-title">Edit Profile</h1>
 
+<div class="profile-form">
   <% if (error && error.length) { %>
     <div class="error-message"><%= error %></div>
   <% } %>
@@ -150,106 +91,34 @@
   <% } %>
 
   <form action="/edit-profile" method="POST" class="needs-validation" novalidate id="editProfileForm">
-    <div class="form-group">
-      <label for="studentName">Name</label>
-      <input type="text" id="studentName" name="studentName" value="<%= student.studentName %>" required>
+    <!-- Name -->
+    <div class="mb-4">
+      <label for="studentName" class="form-label">Name</label>
+      <input type="text" id="studentName" name="studentName" class="form-control"
+             value="<%= student.studentName %>" required>
       <div id="studentNameError" class="error-message"></div>
     </div>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" value="<%= student.email %>" required>
+    <!-- Email -->
+    <div class="mb-4">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" name="email" class="form-control"
+             value="<%= student.email %>" required>
       <div id="emailError" class="error-message"></div>
     </div>
 
-    <div class="form-group">
-      <label for="regNo">Registration Number</label>
-      <input type="text" id="regNo" name="regNo" value="<%= student.regNo %>" required>
+    <!-- Registration Number -->
+    <div class="mb-4">
+      <label for="regNo" class="form-label">Registration Number</label>
+      <input type="text" id="regNo" name="regNo" class="form-control"
+             value="<%= student.regNo %>" required>
       <div id="regNoError" class="error-message"></div>
     </div>
 
-    <div class="form-buttons">
-      <button type="submit" class="submit-btn">Save Changes</button>
-      <a href="/studentDashboard/events" class="cancel-btn">Cancel</a>
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between mt-5">
+      <a href="/index" class="btn btn-danger w-45">Cancel</a>
+      <button type="submit" class="btn btn-success w-45">Save Changes</button>
     </div>
   </form>
 </div>
-
-<script>
-  document.getElementById("editProfileForm").addEventListener("submit", function (event) {
-    let isValid = true;
-
-    // Get input fields
-    const studentNameInput = document.getElementById("studentName");
-    const emailInput = document.getElementById("email");
-    const regNoInput = document.getElementById("regNo");
-
-    // Get error message elements
-    const studentNameError = document.getElementById("studentNameError");
-    const emailError = document.getElementById("emailError");
-    const regNoError = document.getElementById("regNoError");
-
-    // Reset errors and styles
-    studentNameError.textContent = "";
-    emailError.textContent = "";
-    regNoError.textContent = "";
-    studentNameInput.classList.remove("error-border");
-    emailInput.classList.remove("error-border");
-    regNoInput.classList.remove("error-border");
-
-    // Validate Name
-    if (studentNameInput.value.trim() === "") {
-      studentNameError.textContent = "Name is required.";
-      studentNameInput.classList.add("error-border");
-      isValid = false;
-    }
-
-    // Validate Email
-    if (emailInput.value.trim() === "") {
-      emailError.textContent = "Email is required.";
-      emailInput.classList.add("error-border");
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-      emailError.textContent = "Please enter a valid email address.";
-      emailInput.classList.add("error-border");
-      isValid = false;
-    }
-
-    // Validate Registration Number
-    if (regNoInput.value.trim() === "") {
-      regNoError.textContent = "Registration Number is required.";
-      regNoInput.classList.add("error-border");
-      isValid = false;
-    }
-
-    if (!isValid) {
-      event.preventDefault();
-    }
-  });
-
-  // Real-time Validation - Remove Error on Input
-  document.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", function () {
-      if (this.value.trim() !== "") {
-        this.classList.remove("error-border");
-        document.getElementById(this.id + "Error").textContent = "";
-      }
-    });
-  });
-
-  // Bootstrap validation
-  (() => {
-    'use strict';
-    const forms = document.querySelectorAll('.needs-validation');
-    Array.from(forms).forEach(form => {
-      form.addEventListener('submit', event => {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  })();
-</script>
-```

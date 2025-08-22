@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const clubController = require("../controllers/clubController");
+const collegeController = require("../controllers/collegeController");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const passportLocalMongoose = require("passport-local-mongoose");
@@ -28,7 +29,7 @@ router
     }),
     clubController.handleLogin
   );
-
+router.get("/logout", collegeController.logout);
 router.route("/:clubName/profile").get(clubController.showClubProfile);
 
 router.route("/club/verify-password").post(

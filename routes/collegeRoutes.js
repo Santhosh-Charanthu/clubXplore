@@ -24,7 +24,7 @@ router
     }),
     collegeController.handleLogin
   );
-
+router.route("/logout").get(collegeController.logout);
 router
   .route("/collegeProfile/:id")
   .get(isUserLoggedIn, collegeController.showCollegeProfile);
