@@ -22,16 +22,22 @@
     padding: 20px 40px;
     border-bottom: 1px solid #e5e7eb;
     position: relative;
+    align-items: row;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   /* Student registration button in top-right */
   .student-registration-form-link {
-    position: absolute;
-    top: 15px;
-    right: 120px;
-    z-index: 1000;
-  }
+  position: absolute;
+  top: 40px;
+  right: 180px;
+  z-index: 1000;
+
+  display: flex;       
+  align-items: center; 
+  gap: 10px;           
+}
+
 
   #get-link {
     background: #6366f1;
@@ -79,13 +85,16 @@
     value="<%= messages.registrationLink %>"
   />
   <% } %>
+  
 </div>
+
+
 
 <script>
   // Automatically copy the link if it exists on page load
   window.onload = function () {
     const linkInput = document.getElementById("registration-link");
-    if (linkInput) {
+    if (linbuttkInput) {
       navigator.clipboard
         .writeText(linkInput.value)
         .then(() => {

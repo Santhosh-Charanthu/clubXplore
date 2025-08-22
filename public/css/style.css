@@ -1415,3 +1415,14 @@ svg span {
   border-left: 6px solid #5cb85c;
   color: #5cb85c;
 }
+
+
+  
+  /* Top navigation bar */
+.navbar {
+  background: #ffffff !important;
+  padding: 20px 40px;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
