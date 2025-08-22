@@ -83,6 +83,16 @@ module.exports.handleRegistration = async (req, res) => {
 module.exports.showLoginForm = (req, res) => {
   res.render("club/clubformLogin.ejs");
 };
+// module.exports.clubLogOut = async (req, res) => {
+//   req.session.destroy((err) => {
+//     if (err) {
+//       console.error(err);
+//       return res.redirect("/dashboard");
+//     }
+//     res.clearCookie("connect.sid");
+//     res.redirect("/clubRegistration/login");
+//   });
+// };
 
 module.exports.handleLogin = async (req, res) => {
   let { ClubName } = req.body;

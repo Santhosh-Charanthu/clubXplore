@@ -1433,11 +1433,9 @@ svg span {
   border-left: 6px solid #5cb85c;
   color: #5cb85c;
 }
-
-/* Top navigation bar */
 .navbar {
   background: #ffffff !important;
-  padding: 20px 40px;
+  padding: 5px 35px;
   border-bottom: 1px solid #e5e7eb;
   position: relative;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -1453,4 +1451,58 @@ svg span {
   .page {
     margin-top: 20px;
   }
+}
+
+/* Logout button styling */
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* space between icon and text */
+  padding: 9px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff4141; /* red button */
+  position: relative;
+  left: 30px;
+  bottom: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* SVG icon styling */
+.Btn .sign svg {
+  width: 17px; /* size of the icon */
+  height: 17px;
+  fill: white;
+  flex-shrink: 0; /* prevents shrinking */
+  position: relative;
+  bottom: 2px;
+  transition: transform 0.3s;
+}
+
+/* Text styling */
+.Btn .button-text {
+  font-size: 1em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Hover effect */
+.Btn:hover {
+  background-color: #ea4949;
+}
+
+/* Click effect */
+.Btn:active {
+  background-color: #e03a3a;
+  box-shadow: none;
+  transform: scale(0.98);
+}
+
+a {
+  text-decoration: none;
 }

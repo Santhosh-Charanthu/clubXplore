@@ -59,6 +59,31 @@ module.exports.handleRegistration = async (req, res, next) => {
 module.exports.showLoginForm = (req, res) => {
   res.render("users/login.ejs");
 };
+module.exports.logout = async (req, res) => {
+  // read what was stored during serializeUser
+  const sessionUser = req.session?.passport?.user; // { id, type } or undefined
+
+  // Decide where to go after logout
+  let redirectTo = "/"; // default
+  if (sessionUser?.type === "College") {
+    redirectTo = "/collegeRegistration/login";
+  } else if (sessionUser?.type === "Club") {
+    redirectTo = "/clubRegistration/login"; // or "/club/login" if that's your route
+  } else {
+    // if no session, send to a safe default
+    redirectTo = "/collegeRegistration/login";
+  }
+
+  // Destroy session and redirect
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Session destroy error:", err);
+      return res.redirect("/dashboard");
+    }
+    res.clearCookie("connect.sid");
+    return res.redirect(redirectTo);
+  });
+};
 
 module.exports.handleLogin = async (req, res) => {
   try {
