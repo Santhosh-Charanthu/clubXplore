@@ -37,3 +37,19 @@ module.exports.isUserLoggedIn = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.isCorrectClub = (req, res, next) => {
+  if (!req.session.club) {
+    req.flash("error", "Please log in as a club first.");
+    return res.redirect("/clubRegistration/login");
+  }
+
+  // check if the club in URL matches the one in session
+  const clubInUrl = req.params.clubName; // assuming route like "/:ClubName/profile"
+  if (clubInUrl !== req.session.club.ClubName) {
+    req.flash("error", "You are not authorized to access this club's page.");
+    return res.redirect(`/${req.session.club.ClubName}/profile`);
+  }
+
+  next();
+};

@@ -4,7 +4,6 @@
   .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px 15px;
   }
 
   .table-wrapper {
@@ -130,17 +129,14 @@
           <th class="row-number">S.No</th>
           <% if (event.teamSize.max === 1 && event.teamSize.min === 1) { %>
           <th>Name</th>
-          <% event.formFields.forEach(field => { %> 
-            <% if (field.label.toLowerCase() !== 'name') { %>
-              <th><%= field.label %></th>
-            <% } %> 
-          <% }) %> 
-          <% } else { %>
+          <% event.formFields.forEach(field => { %> <% if
+          (field.label.toLowerCase() !== 'name') { %>
+          <th><%= field.label %></th>
+          <% } %> <% }) %> <% } else { %>
           <th>Team Name</th>
           <% event.formFields.forEach(field => { %>
           <th><%= field.label %></th>
-          <% }) %> 
-          <% } %>
+          <% }) %> <% } %>
         </tr>
       </thead>
 
@@ -154,47 +150,45 @@
             No registrations found for this event.
           </td>
         </tr>
-        <% } else { %> 
-          <% registrations.forEach((registration, index) => { %> 
-          <% if (event.teamSize.max === 1 && event.teamSize.min === 1) { %>
+        <% } else { %> <% registrations.forEach((registration, index) => { %> <%
+        if (event.teamSize.max === 1 && event.teamSize.min === 1) { %>
         <tr>
           <td class="row-number"><%= index + 1 %></td>
-          <% const nameField = event.formFields.find(f => f.label.toLowerCase() === 'name')?.label || 'Name'; %> 
-          <% const name = registration.teamMembers[0]?.get(nameField) || 'N/A'; %>
+          <% const nameField = event.formFields.find(f => f.label.toLowerCase()
+          === 'name')?.label || 'Name'; %> <% const name =
+          registration.teamMembers[0]?.get(nameField) || 'N/A'; %>
           <td class="cell-content"><%= name %></td>
-          <% event.formFields.forEach(field => { %> 
-            <% if (field.label.toLowerCase() !== 'name') { %>
-              <td class="cell-content">
-                <% const value = registration.teamMembers[0]?.get(field.label) ||
-                registration.teamMembers[0]?.get(field.label.toLowerCase()) ||
-                registration.teamMembers[0]?.get(field.label.charAt(0).toUpperCase() + field.label.slice(1).toLowerCase()); %> 
-                <%= typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value || 'N/A' %>
-              </td>
-            <% } %> 
-          <% }) %>
+          <% event.formFields.forEach(field => { %> <% if
+          (field.label.toLowerCase() !== 'name') { %>
+          <td class="cell-content">
+            <% const value = registration.teamMembers[0]?.get(field.label) ||
+            registration.teamMembers[0]?.get(field.label.toLowerCase()) ||
+            registration.teamMembers[0]?.get(field.label.charAt(0).toUpperCase()
+            + field.label.slice(1).toLowerCase()); %> <%= typeof value ===
+            'boolean' ? (value ? 'Yes' : 'No') : value || 'N/A' %>
+          </td>
+          <% } %> <% }) %>
         </tr>
-        <% } else { %> 
-          <% const teamMembers = registration.teamMembers || []; %>
-          <% const rowspan = teamMembers.length || 1; %> 
-          <% teamMembers.forEach((member, memberIndex) => { %>
+        <% } else { %> <% const teamMembers = registration.teamMembers || []; %>
+        <% const rowspan = teamMembers.length || 1; %> <%
+        teamMembers.forEach((member, memberIndex) => { %>
         <tr>
           <% if (memberIndex === 0) { %>
           <td class="row-number" rowspan="<%= rowspan %>"><%= index + 1 %></td>
           <td class="cell-content" rowspan="<%= rowspan %>">
             <%= registration.teamName || 'N/A' %>
           </td>
-          <% } %> 
-          <% event.formFields.forEach(field => { %>
+          <% } %> <% event.formFields.forEach(field => { %>
           <td class="cell-content">
             <% const value = member?.get(field.label) ||
             member?.get(field.label.toLowerCase()) ||
-            member?.get(field.label.charAt(0).toUpperCase() + field.label.slice(1).toLowerCase()); %> 
-            <%= typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value || 'N/A' %>
+            member?.get(field.label.charAt(0).toUpperCase() +
+            field.label.slice(1).toLowerCase()); %> <%= typeof value ===
+            'boolean' ? (value ? 'Yes' : 'No') : value || 'N/A' %>
           </td>
           <% }) %>
         </tr>
-        <% }) %> 
-        <% if (teamMembers.length === 0) { %>
+        <% }) %> <% if (teamMembers.length === 0) { %>
         <tr>
           <td class="row-number"><%= index + 1 %></td>
           <td class="cell-content"><%= registration.teamName || 'N/A' %></td>
@@ -202,10 +196,7 @@
             No team members
           </td>
         </tr>
-        <% } %> 
-        <% } %> 
-        <% }) %> 
-        <% } %>
+        <% } %> <% } %> <% }) %> <% } %>
       </tbody>
     </table>
   </div>

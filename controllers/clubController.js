@@ -68,11 +68,9 @@ module.exports.handleRegistration = async (req, res) => {
 
     college.clubs.push(registeredClub._id);
     await college.save();
-    req.login(registeredClub, async (err) => {
-      if (err) return next(err);
-      req.flash("success", "Club registered successfully!");
-      res.redirect(`/${ClubName}/profile`);
-    });
+    req.session.club = registeredClub;
+    req.flash("success", "Club registered successfully!");
+    res.redirect(`/${ClubName}/profile`);
   } catch (e) {
     console.log("Error during club registration:", e);
     req.flash("error", "Failed to register club.");
@@ -94,10 +92,47 @@ module.exports.showLoginForm = (req, res) => {
 //   });
 // };
 
+// module.exports.handleLogin = async (req, res) => {
+//   let { ClubName } = req.body;
+//   let redirectUrl = res.locals.redirectUrl || `/${ClubName}/profile`;
+//   res.redirect(redirectUrl);
+// };
+
 module.exports.handleLogin = async (req, res) => {
-  let { ClubName } = req.body;
-  let redirectUrl = res.locals.redirectUrl || `/${ClubName}/profile`;
-  res.redirect(redirectUrl);
+  try {
+    const { ClubName, password } = req.body;
+
+    if (!ClubName || !password) {
+      req.flash("error", "All fields are required!");
+      return res.redirect("/clubRegistration/login");
+    }
+
+    // 🔍 Find the club
+    const club = await Club.findOne({ ClubName });
+    if (!club) {
+      req.flash("error", "Club not found!");
+      return res.redirect("/clubRegistration/login");
+    }
+
+    // ✅ Authenticate manually using passport-local-mongoose helper
+    const { user, error } = await club.authenticate(password);
+    if (error || !user) {
+      req.flash("error", "Invalid credentials!");
+      return res.redirect("/clubRegistration/login");
+    }
+
+    // ✅ Save authenticated club in session (not in req.user)
+    delete req.session.club;
+    req.session.club = club;
+
+    req.flash("success", "Logged into club successfully!");
+    let redirectUrl = res.locals.redirectUrl || `/${ClubName}/profile`;
+    res.redirect(redirectUrl);
+  } catch (err) {
+    console.log("Error during club login:", err);
+    req.flash("error", "Failed to log in club.");
+    res.redirect("/clubRegistration/login");
+  }
 };
 
 // module.exports.showLoginForm = (req, res) => {
@@ -112,7 +147,7 @@ module.exports.handleLogin = async (req, res) => {
 // };
 
 module.exports.showClubProfile = async (req, res) => {
-  if (!req.user) {
+  if (!req.session.club) {
     return res.redirect("/interface");
   }
   try {
@@ -130,7 +165,7 @@ module.exports.showClubProfile = async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    let user = req.user;
+    let user = req.session.club;
     let filteredEvents = club.events;
     // If user is a student
     if (user.role === "student") {
@@ -174,7 +209,7 @@ module.exports.handleClubPassword = async (req, res) => {
 };
 
 module.exports.showEventForm = async (req, res) => {
-  if (!req.user || req.user.role === "student") {
+  if (!req.session.club || req.user.role === "student") {
     req.flash("error", "You are not authorized to create events.");
     return res.redirect("/interface");
   }

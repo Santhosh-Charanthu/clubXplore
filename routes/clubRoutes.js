@@ -8,7 +8,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const multer = require("multer");
 const { storage } = require("../cloudconfig");
 const upload = multer({ storage: storage });
-const { validateClub } = require("../middleware.js");
+const { validateClub, isCorrectClub } = require("../middleware.js");
 
 router
   .route("/clubRegistration")
@@ -22,15 +22,12 @@ router
 router
   .route("/clubRegistration/login")
   .get(clubController.showLoginForm)
-  .post(
-    passport.authenticate("club", {
-      failureRedirect: "/clubRegistration/login",
-      failureFlash: true,
-    }),
-    clubController.handleLogin
-  );
+  .post(clubController.handleLogin);
+
 router.get("/logout", collegeController.logout);
-router.route("/:clubName/profile").get(clubController.showClubProfile);
+router
+  .route("/:clubName/profile")
+  .get(isCorrectClub, clubController.showClubProfile);
 
 router.route("/club/verify-password").post(
   passport.authenticate("club", {
