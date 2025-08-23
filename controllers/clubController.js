@@ -79,7 +79,7 @@ module.exports.handleRegistration = async (req, res) => {
 };
 
 module.exports.showLoginForm = (req, res) => {
-  res.render("club/clubformLogin.ejs");
+  res.render("club/clubFormLogin.ejs");
 };
 // module.exports.clubLogOut = async (req, res) => {
 //   req.session.destroy((err) => {
