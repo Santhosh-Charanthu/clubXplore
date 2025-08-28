@@ -37,7 +37,8 @@
   <body>
     <div class="container mt-4"><%- include("../includes/flash") %></div>
     <nav class="navbar bg-body-tertiary">
-        <a href="/logout">
+        <% if(user && user.role != "student") {%>
+          <a href="/logout">
           <div class="button-container flex gap-4 items-center">
             <button class="Btn">
               <div class="sign">
@@ -51,6 +52,7 @@
               <div class="button-text">Logout</div>
             </button>
         </a>
+          <% } %>
 
         <!-- Toggle Button -->
         <!-- <label class="theme-toggle">
@@ -63,6 +65,35 @@
         <label for="profile-icon">
           <i class="bi bi-person-circle"></i>
         </label> -->
+        <% if( user && user.role == "student") {%>
+          <div class="profile-section">
+        <div class="profile-icon" onclick="toggleDropdown()">
+          <%= user && user.studentName ?
+          user.studentName.charAt(0).toUpperCase() : 'U' %>
+        </div>
+
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-header">
+            <div class="avatar">
+              <%= user && user.studentName ?
+              user.studentName.charAt(0).toUpperCase() : 'U' %>
+            </div>
+            <div class="profile-info text-break">
+              <span
+                ><%= user && user.studentName ? user.studentName : 'Guest'
+                %></span
+              >
+              <small><%= user && user.email ? user.email : 'No email' %></small>
+            </div>
+          </div>
+          <a href="/edit-profile" class="dropdown-link">Edit Profile</a>
+          <a href="/event-registrations" class="dropdown-link"
+            >Event Registrations</a
+          >
+          <a href="/logout" class="dropdown-link logout-btn">Sign Out</a>
+        </div>
+      </div>
+          <% } %>
       </div>
     </nav>
     <script
@@ -101,6 +132,7 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="../../public/js/app.js"></script>
 
     <!-- <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -122,5 +154,39 @@
         });
       });
     </script> -->
+    <script>
+      (() => {
+    "use strict";
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+    </script>
+
+    <script>
+      function toggleDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    dropdown.classList.toggle("show");
+  }
+
+  document.addEventListener("click", function (e) {
+    const dropdown = document.getElementById("profileDropdown");
+    const icon = document.querySelector(".profile-icon");
+    if (!dropdown.contains(e.target) && !icon.contains(e.target)) {
+      dropdown.classList.remove("show");
+    }
+  });
+    </script>
   </body>
 </html>

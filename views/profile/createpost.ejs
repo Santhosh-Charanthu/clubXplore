@@ -165,7 +165,7 @@
             class="form-control form-control-lg"
             required
           />
-          <div id="eventNameError" class="error-message"></div>
+          <div class="invalid-feedback">Please enter a valid event name.</div>
         </div>
 
         <!-- Description -->
@@ -179,7 +179,7 @@
             rows="4"
             required
           ></textarea>
-          <div id="descriptionError" class="error-message"></div>
+          <div class="invalid-feedback">Please enter a valid description</div>
         </div>
 
         <!-- Image Upload -->
@@ -192,7 +192,7 @@
             class="form-control"
             required
           />
-          <div id="imageError" class="error-message"></div>
+          <div class="invalid-feedback">Please upload an event photo.</div>
         </div>
 
         <!-- Visibility -->
@@ -280,7 +280,7 @@
             class="form-control"
             required
           />
-          <div id="startDateError" class="error-message"></div>
+          <div class="invalid-feedback">Please set the event starting time.</div>
         </div>
 
         <div class="mb-3">
@@ -294,7 +294,7 @@
             class="form-control"
             required
           />
-          <div id="endDateError" class="error-message"></div>
+          <div class="invalid-feedback">Please set the event ending time.</div>
         </div>
 
         <div class="mb-3">
@@ -308,7 +308,7 @@
             class="form-control"
             required
           />
-          <div id="registrationDeadlineError" class="error-message"></div>
+          <div class="invalid-feedback">Please set the specify registration deadline</div>
         </div>
 
         <!-- Mode -->
@@ -320,7 +320,7 @@
             <option value="offline">Offline</option>
             <option value="hybrid">Hybrid</option>
           </select>
-          <div id="modeError" class="error-message"></div>
+          <div class="invalid-feedback">Please set event mode.</div>
         </div>
 
         <!-- Venue & Meeting Link -->
@@ -356,6 +356,7 @@
                   name="coordinators[0][name]"
                   class="form-control"
                   placeholder="Name"
+                  required
                 />
               </div>
               <div class="col-md-5">
@@ -364,6 +365,7 @@
                   name="coordinators[0][contact]"
                   class="form-control"
                   placeholder="Contact"
+                  required
                 />
               </div>
               <div class="col-md-2 text-start">
@@ -424,6 +426,37 @@
           <div id="eligibilityError" class="error-message"></div>
         </div>
 
+        <!-- Participation Type -->
+<div class="mb-4">
+  <label class="form-label fw-bold">Participation Type</label>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="participationType"
+      value="individual"
+      id="individual"
+      checked
+      required
+    />
+    <label class="form-check-label" for="individual">
+      Individual
+    </label>
+  </div>
+  <div class="form-check mt-2">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="participationType"
+      value="team"
+      id="team"
+    />
+    <label class="form-check-label" for="team">Team</label>
+  </div>
+  <div id="participationTypeError" class="error-message"></div>
+</div>
+
+
         <div class="mb-3 row">
           <div class="col-md-6">
             <label for="teamSizeMin" class="form-label fw-bold"
@@ -435,8 +468,9 @@
               name="teamSize[min]"
               class="form-control"
               value="1"
+              required
             />
-            <div id="teamSizeMinError" class="error-message"></div>
+            <div class="invalid-feedback">Please set minimum team size.</div>
           </div>
           <div class="col-md-6">
             <label for="teamSizeMax" class="form-label fw-bold"
@@ -448,8 +482,9 @@
               name="teamSize[max]"
               class="form-control"
               value="1"
+              required
             />
-            <div id="teamSizeMaxError" class="error-message"></div>
+            <div class="invalid-feedback">Please set maximum team size.</div>
           </div>
         </div>
 
@@ -463,8 +498,9 @@
             name="rewards"
             class="form-control"
             rows="2"
+            required
           ></textarea>
-          <div id="rewardsError" class="error-message"></div>
+          <div class="invalid-feedback">Please specify rewards for winners.</div>
         </div>
 
         <div class="mb-3">
@@ -474,25 +510,29 @@
             name="agenda"
             class="form-control"
             rows="3"
+            required
           ></textarea>
-          <div id="agendaError" class="error-message"></div>
+          <div class="invalid-feedback">Please specify this event agenda.</div>
         </div>
 
         <!-- Dynamic Form Fields -->
-        <div class="mb-4">
-          <label class="form-label fw-bold">Custom Registration Fields</label>
-          <div
-            id="formFieldsContainer"
-            class="field-container p-3 rounded bg-light"
-          ></div>
-          <button
-            type="button"
-            id="addField"
-            class="btn btn-outline-primary mt-3 w-100"
-          >
-            <i class="fas fa-plus me-2"></i>Add Field
-          </button>
-        </div>
+<div class="mb-4">
+  <label class="form-label fw-bold">Custom Registration Fields</label>
+  <div
+    id="formFieldsContainer"
+    class="field-container p-3 rounded bg-light"
+  ></div>
+  <div class="invalid-feedback" id="fieldError">
+    Please add at least one custom registration field.
+  </div>
+  <button
+    type="button"
+    id="addField"
+    class="btn btn-outline-primary mt-3 w-100"
+  >
+    <i class="fas fa-plus me-2"></i>Add Field
+  </button>
+</div>
 
         <!-- Submit Button -->
         <div class="text-center">
@@ -728,4 +768,78 @@
       );
     });
   })();
+  
+  const form = document.getElementById("createEventForm");
+const fieldError = document.getElementById("fieldError");
+
+// Submit validation for custom fields
+form.addEventListener("submit", (event) => {
+  const fieldItems = document.querySelectorAll(".field-item");
+  let hasEmpty = false;
+
+  if (fieldItems.length === 0) {
+    // No fields added
+    fieldError.textContent = "Please add at least one custom registration field.";
+    fieldError.style.display = "block";
+    event.preventDefault();
+    return;
+  }
+
+  // Check each input/select in every field-item
+  fieldItems.forEach((item) => {
+    const inputs = item.querySelectorAll("input, select");
+    inputs.forEach((input) => {
+      if (input.hasAttribute("required") && input.value.trim() === "") {
+        input.classList.add("is-invalid"); // Bootstrap red highlight
+        hasEmpty = true;
+      } else {
+        input.classList.remove("is-invalid");
+      }
+    });
+  });
+
+  if (hasEmpty) {
+    fieldError.textContent = "Please fill in all required custom fields.";
+    fieldError.style.display = "block";
+    event.preventDefault();
+  } else {
+    fieldError.style.display = "none";
+  }
+});
+
+// Optional: remove red highlight on input
+document.getElementById("formFieldsContainer").addEventListener("input", (e) => {
+  if (e.target.classList.contains("is-invalid") && e.target.value.trim() !== "") {
+    e.target.classList.remove("is-invalid");
+    // Hide error if all fields are now filled
+    const remainingInvalid = document.querySelectorAll(".field-item .is-invalid");
+    if (remainingInvalid.length === 0) {
+      fieldError.style.display = "none";
+    }
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const individualRadio = document.getElementById("individual");
+    const teamRadio = document.getElementById("team");
+    const minInput = document.getElementById("teamSizeMin");
+    const maxInput = document.getElementById("teamSizeMax");
+
+    function updateTeamSize() {
+      if (individualRadio.checked) {
+        minInput.value = 1;
+        maxInput.value = 1;
+        minInput.setAttribute("readonly", true);
+        maxInput.setAttribute("readonly", true);
+      } else {
+        minInput.removeAttribute("readonly");
+        maxInput.removeAttribute("readonly");
+      }
+    }
+
+    individualRadio.addEventListener("change", updateTeamSize);
+    teamRadio.addEventListener("change", updateTeamSize);
+
+    updateTeamSize(); // run on page load
+  });
 </script>

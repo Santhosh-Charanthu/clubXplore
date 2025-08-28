@@ -1141,14 +1141,9 @@
 
 </style> -->
 
- <main class="page" style="position: relative; min-height: 100vh;">
-
- 
-
+<main class="page" style="position: relative; min-height: 100vh">
   <section class="club-header" aria-labelledby="club-title">
-    <div class="decor decor--radials" aria-hidden="true">
-      
-    </div>
+    <div class="decor decor--radials" aria-hidden="true"></div>
     <div class="decor decor--grid" aria-hidden="true"></div>
 
     <div class="club-header__grid">
@@ -1167,6 +1162,7 @@
       </div>
 
       <!-- Actions -->
+      <% if(user.role != "student") {%>
       <div class="actions">
         <!-- Desktop (md+): full buttons -->
         <div class="actions__desktop" role="group" aria-label="Club actions">
@@ -1354,6 +1350,7 @@
         </div>
         <% } %>
       </div>
+      <% } %>
     </div>
   </section>
   <section class="event-section">

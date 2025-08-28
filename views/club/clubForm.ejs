@@ -92,12 +92,14 @@
         <div class="mb-3">
           <label class="form-label fw-bold">Club Name</label>
           <input type="text" name="ClubName" class="form-control" required />
+          <div class="invalid-feedback">Please enter a valid club name.</div>
         </div>
 
         <!-- Branch Name -->
         <div class="mb-3">
           <label class="form-label fw-bold">Branch Name</label>
           <input type="text" name="branchName" class="form-control" required />
+          <div class="invalid-feedback">Please enter a valid branch name.</div>
         </div>
 
         <!-- Password -->
@@ -109,6 +111,9 @@
             class="form-control"
             required
           />
+          <div class="invalid-feedback">
+            Password must be at least 6 characters.
+          </div>
         </div>
 
         <!-- Club Description -->
@@ -120,12 +125,14 @@
             rows="3"
             required
           ></textarea>
+          <div class="invalid-feedback">Please enter the Club Description</div>
         </div>
 
         <!-- Logo Upload -->
         <div class="mb-3">
           <label class="form-label fw-bold">Club Logo</label>
           <input type="file" name="ClubLogo" class="form-control" required />
+          <div class="invalid-feedback">Please upload the club logo.</div>
         </div>
 
         <!-- Faculty Coordinators -->
@@ -256,7 +263,11 @@
             name="establishedYear"
             class="form-control"
             placeholder="e.g. 2015"
+            required
           />
+          <div class="invalid-feedback">
+            Please enter the established year of the club.
+          </div>
         </div>
 
         <!-- Achievements -->
@@ -413,4 +424,22 @@
     container.appendChild(div);
     socialIndex++;
   }
+
+  (() => {
+    "use strict";
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
 </script>

@@ -14,16 +14,17 @@ router
   .get(collegeController.showRegistrationForm)
   .post(upload.single("collegeLogo"), collegeController.handleRegistration);
 
-router
-  .route("/collegeRegistration/login")
-  .get(collegeController.showLoginForm)
-  .post(
-    passport.authenticate("college", {
-      failureRedirect: "/collegeRegistration/login",
-      failureFlash: true,
-    }),
-    collegeController.handleLogin
-  );
+// router
+//   .route("/collegeRegistration/login")
+//   .get(collegeController.showLoginForm)
+//   .post(
+//     passport.authenticate("college", {
+//       failureRedirect: "/collegeRegistration/login",
+//       failureFlash: true,
+//     }),
+//     collegeController.handleLogin
+//   );
+
 router.route("/logout").get(collegeController.logout);
 router
   .route("/collegeProfile/:id")

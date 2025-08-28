@@ -66,12 +66,12 @@ module.exports.logout = async (req, res) => {
   // Decide where to go after logout
   let redirectTo = "/"; // default
   if (sessionUser?.type === "College") {
-    redirectTo = "/collegeRegistration/login";
+    redirectTo = "/login";
   } else if (sessionUser?.type === "Club") {
     redirectTo = "/clubRegistration/login"; // or "/club/login" if that's your route
   } else {
     // if no session, send to a safe default
-    redirectTo = "/collegeRegistration/login";
+    redirectTo = "/login";
   }
 
   // Destroy session and redirect
@@ -90,14 +90,14 @@ module.exports.handleLogin = async (req, res) => {
     const college = await College.findById(req.user._id).populate("clubs");
     if (!college) {
       req.flash("error", "College not found!");
-      return res.redirect("/collegeRegistration/login");
+      return res.redirect("/login");
     }
     req.flash("success", `Welcome to ${college.college} profile`);
     res.redirect(`/collegeProfile/${req.user._id}`);
   } catch (e) {
     console.error("Login error:", e);
     req.flash("error", "Something went wrong during login.");
-    res.redirect("/collegeRegistration/login");
+    res.redirect("/login");
   }
 };
 module.exports.showRegistrationLink = async (req, res) => {
@@ -106,15 +106,13 @@ module.exports.showRegistrationLink = async (req, res) => {
     const college = await College.findById(id).populate("clubs");
     if (!college) {
       req.flash("error", "College not found!");
-      return res.redirect("/collegeRegistration/login");
+      return res.redirect("/login");
     }
 
     if (!req.user || !req.user._id.equals(college._id)) {
       req.flash("error", "You are not authorized to generate this link!");
       return res.redirect(
-        req.user
-          ? `/collegeProfile/${req.user._id}`
-          : "/collegeRegistration/login"
+        req.user ? `/collegeProfile/${req.user._id}` : "/login"
       );
     }
 
@@ -127,17 +125,18 @@ module.exports.showRegistrationLink = async (req, res) => {
   } catch (err) {
     console.error("Error in showRegistrationLink:", err);
     req.flash("error", "Failed to generate registration link: " + err.message);
-    res.redirect("/collegeRegistration/login");
+    res.redirect("/login");
   }
 };
 
 module.exports.showCollegeProfile = async (req, res) => {
   try {
+    const user = req.user;
     const { id } = req.params;
     const college = await College.findById(id).populate("clubs");
     if (!college) {
       req.flash("error", "College not found!");
-      return res.redirect("/collegeRegistration/login");
+      return res.redirect("/login");
     }
 
     if (!req.user || !req.user._id.equals(college._id)) {
@@ -146,9 +145,7 @@ module.exports.showCollegeProfile = async (req, res) => {
         "You are not authorized to view this college profile!"
       );
       return res.redirect(
-        req.user
-          ? `/collegeProfile/${req.user._id}`
-          : "/collegeRegistration/login"
+        req.user ? `/collegeProfile/${req.user._id}` : "/login"
       );
     }
 
@@ -164,22 +161,24 @@ module.exports.showCollegeProfile = async (req, res) => {
         error: error[0],
         registrationLink: registrationLink[0],
       },
+      user,
     });
   } catch (err) {
     console.error("Error in showCollegeProfile:", err);
     req.flash("error", "Something went wrong: " + err.message);
-    res.redirect("/collegeRegistration/login");
+    res.redirect("/login");
   }
 };
 
 module.exports.showEditForm = async (req, res) => {
+  const user = req.user;
   try {
     const college = await College.findById(req.params.id);
     if (!college) {
       req.flash("error", "College not found!");
-      return res.redirect("/collegeRegistration/login");
+      return res.redirect("/login");
     }
-    res.render("users/collegeEdit.ejs", { college });
+    res.render("users/collegeEdit.ejs", { college, user });
   } catch (e) {
     console.error("Error rendering edit form:", e);
     req.flash("error", "Something went wrong.");
@@ -211,7 +210,7 @@ module.exports.updateProfile = async (req, res) => {
     const collegeDoc = await College.findById(id);
     if (!collegeDoc) {
       req.flash("error", "College not found!");
-      return res.redirect("/collegeRegistration/login");
+      return res.redirect("/login");
     }
 
     // Update fields
@@ -274,7 +273,7 @@ module.exports.deleteCollege = async (req, res) => {
     await College.findByIdAndDelete(id);
 
     req.flash("success", "College and associated data deleted successfully!");
-    res.redirect("/collegeRegistration/login");
+    res.redirect("/login");
   } catch (err) {
     console.error(err);
     req.flash("error", "Something went wrong while deleting the college.");

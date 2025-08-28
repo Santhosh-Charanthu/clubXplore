@@ -190,7 +190,7 @@
             class="form-control"
             required
           />
-          <div id="collegeError" class="error-message"></div>
+        <div class="invalid-feedback">Please enter a valid college name.</div>
         </div>
 
         <div class="mb-3">
@@ -203,7 +203,7 @@
             class="form-control"
             required
           />
-          <div id="emailError" class="error-message"></div>
+          <div class="invalid-feedback">Please a valid email id.</div>
         </div>
 
         <div class="mb-3">
@@ -216,7 +216,7 @@
             class="form-control"
             required
           />
-          <div id="collegeIdError" class="error-message"></div>
+          <div class="invalid-feedback">Please enter a valid college id.</div>
         </div>
 
         <div class="mb-3">
@@ -227,8 +227,9 @@
             name="principalName"
             value="<%= college.principalName %>"
             class="form-control"
+            required
           />
-          <div id="principalNameError" class="error-message"></div>
+          <div class="invalid-feedback">Please enter principal's name.</div>
         </div>
 
         <div class="mb-3">
@@ -239,8 +240,9 @@
             name="establishedYear"
             value="<%= college.establishedYear %>"
             class="form-control"
+            required
           />
-          <div id="establishedYearError" class="error-message"></div>
+          <div class="invalid-feedback">Please specify the established year of your college.</div>
         </div>
 
         <div class="mb-3">
@@ -250,8 +252,9 @@
             name="address"
             rows="3"
             class="form-control"
+            required
           ><%= college.address %></textarea>
-          <div id="addressError" class="error-message"></div>
+          <div class="invalid-feedback">Please enter a valid address.</div>
         </div>
 
         <div class="mb-3">

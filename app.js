@@ -33,6 +33,7 @@ const collegeRouter = require("./routes/collegeRoutes.js");
 const clubRouter = require("./routes/clubRoutes.js");
 const studentRouter = require("./routes/studentRoutes.js");
 const authRoutes = require("./routes/auth.js");
+const authenticateRoutes = require("./routes/authenticateRoutes.js");
 const college = require("./models/college");
 
 app.engine("ejs", ejsMate);
@@ -123,11 +124,12 @@ app.use("/", collegeRouter);
 app.use("/", clubRouter);
 app.use("/", studentRouter);
 app.use("/", authRoutes);
+app.use("/", authenticateRoutes);
 
-app.get("/interface", async (req, res) => {
-  res.render("profile/interface");
-});
+// app.get("/interface", async (req, res) => {
+//   res.render("profile/interface");
+// });
 
 app.listen(8080, () => {
-  console.log("Listening to port http://localhost:8080/interface");
+  console.log("Listening to port http://localhost:8080/login");
 });

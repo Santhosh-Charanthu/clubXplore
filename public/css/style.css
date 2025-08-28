@@ -1506,3 +1506,374 @@ svg span {
 a {
   text-decoration: none;
 }
+
+/* Student profile */
+.profile-section {
+  order: 5; /* Place it last */
+  margin-left: auto; /* Push it to the right */
+}
+
+.profile-icon {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3bd2ad, #28a98a);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.profile-icon:hover {
+  background: linear-gradient(135deg, #32c4a0, #23947d);
+  transform: scale(1.05);
+}
+
+/* Profile dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  width: 280px;
+  background: rgba(30, 30, 30, 0.95);
+  backdrop-filter: blur(10px);
+  color: white;
+  border-radius: 14px;
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  display: none;
+  flex-direction: column;
+  padding: 16px 0;
+  font-family: "Segoe UI", sans-serif;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.25s ease;
+}
+
+.profile-dropdown.show {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.profile-dropdown .profile-header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px 15px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-dropdown .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3bd2ad, #28a98a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.profile-dropdown .profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-dropdown .profile-info span:first-child {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.profile-dropdown .profile-info small {
+  color: #b3b3b3;
+  font-size: 13px;
+}
+
+.dropdown-link {
+  padding: 12px 20px;
+  color: white;
+  text-decoration: none;
+  display: block;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-link:hover {
+  background: linear-gradient(90deg, rgba(59, 210, 173, 0.15), transparent);
+  color: #3bd2ad;
+}
+
+.logout-btn {
+  color: #ff5e5e;
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(90deg, rgba(255, 94, 94, 0.15), transparent);
+  color: #ff9999;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Tablet styles */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 0 10px;
+  }
+
+  .navbar-content {
+    gap: 15px;
+  }
+
+  .search-form {
+    margin-right: 15px;
+  }
+
+  .search-box {
+    width: 280px;
+    padding: 8px 15px;
+  }
+
+  .profile-dropdown {
+    width: 250px;
+  }
+
+  .page {
+    margin-top: 10px; /* adjust as needed */
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 576px) {
+  .container-fluid {
+    padding: 0 8px;
+  }
+
+  .navbar-content {
+    gap: 10px;
+  }
+
+  .search-form {
+    margin-right: 10px;
+  }
+
+  .search-box {
+    width: 70%; /* increase width */
+    max-width: none;
+  }
+
+  .search-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+
+  .input {
+    font-size: 14px;
+  }
+
+  .input::placeholder {
+    font-size: 14px;
+  }
+
+  .search-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .search-box:hover {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .profile-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .profile-dropdown {
+    width: 220px;
+  }
+
+  .profile-dropdown .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+  .container-fluid {
+    padding: 0 5px;
+  }
+
+  .navbar-content {
+    gap: 8px;
+  }
+
+  .search-form {
+    margin-right: 8px;
+  }
+
+  .search-box {
+    width: 160px;
+    padding: 5px 10px;
+  }
+
+  .search-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
+
+  .input {
+    font-size: 13px;
+  }
+
+  .input::placeholder {
+    font-size: 13px;
+  }
+
+  .search-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .search-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .profile-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .profile-dropdown {
+    width: 200px;
+  }
+
+  .profile-dropdown .profile-header {
+    padding: 0 15px 12px 15px;
+  }
+
+  .dropdown-link {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+/* Extra small screens (300px) */
+@media (max-width: 320px) {
+  .container-fluid {
+    padding: 0 3px;
+  }
+
+  .navbar-content {
+    gap: 6px;
+  }
+
+  .search-form {
+    margin-right: 6px;
+  }
+
+  .search-box {
+    width: 140px;
+    padding: 4px 8px;
+  }
+
+  .search-icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+  }
+
+  .input {
+    font-size: 12px;
+  }
+
+  .input::placeholder {
+    font-size: 12px;
+  }
+
+  .search-button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .search-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .profile-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .profile-dropdown {
+    width: 180px;
+  }
+
+  .profile-dropdown .profile-info span:first-child {
+    font-size: 13px;
+  }
+
+  .profile-dropdown .profile-info small {
+    font-size: 11px;
+  }
+
+  .dropdown-link {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .search-box {
+    width: 160px;
+    padding: 5px 35px 5px 10px; /* right padding for button space */
+  }
+}
+
+@media (max-width: 320px) {
+  .search-box {
+    width: 140px;
+    padding: 4px 35px 4px 8px; /* extra right padding for button space */
+  }
+}
+
+@media (max-width: 420px) {
+  .search-box {
+    width: 90%; /* increase width */
+    max-width: none; /* remove previous max-width */
+    margin-left: 0; /* align to the left */
+    margin-right: auto;
+  }
+
+  .search-form {
+    justify-content: flex-start; /* align search box to left */
+  }
+}

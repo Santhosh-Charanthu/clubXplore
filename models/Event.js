@@ -52,6 +52,13 @@ const eventSchema = new Schema(
       },
     ],
 
+    participationType: {
+      type: String,
+      required: true,
+      enum: ["individual", "team"], // radio options
+      default: "team", // default value
+    },
+
     // 🎫 Registration Rules
     registrationRequired: { type: Boolean, default: true },
     participantLimit: { type: Number },

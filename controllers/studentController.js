@@ -54,7 +54,7 @@ module.exports.studentLogOut = async (req, res, next) => {
       return next(err);
     }
     req.flash("success", "You have logged out successfully.");
-    res.redirect("/studentRegistration/login");
+    res.redirect("/login");
   });
 };
 
@@ -64,7 +64,7 @@ module.exports.studentLogOut = async (req, res, next) => {
       return next(err);
     }
     req.flash("success", "You have logged out successfully.");
-    res.redirect("/studentRegistration/login"); // Redirect to student login
+    res.redirect("/login"); // Redirect to student login
   });
 };
 
@@ -74,7 +74,7 @@ module.exports.showCollegeProfile = async (req, res) => {
 
     // If no login, redirect to login
     if (!req.user) {
-      return res.redirect("/studentRegistration/login");
+      return res.redirect("/login");
     }
 
     let college;
@@ -111,12 +111,13 @@ module.exports.showCollegeProfile = async (req, res) => {
 };
 
 module.exports.editProfile = async (req, res) => {
+  const user = req.user;
   const student = await Student.findById(req.user._id);
   if (!student) {
     req.flash("error", "Student not found.");
     return res.redirect("/");
   }
-  res.render("studentDashboard/studentDetailsEdit", { student });
+  res.render("studentDashboard/studentDetailsEdit", { student, user });
 };
 
 module.exports.handleEditProfile = async (req, res) => {
@@ -170,7 +171,7 @@ module.exports.searchColleges = async (req, res) => {
 
 module.exports.showEventRegistration = async (req, res) => {
   if (!req.user) {
-    return res.redirect("/studentRegistration/login");
+    return res.redirect("/login");
   }
 
   let { clubName, eventId } = req.params;
@@ -215,7 +216,7 @@ module.exports.handleEventRegistration = async (req, res) => {
     // Check if user is authenticated
     if (!req.user) {
       req.flash("error", "You must be logged in to register.");
-      return res.redirect("/studentRegistration/login");
+      return res.redirect("/login");
     }
 
     const { clubName, eventId } = req.params;
@@ -447,7 +448,7 @@ module.exports.showStudentEvents = async (req, res) => {
         "error",
         "You must be logged in to view your event registrations."
       );
-      return res.redirect("/studentRegistration/login");
+      return res.redirect("/login");
     }
 
     // Fetch the student with populated registeredEvents and author (Club)

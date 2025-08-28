@@ -144,21 +144,21 @@
   <div class="mb-3">
     <label for="eventName" class="form-label">Event Name</label>
     <input type="text" id="eventName" name="eventName" class="form-control" value="<%= event.eventName %>" required />
-    <div id="eventNameError" class="error-message"></div>
+    <div class="invalid-feedback">Please enter a valid event name.</div>
   </div>
 
   <!-- Event Details -->
   <div class="mb-3">
     <label for="eventDetails" class="form-label">Event Details</label>
     <textarea id="eventDetails" name="eventDetails" class="form-control" rows="3" required><%= event.eventDetails %></textarea>
-    <div id="eventDetailsError" class="error-message"></div>
+    <div class="invalid-feedback">Please enter a valid description</div>
   </div>
 
   <!-- Event Image -->
   <div class="mb-3">
     <label for="eventImage" class="form-label">Event Image</label>
     <input type="file" name="eventImage" id="eventImage" class="form-control" />
-    <div id="eventImageError" class="error-message"></div>
+    <div class="invalid-feedback">Please upload an event photo.</div>
     <% if (event.image && event.image.url) { %>
     <div class="event-image-container mt-2">
       <img src="<%= event.image.url %>" alt="Event Image" class="event-image" />
@@ -174,7 +174,7 @@
       <option value="Online" <%= event.mode === 'Online' ? 'selected' : '' %>>Online</option>
       <option value="Offline" <%= event.mode === 'Offline' ? 'selected' : '' %>>Offline</option>
     </select>
-    <div id="modeError" class="error-message"></div>
+    <div class="invalid-feedback">Please set event mode.</div>
   </div>
 
   <!-- Venue -->
@@ -214,9 +214,39 @@
   <!-- Eligibility -->
   <div class="mb-3">
     <label for="eligibility" class="form-label">Eligibility</label>
-    <input type="text" id="eligibility" name="eligibility" class="form-control" value="<%= event.eligibility %>" required />
+    <input type="text" id="eligibility" name="eligibility" class="form-control" value="<%= event.eligibility %>" />
     <div id="eligibilityError" class="error-message"></div>
   </div>
+
+  <!-- Participation Type -->
+<div class="mb-3">
+  <label class="form-label">Participation Type</label>
+  <div class="form-check">
+    <input 
+      class="form-check-input" 
+      type="radio" 
+      name="participationType" 
+      value="individual" 
+      id="individual" 
+      <%= event.participationType === 'individual' ? 'checked' : '' %> 
+      required 
+    />
+    <label class="form-check-label" for="individual">Individual</label>
+  </div>
+  <div class="form-check">
+    <input 
+      class="form-check-input" 
+      type="radio" 
+      name="participationType" 
+      value="team" 
+      id="team" 
+      <%= event.participationType === 'team' ? 'checked' : '' %> 
+    />
+    <label class="form-check-label" for="team">Team</label>
+  </div>
+  <div id="participationTypeError" class="error-message"></div>
+</div>
+
 
   <!-- Team Size -->
   <div class="mb-3">
@@ -224,11 +254,11 @@
     <div class="row g-2">
       <div class="col">
         <input type="number" name="teamSize[min]" id="teamSizeMin" class="form-control" placeholder="Min" min="1" value="<%= event.teamSize.min %>" required />
-        <div id="teamSizeMinError" class="error-message"></div>
+        <div class="invalid-feedback">Please set minimum team size.</div>
       </div>
       <div class="col">
         <input type="number" name="teamSize[max]" id="teamSizeMax" class="form-control" placeholder="Max" min="1" value="<%= event.teamSize.max %>" required />
-        <div id="teamSizeMaxError" class="error-message"></div>
+        <div class="invalid-feedback">Please set maximum team size.</div>
       </div>
     </div>
   </div>
@@ -237,33 +267,33 @@
   <div class="mb-3">
     <label for="rewards" class="form-label">Rewards</label>
     <input type="text" id="rewards" name="rewards" class="form-control" value="<%= event.rewards %>" required />
-    <div id="rewardsError" class="error-message"></div>
+    <div class="invalid-feedback">Please specify rewards for winners.</div>
   </div>
 
   <!-- Agenda -->
   <div class="mb-3">
     <label for="agenda" class="form-label">Agenda</label>
     <textarea id="agenda" name="agenda" class="form-control" rows="3" required><%= event.agenda %></textarea>
-    <div id="agendaError" class="error-message"></div>
+    <div class="invalid-feedback">Please specify this event agenda.</div>
   </div>
 
   <!-- Dates -->
   <div class="mb-3">
     <label for="startDate" class="form-label">Starting Date</label>
     <input type="date" id="startDate" name="startDate" class="form-control" value="<%= event.startDate.toISOString().split('T')[0] %>" required />
-    <div id="startDateError" class="error-message"></div>
+    <div class="invalid-feedback">Please set the event starting time.</div>
   </div>
 
   <div class="mb-3">
     <label for="endDate" class="form-label">Ending Date</label>
     <input type="date" id="endDate" name="endDate" class="form-control" value="<%= event.endDate.toISOString().split('T')[0] %>" required />
-    <div id="endDateError" class="error-message"></div>
+    <div class="invalid-feedback">Please set the event ending time.</div>
   </div>
 
   <div class="mb-3">
     <label for="registrationDeadline" class="form-label">Registration Deadline</label>
     <input type="date" id="registrationDeadline" name="registrationDeadline" class="form-control" value="<%= event.registrationDeadline.toISOString().split('T')[0] %>" required />
-    <div id="registrationDeadlineError" class="error-message"></div>
+    <div class="invalid-feedback">Please set the specify registration deadline</div>
   </div>
 
   <!-- Visibility -->
@@ -615,4 +645,28 @@
       }, false);
     });
   })();
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const individualRadio = document.getElementById("individual");
+    const teamRadio = document.getElementById("team");
+    const minInput = document.getElementById("teamSizeMin");
+    const maxInput = document.getElementById("teamSizeMax");
+
+    function updateTeamSize() {
+      if (individualRadio.checked) {
+        minInput.value = 1;
+        maxInput.value = 1;
+        minInput.setAttribute("readonly", true);
+        maxInput.setAttribute("readonly", true);
+      } else {
+        minInput.removeAttribute("readonly");
+        maxInput.removeAttribute("readonly");
+      }
+    }
+
+    individualRadio.addEventListener("change", updateTeamSize);
+    teamRadio.addEventListener("change", updateTeamSize);
+
+    updateTeamSize(); // Run once on page load
+  });
 </script>

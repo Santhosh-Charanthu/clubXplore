@@ -23,7 +23,7 @@
             class="form-control form-control-lg"
             required
           />
-          <div class="error-message" id="ClubNameError"></div>
+          <div class="invalid-feedback">Please enter a valid club name.</div>
         </div>
 
         <!-- Password -->
@@ -37,7 +37,7 @@
             class="form-control"
             required
           />
-          <div class="error-message" id="passwordError"></div>
+          <div class="invalid-feedback">Please enter a valid password</div>
         </div>
 
         <!-- Submit Button -->
@@ -111,54 +111,21 @@
 </style>
 
 <script>
-  document
-    .getElementById("clubLoginForm")
-    .addEventListener("submit", function (event) {
-      let isValid = true;
-
-      // Get input elements
-      const clubNameInput = document.getElementById("ClubName");
-      const passwordInput = document.getElementById("password");
-
-      // Get error message elements
-      const clubNameError = document.getElementById("ClubNameError");
-      const passwordError = document.getElementById("passwordError");
-
-      // Reset errors and styles
-      clubNameError.textContent = "";
-      passwordError.textContent = "";
-      clubNameInput.classList.remove("error-border");
-      passwordInput.classList.remove("error-border");
-
-      // Validate Club Name
-      if (clubNameInput.value.trim() === "") {
-        clubNameError.textContent = "Club name is required.";
-        clubNameInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Password
-      if (passwordInput.value.trim() === "") {
-        passwordError.textContent = "Password is required.";
-        passwordInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      if (!isValid) {
-        event.preventDefault();
-      }
+  (() => {
+    "use strict";
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
     });
-
-  // Real-time Validation - Remove Error on Input
-  document.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", function () {
-      if (this.value.trim() !== "") {
-        this.classList.remove("error-border"); // Remove red border
-        const errorDiv = this.closest("div").querySelector(".error-message");
-        if (errorDiv) {
-          errorDiv.textContent = ""; // Clear error message
-        }
-      }
-    });
-  });
+  })();
 </script>

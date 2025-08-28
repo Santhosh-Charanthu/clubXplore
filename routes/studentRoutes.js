@@ -8,16 +8,16 @@ router
   .get(studentController.showStudentRegistration)
   .post(studentController.handleStudentRegistration);
 
-router
-  .route("/studentRegistration/login")
-  .get(studentController.showStudentLogin)
-  .post(
-    passport.authenticate("student", {
-      failureRedirect: "/studentRegistration/login",
-      failureFlash: true,
-    }),
-    studentController.handleStudentLogin
-  );
+// router
+//   .route("/studentRegistration/login")
+//   .get(studentController.showStudentLogin)
+//   .post(
+//     passport.authenticate("student", {
+//       failureRedirect: "/studentRegistration/login",
+//       failureFlash: true,
+//     }),
+//     studentController.handleStudentLogin
+//   );
 
 router.route("/logout").get(studentController.studentLogOut);
 

@@ -31,7 +31,7 @@ router
 
 router.route("/club/verify-password").post(
   passport.authenticate("club", {
-    failureRedirect: "/collegeRegistration/login",
+    failureRedirect: "/clubRegistration/login",
     failureFlash: true,
   }),
   clubController.handleClubPassword

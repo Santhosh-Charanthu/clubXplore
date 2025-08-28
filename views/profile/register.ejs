@@ -1,7 +1,6 @@
-```ejs
 <%- include("../layouts/boilerplate") %>
 
-<style>
+<!-- <style>
   body {
     background: linear-gradient(to bottom, #f4f6f8, #e8ecef);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -220,119 +219,204 @@
       font-size: 1.05rem;
     }
   }
+</style> -->
+
+<style>
+  .event-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+    padding: 20px; /* reduced padding */
+  }
+
+  .event-form:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control-sm {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .error-border {
+    border: 2px solid red !important;
+  }
+
+  .form-control:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .event-form {
+      padding: 15px;
+    }
+    .btn-lg {
+      padding: 10px;
+    }
+  }
+
+  .team-member-card {
+    position: relative;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+
+  .team-member-card .remove-member {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .team-member-card .remove-member:hover {
+    color: #dc3545; /* Bootstrap danger red */
+  }
 </style>
 
-<% const encodedEventId = encodeURIComponent(event._id); %>
-<% const encodedClubName = encodeURIComponent(clubName); %>
-<% const isSingleStudent = event.teamSize && event.teamSize.max === 1 && event.teamSize.min === 1; %>
+<% const encodedEventId = encodeURIComponent(event._id); %> <% const
+encodedClubName = encodeURIComponent(clubName); %> <% const isTeamEvent =
+event.participationType === "team"; %>
 
-<h2 class="event-title">Register for <%= event.eventName %></h2>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h2 class="text-center mb-4">Register for <%= event.eventName %></h2>
 
-<% if (error && error.length > 0) { %>
-<div class="alert alert-danger" role="alert"><%= error %></div>
-<% } %>
-<% if (success && success.length > 0) { %>
-<div class="alert alert-success" role="alert"><%= success %></div>
-<% } %>
-<% if (!event || !event.teamSize || !Array.isArray(event.formFields)) { %>
-<div class="alert alert-danger" role="alert">
-  Invalid event configuration. Please contact the administrator.
-</div>
-<% } else { %>
-<form
-  action="/<%= encodedClubName %>/event/<%= encodedEventId %>/register"
-  method="post"
-  class="needs-validation registration-form"
-  novalidate
->
-  <% if (!isSingleStudent) { %>
-  <div class="mb-4">
-    <label for="teamName" class="form-label"><b>Team Name</b></label>
-    <input
-      type="text"
-      id="teamName"
-      name="teamName"
-      class="form-control"
-      placeholder="Enter Team Name"
-      required
-    />
-    <div class="invalid-feedback">Team name is required.</div>
-  </div>
-  <% } %>
-
-  <div class="team-member-section">
-    <h4 class="mb-3">
-      <% if (!isSingleStudent) { %>
-      Team Members (Min: <%= event.teamSize.min %>, Max: <%= event.teamSize.max %>)
-      <% } else { %>
-      Your Details
-      <% } %>
-    </h4>
-
-    <div id="teamMembersContainer">
-      <div class="team-member-card" data-member-index="0">
-        <% if (!isSingleStudent) { %>
-        <div class="member-header">
-          <span class="member-title">Member 1</span>
-        </div>
-        <% } %>
-        <% event.formFields.forEach((field) => { %>
-        <% const safeLabel = field.label.replace(/[^a-zA-Z0-9]/g, '_'); %>
-        <% if (!isSingleStudent || field.label.toLowerCase() !== 'team name') { %>
-        <div class="mb-3">
-          <label for="member-0-<%= safeLabel %>" class="form-label"><b><%= field.label %></b></label>
-          <% if (field.type === "checkbox") { %>
-          <input
-            type="checkbox"
-            id="member-0-<%= safeLabel %>"
-            name="teamMembers[0][<%= safeLabel %>]"
-            value="true"
-            <%= field.isRequired ? 'required' : '' %>
-          />
-          <% } else { %>
-          <input
-            type="<%= field.type %>"
-            id="member-0-<%= safeLabel %>"
-            name="teamMembers[0][<%= safeLabel %>]"
-            class="form-control"
-            placeholder="<%= field.label %>"
-            <%= field.isRequired ? 'required' : '' %>
-            <%= field.type === 'number' ? 'pattern="[0-9]+"' : '' %>
-            <%= field.type === 'email' ? 'pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"' : '' %>
-          />
-          <div class="invalid-feedback">This field is required.</div>
-          <% } %>
-        </div>
-        <% } %>
-        <% }) %>
+      <% if (error && error.length > 0) { %>
+      <div class="alert alert-danger" role="alert"><%= error %></div>
+      <% } %> <% if (success && success.length > 0) { %>
+      <div class="alert alert-success" role="alert"><%= success %></div>
+      <% } %> <% if (!event || !event.teamSize ||
+      !Array.isArray(event.formFields)) { %>
+      <div class="alert alert-danger" role="alert">
+        Invalid event configuration. Please contact the administrator.
       </div>
-    </div>
+      <% } else { %>
 
-    <% if (!isSingleStudent && event.teamSize.max > 1) { %>
-    <button
-      type="button"
-      id="addMemberBtn"
-      class="btn btn-outline-primary mt-3"
-    >
-      <i class="fas fa-plus me-2"></i>Add Team Member
-    </button>
-    <% } %>
-    <div class="invalid-feedback" id="teamSizeError" style="display: none">
-      Please add between <%= event.teamSize.min %> and <%= event.teamSize.max %> members.
+      <form
+        action="/<%= encodedClubName %>/event/<%= encodedEventId %>/register"
+        method="post"
+        class="needs-validation registration-form event-form shadow p-4 rounded"
+        novalidate
+      >
+        <% if (isTeamEvent) { %>
+        <div class="mb-3">
+          <label for="teamName" class="form-label fw-bold">Team Name</label>
+          <input
+            type="text"
+            id="teamName"
+            name="teamName"
+            class="form-control form-control-sm"
+            placeholder="Enter Team Name"
+            required
+          />
+          <div class="invalid-feedback">Team name is required.</div>
+        </div>
+        <% } %>
+
+        <div class="team-member-section">
+          <h4 class="mb-3">
+            <% if (isTeamEvent) { %> Team Members (Min: <%= event.teamSize.min
+            %>, Max: <%= event.teamSize.max %>) <% } else { %> Your Details <% }
+            %>
+          </h4>
+
+          <div id="teamMembersContainer">
+            <div class="team-member-card" data-member-index="0">
+              <% if (isTeamEvent) { %>
+              <div class="member-header mb-2">
+                <span class="member-title fw-bold">Member 1</span>
+              </div>
+              <% } %> <% event.formFields.forEach((field) => { %> <% const
+              safeLabel = field.label.replace(/[^a-zA-Z0-9]/g, '_'); %>
+              <div class="mb-3">
+                <label
+                  for="member-0-<%= safeLabel %>"
+                  class="form-label fw-bold"
+                  ><%= field.label %></label
+                >
+                <% if (field.type === "checkbox") { %> <input type="checkbox"
+                id="member-0-<%= safeLabel %>" name="teamMembers[0][<%=
+                safeLabel %>]" value="true" <%= field.isRequired ? 'required' :
+                '' %> /> <% } else { %> <input type="<%= field.type %>"
+                id="member-0-<%= safeLabel %>" name="teamMembers[0][<%=
+                safeLabel %>]" class="form-control form-control-sm"
+                placeholder="<%= field.label %>" <%= field.isRequired ?
+                'required' : '' %> <%= field.type === 'number' ?
+                'pattern="[0-9]+"' : '' %> <%= field.type === 'email' ?
+                'pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"' : '' %> />
+                <div class="invalid-feedback">This field is required.</div>
+                <% } %>
+              </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <% if (isTeamEvent && event.teamSize.max > 1) { %>
+          <button
+            type="button"
+            id="addMemberBtn"
+            class="btn btn-outline-primary btn-sm mt-3"
+          >
+            <i class="fas fa-plus me-2"></i>Add Team Member
+          </button>
+          <% } %>
+          <div
+            class="invalid-feedback"
+            id="teamSizeError"
+            style="display: none"
+          >
+            Please add between <%= event.teamSize.min %> and <%=
+            event.teamSize.max %> members.
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success btn-lg w-100">
+            Submit Registration
+          </button>
+        </div>
+      </form>
+      <% } %>
     </div>
   </div>
-
-  <div class="button-container">
-    <button type="submit" class="btn btn-success submit-btn">
-      Submit Registration
-    </button>
-  </div>
-</form>
+</div>
 
 <script>
-  const minTeamSize = '<%= event.teamSize.min || 1 %>';
-  const maxTeamSize = '<%= event.teamSize.max || 1 %>';
-  const isSingleStudent = "<%= isSingleStudent ? 'true' : 'false' %>";
+  const minTeamSize = parseInt("<%= event.teamSize.min || 1 %>");
+  const maxTeamSize = parseInt("<%= event.teamSize.max || 1 %>");
+  const isTeamEvent = "<%= isTeamEvent ? 'true' : 'false' %>";
   let memberCount = 1;
 
   function addMember() {
@@ -349,11 +433,8 @@
     newMemberDiv.innerHTML = `
       <div class="member-header">
         <span class="member-title">Member ${newMemberIndex + 1}</span>
-        <button type="button" class="remove-member" onclick="removeMember(this)">×</button>
-      </div>
       <% event.formFields.forEach((field) => { %>
       <% const safeLabel = field.label.replace(/[^a-zA-Z0-9]/g, '_'); %>
-      <% if (field.label.toLowerCase() !== 'team name') { %>
       <div class="mb-3">
         <label for="member-${newMemberIndex}-<%= safeLabel %>" class="form-label"><b><%= field.label %></b></label>
         <% if (field.type === "checkbox") { %>
@@ -378,8 +459,8 @@
         <div class="invalid-feedback">This field is required.</div>
         <% } %>
       </div>
-      <% } %>
       <% }) %>
+      <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMember(this)">Remove</button>
     `;
     container.appendChild(newMemberDiv);
     updateAddButtonState();
@@ -403,7 +484,10 @@
       card.querySelector(".member-title").textContent = `Member ${index + 1}`;
       const inputs = card.querySelectorAll("input");
       inputs.forEach((input) => {
-        const name = input.name.replace(/teamMembers\[\d+\]/, `teamMembers[${index}]`);
+        const name = input.name.replace(
+          /teamMembers\[\d+\]/,
+          `teamMembers[${index}]`
+        );
         input.name = name;
         input.id = input.id.replace(/member-\d+-/, `member-${index}-`);
       });
@@ -417,8 +501,10 @@
     }
   }
 
-  if (!isSingleStudent) {
-    document.getElementById("addMemberBtn")?.addEventListener("click", addMember);
+  if (isTeamEvent === "true") {
+    document
+      .getElementById("addMemberBtn")
+      ?.addEventListener("click", addMember);
   }
 
   // Form validation
@@ -430,10 +516,14 @@
     form?.addEventListener(
       "submit",
       (event) => {
-        const memberCount = document.querySelectorAll(".team-member-card").length;
+        const memberCount =
+          document.querySelectorAll(".team-member-card").length;
         let isValid = form.checkValidity();
 
-        if (memberCount < minTeamSize || memberCount > maxTeamSize) {
+        if (
+          isTeamEvent === "true" &&
+          (memberCount < minTeamSize || memberCount > maxTeamSize)
+        ) {
           isValid = false;
           teamSizeError.style.display = "block";
         } else {
@@ -451,4 +541,3 @@
     );
   })();
 </script>
-<% } %>

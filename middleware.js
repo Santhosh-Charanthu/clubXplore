@@ -33,12 +33,15 @@ module.exports.isUserLoggedIn = async (req, res, next) => {
   if (!req.isAuthenticated()) {
     req.session.redirectUrl = req.originalUrl;
     req.flash("error", "Login to continue!");
-    return res.redirect("/collegeRegistration/login");
+    return res.redirect("/login");
   }
   next();
 };
 
 module.exports.isCorrectClub = (req, res, next) => {
+  if (req.user && req.user.role == "student") {
+    return next();
+  }
   if (!req.session.club) {
     req.flash("error", "Please log in as a club first.");
     return res.redirect("/clubRegistration/login");
