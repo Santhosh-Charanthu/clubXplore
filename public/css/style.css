@@ -853,7 +853,7 @@ body.dark-mode .create-event-button {
 .profile-icon {
   position: relative;
   display: inline-block;
-  width: 50px;
+  width: 30px;
   height: 30px;
 }
 
@@ -1511,12 +1511,15 @@ a {
 .profile-section {
   order: 5; /* Place it last */
   margin-left: auto; /* Push it to the right */
+  position: relative;
+  bottom: 10px;
 }
 
 .profile-icon {
   cursor: pointer;
   width: 40px;
   height: 40px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   background: linear-gradient(135deg, #3bd2ad, #28a98a);
   color: white;
@@ -1573,6 +1576,7 @@ a {
   width: 44px;
   height: 44px;
   border-radius: 50%;
+  aspect-ratio: 1/1;
   background: linear-gradient(135deg, #3bd2ad, #28a98a);
   display: flex;
   align-items: center;

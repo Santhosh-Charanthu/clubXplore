@@ -1,7 +1,7 @@
 <%- include("../layouts/boilerplate") %>
 
 <style>
-  /* Your existing styles from earlier */
+  /* Your existing styles (unchanged parts skipped for brevity) */
   .event-title {
     text-align: center;
     font-size: 2.5rem;
@@ -61,29 +61,36 @@
     margin-top: 20px;
   }
 
-.registration-ended-status {
-  display: block;
-  width: 100%;
-  text-align: center;
-  color: #c0392b;
-  font-size: 1.1rem;
-  padding: 10px;
-  background: #fdecea;
-  border-radius: 5px;
-  margin-top: 20px;
-  box-sizing: border-box; /* ensures padding doesn't exceed width */
-}
+  .registration-ended-status {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: #c0392b;
+    font-size: 1.1rem;
+    padding: 10px;
+    background: #fdecea;
+    border-radius: 5px;
+    margin-top: 20px;
+    box-sizing: border-box;
+  }
 
   .admin-actions {
     margin-top: 20px;
   }
 
-  .button-group {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
+ .button-group {
+  display: flex;
+  flex-direction: column; /* stack rows */
+  gap: 15px; /* space between row 1 and row 2 */
+  margin-bottom: 20px;
+}
+
+.action-row {
+  display: flex;
+  justify-content: center; /* center buttons inside each row */
+  gap: 10px; /* space between buttons in row */
+  flex-wrap: wrap; /* wrap buttons if screen is too small */
+}
 
   .button-container {
     display: flex;
@@ -152,11 +159,17 @@
       height: 250px;
     }
   }
-  .announcements{
-    position: absolute;
-    top: 40px;
-    right: 200px;
-  }
+
+  .announcements {
+  position: absolute;
+  top: 20px;
+  right: 200px;
+  z-index: 1100;
+  display: flex;              /* arrange in row */
+  flex-direction: row;        /* ensure row layout */
+  gap: 10px;                  /* space between buttons */
+  align-items: center;        /* vertical alignment */
+}
   .winners {
     background: #6366f1;
     color: white;
@@ -165,19 +178,18 @@
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
-    position: relative;
-    bottom: 20px;
-    left: 65px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+   
+    
   }
 
-  
-  .winners {
+  .winners:hover {
     background: #4f46e5;
   }
 
-  .winner-modal {
+ .winner-modal {
   display: none;
   position: fixed;
   z-index: 1000;
@@ -188,16 +200,53 @@
   align-items: center;
 }
 
-.modal-content {
-  background-color: #fff;
-  padding: 30px;
-  width: 400px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  position: relative;
-  animation: fadeIn 0.3s ease-in-out;
-}
+  .winner-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
 
+  .modal-content {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: scale(0.95);
+    animation: modalSlideIn 0.2s ease-out forwards;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: 400;
+    color: #6b7280;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    background: transparent;
+    border: none;
+    line-height: 1;
+  }
+
+  .close-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .close-btn:active {
+    background: #e5e7eb;
+  }
 .modal-content h2 {
   margin-bottom: 20px;
   color: #333;
@@ -235,227 +284,248 @@
   background-color: #0056b3;
 }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  color: #555;
-  cursor: pointer;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* Modal Overlay */
-.winner-modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  animation: fadeIn 0.2s ease-out;
-}
-
-.winner-modal.show {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-/* Modal Content */
-.modal-content {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 32px;
-  max-width: 400px;
-  width: 100%;
-  position: relative;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transform: scale(0.95);
-  animation: modalSlideIn 0.2s ease-out forwards;
-}
-
-/* Close Button */
-.close-btn {
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  font-size: 24px;
-  font-weight: 400;
-  color: #6b7280;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-  background: transparent;
-  border: none;
-  line-height: 1;
-}
-
-.close-btn:hover {
-  background: #f3f4f6;
-  color: #374151;
-}
-
-.close-btn:active {
-  background: #e5e7eb;
-}
-
-/* Header */
-.modal-content h2 {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #111827;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 24px 0;
-  line-height: 1.2;
-}
-
-/* Prize Items */
-.modal-content p {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 16px 0;
-  padding: 0;
-  color: #374151;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.modal-content p:last-of-type {
-  margin-bottom: 0;
-}
-
-/* Prize Labels */
-.modal-content strong {
-  color: #111827;
-  font-weight: 600;
-}
-
-/* Winner Names */
-.modal-content p span:last-child {
-  color: #6b7280;
-}
-
-/* Timestamp Styling */
-.timestamp {
-  margin-top: 24px !important;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-  color: #6b7280 !important;
-  font-size: 14px !important;
-  font-weight: 400 !important;
-  gap: 8px !important;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes modalSlideIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  .winner-modal {
-    padding: 16px;
-  }
-  
-  .modal-content {
-    padding: 24px 20px;
-    border-radius: 12px;
-  }
-  
   .modal-content h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #111827;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 24px 0;
+    line-height: 1.2;
   }
-  
+
   .modal-content p {
-    font-size: 15px;
-    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 16px 0;
+    padding: 0;
+    color: #374151;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
   }
-  
+
+  .modal-content p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .modal-content strong {
+    color: #111827;
+    font-weight: 600;
+  }
+
+  .modal-content p span:last-child {
+    color: #6b7280;
+  }
+
   .timestamp {
-    margin-top: 20px !important;
-    padding-top: 16px;
-    font-size: 13px !important;
+    margin-top: 24px !important;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    color: #6b7280 !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    gap: 8px !important;
   }
-  
-  .close-btn {
-    top: 12px;
-    right: 16px;
-    font-size: 20px;
-    width: 28px;
-    height: 28px;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
-}
 
-/* Focus styles for accessibility */
-.close-btn:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Smooth exit animation */
-.winner-modal.closing {
-  animation: fadeOut 0.15s ease-out forwards;
-}
-
-.winner-modal.closing .modal-content {
-  animation: modalSlideOut 0.15s ease-out forwards;
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
+  @keyframes modalSlideIn {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
-  to {
+
+  @media (max-width: 480px) {
+    .winner-modal {
+      padding: 16px;
+    }
+    .modal-content {
+      padding: 24px 20px;
+      border-radius: 12px;
+    }
+    .modal-content h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .modal-content p {
+      font-size: 15px;
+      margin-bottom: 14px;
+    }
+    .timestamp {
+      margin-top: 20px !important;
+      padding-top: 16px;
+      font-size: 13px !important;
+    }
+    .close-btn {
+      top: 12px;
+      right: 16px;
+      font-size: 20px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* Hamburger Styles */
+  .hamburger {
+    display: none; /* Hidden by default (above 490px) */
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    gap: 5px;
+    width: 30px;
+    height: 24px;
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    z-index: 1100;
+  }
+
+  .hamburger div {
+    width: 100%;
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  /* Hamburger Dropdown Menu */
+  .hamburger-dropdown {
+    display: none; /* Hidden by default (above 490px) */
+    position: absolute;
+    top: 30px; /* Below announcements (40px) + padding */
+    right: 20px;
+    width: 250px;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    border-radius: 14px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.4);
+    z-index: 1200;
+    flex-direction: column;
+    padding: 16px 0;
+    font-family: "Segoe UI", sans-serif;
     opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
+    max-height: 300px; /* Sufficient height for buttons */
+    overflow-y: auto; /* Scroll if content exceeds */
+  }
+
+  .hamburger-dropdown.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .menu-link {
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    display: block;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .menu-link:hover {
+    background: linear-gradient(90deg, rgba(59, 210, 173, 0.15), transparent);
+    color: #3bd2ad;
+  }
+
+  .logout-btn {
+    color: #ff5e5e;
+    font-weight: 500;
+  }
+
+  .logout-btn:hover {
+    background: linear-gradient(90deg, rgba(255, 94, 94, 0.15), transparent);
+    color: #ff9999;
+  }
+
+  /* Explicitly ensure above 490px styling */
+  @media (min-width: 491px) {
+    .announcements {
+      display: block; /* Ensure visible above 490px */
+    }
+    .hamburger {
+      display: none; /* Ensure hidden above 490px */
+    }
+    .hamburger-dropdown {
+      display: none; /* Ensure hidden above 490px */
+    }
+  }
+
+@media (max-width: 490px) {
+  .admin-actions {
+    display: flex;      /* keep them visible */
+    flex-direction: column;  /* stack vertically if screen is too small */
+    gap: 8px;
   }
 }
 
-@keyframes modalSlideOut {
-  from {
-    transform: scale(1);
-    opacity: 1;
+  @media (max-width: 490px) {
+    .announcements {
+      display: none; /* Hide announcements below 490px */
+    }
+    .hamburger {
+      display: flex; /* Show hamburger below 490px */
+    }
   }
-  to {
-    transform: scale(0.95);
-    opacity: 0;
+
+  /* Focus styles for accessibility */
+  .close-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
   }
-}
+
+  /* Smooth exit animation */
+  .winner-modal.closing {
+    animation: fadeOut 0.15s ease-out forwards;
+  }
+
+  .winner-modal.closing .modal-content {
+    animation: modalSlideOut 0.15s ease-out forwards;
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes modalSlideOut {
+    from {
+      transform: scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 490px) {
+      .button-container {
+        display: none !important; /* Added !important to override any potential styles */
+      }
+  }
 </style>
-
 
 <h1 class="event-title"><%= event.eventName %></h1>
 <% const winnersExist = event.winners && event.winners.first && event.winners.second && event.winners.third; %>
@@ -466,7 +536,7 @@
       <button class="winners" onclick="openModal()">Announce Winners</button>
     <% } else { %>
       <button class="winners" onclick="openWinnerModal()">🏆 Winners</button>
-      <button class="winners edit-btn" onclick="openModal()">✏️ Edit Winners</button>
+      <button class="winners edit-btn" onclick="openModal()">✏ Edit Winners</button>
     <% } %>
   <% } else { %>
     <% if (winnersExist) { %>
@@ -475,7 +545,33 @@
   <% } %>
 </div>
 
+<!-- Hamburger -->
+<% if(user.role != "student") {%>
+  <div class="hamburger" onclick="toggleMenu()">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
 
+<!-- Hamburger Dropdown Menu -->
+<div class="hamburger-dropdown" id="mobileMenu">
+  <% if (user.role !== "student") { %>
+    <% if (!winnersExist) { %>
+      <a href="#" class="menu-link" onclick="openModal()">Announce Winners</a>
+    <% } else { %>
+      <a href="#" class="menu-link" onclick="openWinnerModal()">🏆 Winners</a>
+      <a href="#" class="menu-link" onclick="openModal()">✏ Edit Winners</a>
+    <% } %>
+  <% } else { %>
+    <% if (winnersExist) { %>
+      <a href="#" class="menu-link" onclick="openWinnerModal()">🏆 Winners</a>
+    <% } %>
+  <% } %>
+ 
+  <a href="/logout" class="menu-link logout-btn">Sign Out</a>
+  <% } %>
+
+</div>
 
 <div class="winner-modal" id="studentModal">
   <div class="modal-content">
@@ -485,9 +581,8 @@
     <p>🥈<strong>2nd Prize:</strong> <%= event.winners.second %></p>
     <p>🥉<strong>3rd Prize:</strong> <%= event.winners.third %></p>
     <% if (event.winners.announcedAt) { %>
-  <p class="timestamp">Announced On: <%= new Date(event.winners.announcedAt).toDateString() %></p>
-<% } %>
-
+      <p class="timestamp">Announced On: <%= new Date(event.winners.announcedAt).toDateString() %></p>
+    <% } %>
   </div>
 </div>
 
@@ -495,22 +590,17 @@
   <div class="modal-content">
     <span class="close-btn" onclick="closeModal()">&times;</span>
     <h2><%= event.winners ? "Edit Winners" : "Announce Winners" %></h2>
-
     <form action="/<%= event.author.ClubName %>/event/<%= event._id %>/announce-winners" method="POST">
       <label>1st Prize Winner:</label>
       <input type="text" name="first" value="<%= event.winners?.first || '' %>" placeholder="Enter name" required />
-
       <label>2nd Prize Winner:</label>
       <input type="text" name="second" value="<%= event.winners?.second || '' %>" placeholder="Enter name" required />
-
       <label>3rd Prize Winner:</label>
       <input type="text" name="third" value="<%= event.winners?.third || '' %>" placeholder="Enter name" required />
-
       <button type="submit"><%= event.winners ? "Update Winners" : "Submit" %></button>
     </form>
   </div>
 </div>
-
 
 <div class="event-card-container">
   <div class="event-card">
@@ -534,14 +624,13 @@
         </p>
         <p class="event-description-container"><b>Coordinators:</b></p>
         <% event.coordinators.forEach(coordinator => { %>
-        <p class="event-description-container">
-          <%= coordinator.name %> (<%= coordinator.contact %>)
-        </p>
+          <p class="event-description-container">
+            <%= coordinator.name %> (<%= coordinator.contact %>)
+          </p>
         <% }) %> <% if (event.branchName) { %>
-        <p class="event-description-container">
-          <b>Branch:</b> For <%= event.branchName %> students only eligible for
-          participation
-        </p>
+          <p class="event-description-container">
+            <b>Branch:</b> For <%= event.branchName %> students only eligible for participation
+          </p>
         <% } %>
         <p class="event-description-container">
           <b>Eligibility:</b> <%= event.eligibility %>
@@ -572,61 +661,65 @@
 
       <% if (user && user.role === "student") { %> <% if
       (!event.registeredStudents.includes(user._id)) { %>
-      <div class="button-container">
-        <form
-          action="/<%= event.author.ClubName %>/event/<%= event._id %>/register"
-          method="get"
-        >
-        <% if (new Date() > new Date(event.registrationDeadline)) { %>
-            <p class="registration-ended-status"> Registration Completed</p>
-          <% } else {%>
-          <button type="submit" class="btn btn-success submit-btn">
-            Register
-          </button>
-          <% } %>
-        </form>
-      </div>
-      <% } else { %>
-      <p class="registration-status">
-        You are already registered for this event.
-      </p>
-      <% } %> <% } %> <% if (!user || user.role !== "student") { %>
-      <div class="admin-actions">
-        <div class="button-group">
+        <div class="button-container">
           <form
-            action="/<%= event.author.ClubName %>/event/<%= event._id %>/edit"
+            action="/<%= event.author.ClubName %>/event/<%= event._id %>/register"
+            method="get"
           >
-            <button type="submit" class="btn btn-primary edit-btn">Edit</button>
-          </form>
-
-          <form
-            id="deleteEventForm"
-            action="/<%= event.author.ClubName %>/event/<%= event._id %>/delete?_method=DELETE"
-            method="post"
-          >
-            <button
-              type="button"
-              class="btn btn-danger delete-btn"
-              onclick="confirmEventDeletion()"
-            >
-              Delete
-            </button>
+            <% if (new Date() > new Date(event.registrationDeadline)) { %>
+              <p class="registration-ended-status"> Registration Completed</p>
+            <% } else {%>
+              <button type="submit" class="btn btn-success submit-btn">
+                Register
+              </button>
+            <% } %>
           </form>
         </div>
+      <% } else { %>
+        <p class="registration-status">
+          You are already registered for this event.
+        </p>
+      <% } %> <% } %> <% if (!user || user.role !== "student") { %>
+        <div class="admin-actions">
+         <div class="button-group">
+  <!-- Row 1: Edit + Delete -->
+  <div class="action-row">
+    <form
+      action="/<%= event.author.ClubName %>/event/<%= event._id %>/edit"
+    >
+      <button type="submit" class="btn btn-primary edit-btn">Edit</button>
+    </form>
 
-        <form
-          action="/<%= event.author.ClubName %>/event/<%= event._id %>/viewRegistration"
-          method="get"
-        >
-          <div class="button-container">
-            <button type="submit" class="btn btn-info view-btn">
-              View Registrations
-            </button>
-          </div>
-        </form>
-      </div>
+    <form
+      id="deleteEventForm"
+      action="/<%= event.author.ClubName %>/event/<%= event._id %>/delete?_method=DELETE"
+      method="post"
+    >
+      <button
+        type="button"
+        class="btn btn-danger delete-btn"
+        onclick="confirmEventDeletion()"
+      >
+        Delete
+      </button>
+    </form>
+  </div>
+
+  <div class="action-row">
+    <form
+      action="/<%= event.author.ClubName %>/event/<%= event._id %>/viewRegistration"
+      method="get"
+    >
+      <button type="submit" class="btn btn-info view-btn">
+        View Registrations
+      </button>
+    </form>
+  </div>
+</div>
+
       <% } %>
     </div>
+  </div>
   </div>
 </div>
 
@@ -684,6 +777,10 @@
     document.getElementById("confirmEventModal").style.display = "flex";
   }
 
+  function toggleMenu() {
+    document.getElementById("mobileMenu").classList.toggle("show");
+  }
+
   function closeEventModal() {
     document.getElementById("confirmEventModal").style.display = "none";
   }
@@ -692,7 +789,7 @@
     document.getElementById("deleteEventForm").submit();
   }
 
-  //winners
+  // Winners
   function openModal() {
     document.getElementById("winnerModal").style.display = "flex";
   }
@@ -713,8 +810,12 @@
   window.onclick = function (event) {
     const adminModal = document.getElementById("winnerModal");
     const studentModal = document.getElementById("studentModal");
+    const dropdown = document.getElementById("mobileMenu");
 
     if (event.target === adminModal) adminModal.style.display = "none";
     if (event.target === studentModal) studentModal.style.display = "none";
+    if (dropdown.classList.contains("show") && !dropdown.contains(event.target) && !document.querySelector(".hamburger").contains(event.target)) {
+      dropdown.classList.remove("show");
+    }
   };
 </script>

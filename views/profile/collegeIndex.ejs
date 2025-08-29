@@ -367,7 +367,10 @@
           <div class="events-grid">
             <% if (college.clubs && college.clubs.length > 0) { %> <%
             college.clubs.forEach(club => { %>
-            <a href="/clubRegistration/login" class="club-navigation">
+            <a
+              href="/clubRegistration/login?club=<%= encodeURIComponent(club.ClubName) %>"
+              class="club-navigation"
+            >
               <div class="event-card">
                 <div class="card-image-container">
                   <img

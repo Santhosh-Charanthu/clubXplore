@@ -5,11 +5,11 @@
     background: #fff;
     border: 1px solid #ddd;
     transition: box-shadow 0.3s ease;
-    max-width: 50%;      /* Half of page width */
+    max-width: 50%; /* Half of page width */
     margin: 50px auto;
-    padding: 40px;       
+    padding: 40px;
     border-radius: 12px;
-    min-width: 400px;    /* Prevents shrinking too small */
+    min-width: 400px; /* Prevents shrinking too small */
   }
 
   .profile-form:hover {
@@ -21,8 +21,8 @@
   }
 
   .form-control {
-    font-size: 1.1rem;  
-    padding: 14px;      
+    font-size: 1.1rem;
+    padding: 14px;
   }
 
   .form-control:focus {
@@ -73,10 +73,57 @@
 
   .profile-title {
     text-align: center;
-    font-size: 2.5rem;   
+    font-size: 2.5rem;
     margin-bottom: 35px;
     color: #4b6cb7;
     font-weight: 600;
+  }
+
+  .profile-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+    max-width: 50%;
+    margin: 50px auto;
+    padding: 40px;
+    border-radius: 12px;
+    min-width: 400px; /* default for larger screens */
+  }
+
+  /* ✅ Responsive fix */
+  @media (max-width: 768px) {
+    .profile-form {
+      max-width: 90%; /* take almost full width */
+      min-width: auto; /* remove 400px restriction */
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 445px) {
+    .profile-form {
+      max-width: 95%; /* stretch nicely */
+      padding: 15px; /* smaller padding for tiny screens */
+    }
+
+    .profile-title {
+      font-size: 1.8rem; /* scale down title */
+    }
+
+    .btn {
+      font-size: 1rem;
+      padding: 8px 12px;
+    }
+  }
+
+  @media (max-width: 300px) {
+    .profile-form {
+      max-width: 100%;
+      padding: 10px;
+    }
+
+    .profile-title {
+      font-size: 1.5rem;
+    }
   }
 </style>
 
@@ -84,34 +131,57 @@
 
 <div class="profile-form">
   <% if (error && error.length) { %>
-    <div class="error-message"><%= error %></div>
-  <% } %>
-  <% if (success && success.length) { %>
-    <div class="success-message"><%= success %></div>
+  <div class="error-message"><%= error %></div>
+  <% } %> <% if (success && success.length) { %>
+  <div class="success-message"><%= success %></div>
   <% } %>
 
-  <form action="/edit-profile" method="POST" class="needs-validation" novalidate id="editProfileForm">
+  <form
+    action="/edit-profile"
+    method="POST"
+    class="needs-validation"
+    novalidate
+    id="editProfileForm"
+  >
     <!-- Name -->
     <div class="mb-4">
       <label for="studentName" class="form-label">Name</label>
-      <input type="text" id="studentName" name="studentName" class="form-control"
-             value="<%= student.studentName %>" required>
+      <input
+        type="text"
+        id="studentName"
+        name="studentName"
+        class="form-control"
+        value="<%= student.studentName %>"
+        required
+      />
       <div id="studentNameError" class="error-message"></div>
     </div>
 
     <!-- Email -->
     <div class="mb-4">
       <label for="email" class="form-label">Email</label>
-      <input type="email" id="email" name="email" class="form-control"
-             value="<%= student.email %>" required>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        class="form-control"
+        value="<%= student.email %>"
+        required
+      />
       <div id="emailError" class="error-message"></div>
     </div>
 
     <!-- Registration Number -->
     <div class="mb-4">
       <label for="regNo" class="form-label">Registration Number</label>
-      <input type="text" id="regNo" name="regNo" class="form-control"
-             value="<%= student.regNo %>" required>
+      <input
+        type="text"
+        id="regNo"
+        name="regNo"
+        class="form-control"
+        value="<%= student.regNo %>"
+        required
+      />
       <div id="regNoError" class="error-message"></div>
     </div>
 

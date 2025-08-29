@@ -82,8 +82,10 @@ module.exports.handleRegistration = async (req, res) => {
 };
 
 module.exports.showLoginForm = (req, res) => {
-  res.render("club/clubFormLogin.ejs");
+  const clubName = req.query.club || ""; // default empty if not provided
+  res.render("club/clubformLogin.ejs", { clubName });
 };
+
 // module.exports.clubLogOut = async (req, res) => {
 //   req.session.destroy((err) => {
 //     if (err) {
