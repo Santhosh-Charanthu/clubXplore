@@ -101,6 +101,48 @@
       padding: 20px;
     }
   }
+
+  .event-card {
+    width: 30%;
+    min-width: 300px;
+    max-width: 350px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @media (max-width: 768px) {
+    .event-card {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .event-card {
+      width: 100%;
+      min-width: unset;
+      max-width: 100%;
+      margin: 0 auto; /* center it */
+    }
+
+    .event-card img {
+      width: 100%; /* make images shrink */
+      height: auto; /* keep aspect ratio */
+      object-fit: cover; /* prevent distortion */
+    }
+
+    .event-card .event-body {
+      font-size: 14px; /* shrink text slightly */
+      word-wrap: break-word; /* wrap long text */
+    }
+    .navbar {
+      top: -45px;
+    }
+  }
 </style>
 
 <div class="container">

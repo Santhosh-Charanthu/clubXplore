@@ -1,7 +1,9 @@
 let College = require("../models/college");
 let Club = require("../models/club");
 let Student = require("../models/student");
+const Event = require("../models/Event");
 let Registration = require("../models/registration");
+const Invitation = require("../models/invitation");
 const passport = require("passport");
 
 const college = require("../models/college");
@@ -211,9 +213,237 @@ module.exports.showEventRegistration = async (req, res) => {
   });
 };
 
+// module.exports.handleEventRegistration = async (req, res) => {
+//   try {
+//     // Check if user is authenticated
+//     if (!req.user) {
+//       req.flash("error", "You must be logged in to register.");
+//       return res.redirect("/login");
+//     }
+
+//     const { clubName, eventId } = req.params;
+//     const decodedClubName = decodeURIComponent(clubName);
+//     const decodedEventId = decodeURIComponent(eventId);
+
+//     // Find club and event
+//     const club = await Club.findOne({ ClubName: decodedClubName }).populate(
+//       "events"
+//     );
+//     if (!club) {
+//       req.flash("error", "Club not found");
+//       return res.redirect("/clubRegistration");
+//     }
+
+//     const event = club.events.find((event) => event._id.equals(decodedEventId));
+//     if (!event) {
+//       req.flash("error", "Event not found");
+//       return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
+//     }
+
+//     // Check registration deadline
+//     if (new Date(event.registrationDeadline) < new Date()) {
+//       req.flash("error", "Registration for this event has closed");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     // Validate event configuration
+//     if (!Array.isArray(event.formFields)) {
+//       req.flash("error", "Invalid event configuration");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}/register`
+//       );
+//     }
+
+//     // Prevent duplicate registration
+//     const existingRegistration = await Registration.findOne({
+//       eventId: event._id,
+//       studentId: req.user._id,
+//     });
+//     if (existingRegistration) {
+//       req.flash("error", "You are already registered for this event");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     // Normalize team members
+//     let members = Array.isArray(req.body.teamMembers)
+//       ? req.body.teamMembers
+//       : req.body.teamMembers
+//       ? [req.body.teamMembers]
+//       : [];
+
+//     // Validate team size
+//     if (
+//       members.length < event.teamSize.min ||
+//       members.length > event.teamSize.max
+//     ) {
+//       req.flash(
+//         "error",
+//         `Team size must be between ${event.teamSize.min} and ${event.teamSize.max} members`
+//       );
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}/register`
+//       );
+//     }
+
+//     // Validate team name if required
+//     const isSingleStudent =
+//       event.teamSize.max === 1 && event.teamSize.min === 1;
+//     let teamName = null;
+//     if (!isSingleStudent) {
+//       teamName = req.body.teamName?.trim();
+//       if (!teamName) {
+//         req.flash("error", "Team name is required");
+//         return res.redirect(
+//           `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//             decodedEventId
+//           )}/register`
+//         );
+//       }
+//     }
+
+//     // Process team members
+//     const safeFieldLabels = event.formFields.map((field) =>
+//       field.label.replace(/[^a-zA-Z0-9]/g, "_")
+//     );
+//     const registrationNumbers = new Set();
+//     const teamMembers = [];
+
+//     for (const [index, member] of members.entries()) {
+//       const memberData = new Map();
+//       for (const [j, field] of event.formFields.entries()) {
+//         const safeLabel = safeFieldLabels[j];
+//         const value =
+//           member[safeLabel] ?? (field.type === "checkbox" ? "false" : "");
+
+//         // Skip validation for "Team Name" field in formFields for single student
+//         if (isSingleStudent && field.label.toLowerCase() === "team name") {
+//           continue;
+//         }
+
+//         // Validate required fields
+//         if (field.isRequired && !value) {
+//           req.flash(
+//             "error",
+//             `${field.label} is required for team member ${index + 1}`
+//           );
+//           return res.redirect(
+//             `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//               decodedEventId
+//             )}/register`
+//           );
+//         }
+
+//         // Validate field types
+//         if (field.type === "number" && value && !/^[0-9]+$/.test(value)) {
+//           req.flash(
+//             "error",
+//             `Invalid number format for ${field.label} in team member ${
+//               index + 1
+//             }`
+//           );
+//           return res.redirect(
+//             `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//               decodedEventId
+//             )}/register`
+//           );
+//         }
+
+//         if (
+//           field.type === "email" &&
+//           value &&
+//           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+//         ) {
+//           req.flash(
+//             "error",
+//             `Invalid email format for ${field.label} in team member ${
+//               index + 1
+//             }`
+//           );
+//           return res.redirect(
+//             `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//               decodedEventId
+//             )}/register`
+//           );
+//         }
+
+//         memberData.set(field.label, value);
+//       }
+
+//       // Check for duplicate registration numbers
+//       const regNum = memberData.get("Registration Number");
+//       if (regNum) {
+//         if (registrationNumbers.has(regNum)) {
+//           req.flash(
+//             "error",
+//             `Duplicate registration number found in team member ${index + 1}`
+//           );
+//           return res.redirect(
+//             `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//               decodedEventId
+//             )}/register`
+//           );
+//         }
+//         registrationNumbers.add(regNum);
+//       }
+
+//       teamMembers.push(memberData);
+//     }
+
+//     // Save registration
+//     const registration = new Registration({
+//       eventId: event._id,
+//       studentId: req.user._id,
+//       teamName,
+//       teamMembers,
+//       submittedAt: new Date(),
+//     });
+
+//     await registration.save();
+
+//     // Update event's registered students
+//     event.registeredStudents.push(req.user._id);
+//     await event.save();
+
+//     // Update student's registered events
+//     await Student.findByIdAndUpdate(
+//       req.user._id,
+//       { $addToSet: { registeredEvents: event._id } },
+//       { new: true }
+//     );
+
+//     req.flash("success", "Registered successfully!");
+//     return res.redirect(
+//       `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//         decodedEventId
+//       )}`
+//     );
+//   } catch (error) {
+//     console.error("Registration Error:", error);
+//     req.flash("error", `Failed to complete registration: ${error.message}`);
+//     return res.redirect(
+//       `/${encodeURIComponent(
+//         decodeURIComponent(req.params.clubName)
+//       )}/event/${encodeURIComponent(
+//         decodeURIComponent(req.params.eventId)
+//       )}/register`
+//     );
+//   }
+// };
+
 module.exports.handleEventRegistration = async (req, res) => {
   try {
-    // Check if user is authenticated
     if (!req.user) {
       req.flash("error", "You must be logged in to register.");
       return res.redirect("/login");
@@ -223,7 +453,6 @@ module.exports.handleEventRegistration = async (req, res) => {
     const decodedClubName = decodeURIComponent(clubName);
     const decodedEventId = decodeURIComponent(eventId);
 
-    // Find club and event
     const club = await Club.findOne({ ClubName: decodedClubName }).populate(
       "events"
     );
@@ -232,13 +461,13 @@ module.exports.handleEventRegistration = async (req, res) => {
       return res.redirect("/clubRegistration");
     }
 
-    const event = club.events.find((event) => event._id.equals(decodedEventId));
+    const event = club.events.find((e) => e._id.equals(decodedEventId));
     if (!event) {
       req.flash("error", "Event not found");
       return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
     }
 
-    // Check registration deadline
+    // ✅ Check registration deadline
     if (new Date(event.registrationDeadline) < new Date()) {
       req.flash("error", "Registration for this event has closed");
       return res.redirect(
@@ -248,17 +477,7 @@ module.exports.handleEventRegistration = async (req, res) => {
       );
     }
 
-    // Validate event configuration
-    if (!Array.isArray(event.formFields)) {
-      req.flash("error", "Invalid event configuration");
-      return res.redirect(
-        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}/register`
-      );
-    }
-
-    // Prevent duplicate registration
+    // ✅ Prevent duplicate registration
     const existingRegistration = await Registration.findOne({
       eventId: event._id,
       studentId: req.user._id,
@@ -272,35 +491,44 @@ module.exports.handleEventRegistration = async (req, res) => {
       );
     }
 
-    // Normalize team members
-    let members = Array.isArray(req.body.teamMembers)
-      ? req.body.teamMembers
-      : req.body.teamMembers
-      ? [req.body.teamMembers]
-      : [];
+    // -----------------
+    // ✅ CASE 1: INDIVIDUAL EVENTS
+    // -----------------
+    if (event.participationType === "individual") {
+      const registration = new Registration({
+        eventId: event._id,
+        studentId: req.user._id,
+        teamName: null,
+        teamMembers: [
+          {
+            id: req.user._id,
+            email: req.user.email,
+            name: req.user.studentName,
+          },
+        ],
+      });
+      await registration.save();
 
-    // Validate team size
-    if (
-      members.length < event.teamSize.min ||
-      members.length > event.teamSize.max
-    ) {
-      req.flash(
-        "error",
-        `Team size must be between ${event.teamSize.min} and ${event.teamSize.max} members`
-      );
+      // Update references
+      event.registeredStudents.push(req.user._id);
+      await event.save();
+      await Student.findByIdAndUpdate(req.user._id, {
+        $addToSet: { registeredEvents: event._id },
+      });
+
+      req.flash("success", "Registered successfully for individual event!");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
           decodedEventId
-        )}/register`
+        )}`
       );
     }
 
-    // Validate team name if required
-    const isSingleStudent =
-      event.teamSize.max === 1 && event.teamSize.min === 1;
-    let teamName = null;
-    if (!isSingleStudent) {
-      teamName = req.body.teamName?.trim();
+    // -----------------
+    // ✅ CASE 2: TEAM EVENTS
+    // -----------------
+    if (event.participationType === "team") {
+      const teamName = req.body.teamName?.trim();
       if (!teamName) {
         req.flash("error", "Team name is required");
         return res.redirect(
@@ -309,124 +537,83 @@ module.exports.handleEventRegistration = async (req, res) => {
           )}/register`
         );
       }
-    }
 
-    // Process team members
-    const safeFieldLabels = event.formFields.map((field) =>
-      field.label.replace(/[^a-zA-Z0-9]/g, "_")
-    );
-    const registrationNumbers = new Set();
-    const teamMembers = [];
+      const minSize = event.teamSize.min;
+      const maxSize = event.teamSize.max;
 
-    for (const [index, member] of members.entries()) {
-      const memberData = new Map();
-      for (const [j, field] of event.formFields.entries()) {
-        const safeLabel = safeFieldLabels[j];
-        const value =
-          member[safeLabel] ?? (field.type === "checkbox" ? "false" : "");
+      // req.body.teamMembers will be an array of objects
+      const teamMembers = req.body.teamMembers || [];
 
-        // Skip validation for "Team Name" field in formFields for single student
-        if (isSingleStudent && field.label.toLowerCase() === "team name") {
-          continue;
+      // Extract all emails dynamically
+      let emails = [];
+      teamMembers.forEach((member) => {
+        for (let key in member) {
+          if (key.toLowerCase().includes("email") && member[key]) {
+            emails.push(member[key].trim().toLowerCase());
+          }
         }
+      });
 
-        // Validate required fields
-        if (field.isRequired && !value) {
-          req.flash(
-            "error",
-            `${field.label} is required for team member ${index + 1}`
-          );
-          return res.redirect(
-            `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-              decodedEventId
-            )}/register`
-          );
-        }
+      // Remove duplicates, exclude leader’s email
+      emails = [...new Set(emails)].filter(
+        (email) => email && email !== req.user.email
+      );
 
-        // Validate field types
-        if (field.type === "number" && value && !/^[0-9]+$/.test(value)) {
-          req.flash(
-            "error",
-            `Invalid number format for ${field.label} in team member ${
-              index + 1
-            }`
-          );
-          return res.redirect(
-            `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-              decodedEventId
-            )}/register`
-          );
-        }
-
-        if (
-          field.type === "email" &&
-          value &&
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-        ) {
-          req.flash(
-            "error",
-            `Invalid email format for ${field.label} in team member ${
-              index + 1
-            }`
-          );
-          return res.redirect(
-            `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-              decodedEventId
-            )}/register`
-          );
-        }
-
-        memberData.set(field.label, value);
+      // Validate team size (leader + teammates)
+      if (emails.length + 1 < minSize || emails.length + 1 > maxSize) {
+        req.flash(
+          "error",
+          `Team size must be between ${minSize} and ${maxSize} members (including leader).`
+        );
+        return res.redirect(
+          `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+            decodedEventId
+          )}/register`
+        );
       }
 
-      // Check for duplicate registration numbers
-      const regNum = memberData.get("Registration Number");
-      if (regNum) {
-        if (registrationNumbers.has(regNum)) {
-          req.flash(
-            "error",
-            `Duplicate registration number found in team member ${index + 1}`
-          );
-          return res.redirect(
-            `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-              decodedEventId
-            )}/register`
-          );
-        }
-        registrationNumbers.add(regNum);
+      // Create registration (leader only for now)
+      const registration = new Registration({
+        eventId: event._id,
+        studentId: req.user._id,
+        teamName,
+        teamMembers: [
+          {
+            id: req.user._id,
+            email: req.user.email,
+            name: req.user.studentName,
+          },
+        ],
+      });
+      await registration.save();
+
+      // Update leader references
+      event.registeredStudents.push(req.user._id);
+      await event.save();
+      await Student.findByIdAndUpdate(req.user._id, {
+        $addToSet: { registeredEvents: event._id },
+      });
+
+      // Send invitations to teammates
+      for (const email of emails) {
+        const student = await Student.findOne({ email });
+        await Invitation.create({
+          eventId: event._id,
+          registrationId: registration._id,
+          senderId: req.user._id,
+          receiverId: student ? student._id : null,
+          receiverEmail: email,
+          status: "pending",
+        });
       }
 
-      teamMembers.push(memberData);
+      req.flash("success", "Team registered! Invitations sent to teammates.");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
     }
-
-    // Save registration
-    const registration = new Registration({
-      eventId: event._id,
-      studentId: req.user._id,
-      teamName,
-      teamMembers,
-      submittedAt: new Date(),
-    });
-
-    await registration.save();
-
-    // Update event's registered students
-    event.registeredStudents.push(req.user._id);
-    await event.save();
-
-    // Update student's registered events
-    await Student.findByIdAndUpdate(
-      req.user._id,
-      { $addToSet: { registeredEvents: event._id } },
-      { new: true }
-    );
-
-    req.flash("success", "Registered successfully!");
-    return res.redirect(
-      `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-        decodedEventId
-      )}`
-    );
   } catch (error) {
     console.error("Registration Error:", error);
     req.flash("error", `Failed to complete registration: ${error.message}`);
@@ -484,5 +671,157 @@ module.exports.showStudentEvents = async (req, res) => {
     console.error("Error fetching student events:", error);
     req.flash("error", `Failed to load event registrations: ${error.message}`);
     return res.redirect("/college");
+  }
+};
+
+module.exports.showInvitations = async (req, res) => {
+  try {
+    if (!req.user) {
+      req.flash("error", "You must be logged in to view invitations.");
+      return res.redirect("/login");
+    }
+
+    // Fetch all invitations where user is invited
+    const invitations = await Invitation.find({
+      $or: [{ receiverEmail: req.user.email }, { receiverId: req.user._id }],
+    })
+      .populate("eventId")
+      .populate("registrationId", "teamName")
+      .populate("senderId", "studentName email");
+
+    // Format for EJS
+    const formattedInvites = invitations.map((invite) => ({
+      _id: invite._id,
+      eventId: invite.eventId,
+      teamName: invite.registrationId
+        ? invite.registrationId.teamName
+        : "Not Provided",
+      inviterName: invite.senderId ? invite.senderId.studentName : "Unknown",
+      status: invite.status,
+    }));
+
+    res.render("studentDashboard/invitations", {
+      invitations: formattedInvites,
+      user: req.user,
+      error: req.flash("error"),
+      success: req.flash("success"),
+    });
+  } catch (error) {
+    console.error("Show Invitations Error:", error);
+    req.flash("error", "Unable to fetch invitations.");
+    return res.redirect("/");
+  }
+};
+
+// Accept Invitation
+module.exports.acceptInvitation = async (req, res) => {
+  try {
+    const { invitationId } = req.params;
+
+    if (!req.user) {
+      req.flash("error", "You must be logged in to respond to an invitation.");
+      return res.redirect("/login");
+    }
+
+    const invitation = await Invitation.findById(invitationId).populate(
+      "eventId"
+    );
+    if (!invitation) {
+      req.flash("error", "Invitation not found");
+      return res.redirect("/invitations");
+    }
+
+    if (invitation.status !== "pending") {
+      req.flash("error", "This invitation has already been responded to.");
+      return res.redirect("/invitations");
+    }
+
+    if (invitation.receiverEmail !== req.user.email) {
+      // ✅ fixed
+      req.flash("error", "This invitation was not sent to your email.");
+      return res.redirect("/invitations");
+    }
+
+    // ✅ Mark as accepted
+    invitation.status = "accepted";
+    await invitation.save();
+
+    // ✅ Add to registration team
+    const registration = await Registration.findById(invitation.registrationId);
+    if (!registration) {
+      req.flash("error", "Registration not found");
+      return res.redirect("/invitations");
+    }
+
+    const alreadyMember = registration.teamMembers.some(
+      (m) => m.email === req.user.email
+    );
+    if (!alreadyMember) {
+      registration.teamMembers.push({
+        id: req.user._id,
+        name: req.user.studentName,
+        email: req.user.email,
+      });
+      await registration.save();
+    }
+
+    // ✅ Add student to event + student profile
+    await Event.findByIdAndUpdate(
+      registration.eventId,
+      { $addToSet: { registeredStudents: req.user._id } },
+      { new: true }
+    );
+
+    await Student.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { registeredEvents: registration.eventId } },
+      { new: true }
+    );
+
+    req.flash("success", "You have successfully joined the team!");
+    return res.redirect("/invitations");
+  } catch (error) {
+    console.error("Accept Invitation Error:", error);
+    req.flash("error", "Failed to accept invitation.");
+    return res.redirect("/invitations");
+  }
+};
+
+// Reject Invitation
+module.exports.rejectInvitation = async (req, res) => {
+  try {
+    const { invitationId } = req.params;
+
+    if (!req.user) {
+      req.flash("error", "You must be logged in to respond to an invitation.");
+      return res.redirect("/login");
+    }
+
+    const invitation = await Invitation.findById(invitationId);
+    if (!invitation) {
+      req.flash("error", "Invitation not found");
+      return res.redirect("/invitations");
+    }
+
+    if (invitation.status !== "pending") {
+      req.flash("error", "This invitation has already been responded to.");
+      return res.redirect("/invitations");
+    }
+
+    if (invitation.receiverEmail !== req.user.email) {
+      // ✅ fixed
+      req.flash("error", "This invitation was not sent to your email.");
+      return res.redirect("/invitations");
+    }
+
+    invitation.status = "rejected";
+    await invitation.save();
+
+    req.flash("success", "You have rejected the team invitation.");
+    return res.redirect("/invitations");
+  } catch (error) {
+    console.error("Reject Invitation Error:", error);
+    req.flash("error", "Failed to reject invitation.");
+    return res.redirect("/invitations");
   }
 };

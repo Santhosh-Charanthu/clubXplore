@@ -1,0 +1,185 @@
+<%- include("../layouts/boilerplate") %>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 40px 0;
+    color: #2c3e50;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .event-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 30px;
+  }
+
+  .event-card {
+    width: 30%;
+    min-width: 300px;
+    max-width: 350px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    color: inherit;
+  }
+
+  .event-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .event-card img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .event-card-body {
+    padding: 20px;
+  }
+
+  .event-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+
+  .event-card-text {
+    font-size: 1rem;
+    color: #34495e;
+    margin-bottom: 8px;
+  }
+
+  .event-card-text strong {
+    color: #2c3e50;
+  }
+
+  .event-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-accept {
+    background-color: #27ae60;
+    color: white;
+  }
+
+  .btn-accept:hover {
+    background-color: #219150;
+  }
+
+  .btn-reject {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .btn-reject:hover {
+    background-color: #c0392b;
+  }
+
+  .no-events {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 1200px) {
+    .event-card {
+      width: 45%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .event-card {
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page-title {
+      font-size: 1.8rem;
+    }
+
+    .container {
+      padding: 20px;
+    }
+  }
+</style>
+
+<div class="container">
+  <h1 class="page-title">Your Invitations</h1>
+
+  <% if (error && error.length > 0) { %>
+  <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% } %> <% if (success && success.length > 0) { %>
+  <div class="alert alert-success" role="alert"><%= success %></div>
+  <% } %> <% if (invitations && invitations.length > 0) { %>
+  <div class="event-container">
+    <% invitations.forEach(invite => { %>
+    <div class="event-card">
+      <img
+        src="<%= invite.eventId?.image?.url || 'https://via.placeholder.com/300x200' %>"
+        alt="<%= invite.eventId?.eventName || 'Event' %>"
+      />
+      <div class="event-card-body">
+        <h3 class="event-card-title">
+          <%= invite.eventId?.eventName || "Event Deleted" %>
+        </h3>
+
+        <p class="event-card-text">
+          <strong>Team Name:</strong> <%= invite.teamName || "Not Provided" %>
+        </p>
+        <p class="event-card-text">
+          <strong>Invited By:</strong> <%= invite.inviterName || "Unknown" %>
+        </p>
+        <p class="event-card-text">
+          <strong>Status:</strong> <%= invite.status %>
+        </p>
+
+        <% if (invite.status === "pending") { %>
+        <div class="event-actions">
+          <form action="/invitation/<%= invite._id %>/accept" method="POST">
+            <button type="submit" class="btn btn-accept">Accept</button>
+          </form>
+          <form action="/invitation/<%= invite._id %>/reject" method="POST">
+            <button type="submit" class="btn btn-reject">Reject</button>
+          </form>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <p class="no-events">You don’t have any invitations right now.</p>
+  <% } %>
+</div>

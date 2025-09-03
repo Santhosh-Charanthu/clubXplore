@@ -35,4 +35,16 @@ router
   .get(studentController.showEventRegistration)
   .post(studentController.handleEventRegistration);
 router.route("/event-registrations").get(studentController.showStudentEvents);
+
+router.get("/invitations", studentController.showInvitations);
+
+router.post(
+  "/invitation/:invitationId/accept",
+  studentController.acceptInvitation
+);
+
+router.post(
+  "/invitation/:invitationId/reject",
+  studentController.rejectInvitation
+);
 module.exports = router;

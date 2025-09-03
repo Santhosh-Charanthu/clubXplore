@@ -163,11 +163,11 @@
   .announcements {
   position: absolute;
   top: 20px;
-  right: 200px;
+  right: 123px;
   z-index: 1100;
   display: flex;              /* arrange in row */
   flex-direction: row;        /* ensure row layout */
-  gap: 10px;                  /* space between buttons */
+  gap: 30px;                  /* space between buttons */
   align-items: center;        /* vertical alignment */
 }
   .winners {
@@ -390,7 +390,7 @@
     width: 30px;
     height: 24px;
     position: absolute;
-    top: 5px;
+    top: 25px;
     right: 20px;
     z-index: 1100;
   }
@@ -466,7 +466,13 @@
     .hamburger-dropdown {
       display: none; /* Ensure hidden above 490px */
     }
+
   }
+
+  .navbar {
+  min-height: 50px;
+}
+
 
 @media (max-width: 490px) {
   .admin-actions {
@@ -490,6 +496,8 @@
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
   }
+
+
 
   /* Smooth exit animation */
   .winner-modal.closing {
@@ -536,7 +544,27 @@
       <button class="winners" onclick="openModal()">Announce Winners</button>
     <% } else { %>
       <button class="winners" onclick="openWinnerModal()">🏆 Winners</button>
-      <button class="winners edit-btn" onclick="openModal()">✏ Edit Winners</button>
+      <button class="winners edit-btn" onclick="openModal()">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+              <span>Edit Winners</span>
+            </button>
     <% } %>
   <% } else { %>
     <% if (winnersExist) { %>
@@ -560,7 +588,27 @@
       <a href="#" class="menu-link" onclick="openModal()">Announce Winners</a>
     <% } else { %>
       <a href="#" class="menu-link" onclick="openWinnerModal()">🏆 Winners</a>
-      <a href="#" class="menu-link" onclick="openModal()">✏ Edit Winners</a>
+      <a href="#" class="menu-link" onclick="openModal()">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+              <span>Edit Winners</span>
+      </a>
     <% } %>
   <% } else { %>
     <% if (winnersExist) { %>

@@ -83,7 +83,10 @@ module.exports.handleRegistration = async (req, res) => {
 
 module.exports.showLoginForm = (req, res) => {
   const clubName = req.query.club || ""; // default empty if not provided
-  res.render("club/clubformLogin.ejs", { clubName });
+  res.render("club/clubformLogin.ejs", {
+    clubName,
+    error: req.flash("error")[0],
+  });
 };
 
 // module.exports.clubLogOut = async (req, res) => {
@@ -109,7 +112,10 @@ module.exports.handleLogin = async (req, res) => {
 
     if (!ClubName || !password) {
       req.flash("error", "All fields are required!");
-      return res.redirect("/clubRegistration/login");
+      return res.render("club/clubformLogin.ejs", {
+        clubName: ClubName,
+        error: req.flash("error")[0],
+      });
     }
 
     // 🔍 Find the club
@@ -123,7 +129,10 @@ module.exports.handleLogin = async (req, res) => {
     const { user, error } = await club.authenticate(password);
     if (error || !user) {
       req.flash("error", "Invalid credentials!");
-      return res.redirect("/clubRegistration/login");
+      return res.render("club/clubformLogin.ejs", {
+        clubName: ClubName,
+        error: req.flash("error")[0],
+      });
     }
 
     // ✅ Save authenticated club in session (not in req.user)
@@ -136,7 +145,10 @@ module.exports.handleLogin = async (req, res) => {
   } catch (err) {
     console.log("Error during club login:", err);
     req.flash("error", "Failed to log in club.");
-    res.redirect("/clubRegistration/login");
+    return res.render("club/clubformLogin.ejs", {
+      clubName: ClubName,
+      error: req.flash("error")[0],
+    });
   }
 };
 

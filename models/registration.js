@@ -7,10 +7,12 @@ const registrationSchema = new Schema({
   teamName: { type: String },
   teamMembers: [
     {
-      type: Map,
-      of: String,
+      id: { type: Schema.Types.ObjectId, ref: "Student" },
+      email: String,
+      name: String,
     },
   ],
+
   submittedAt: { type: Date, default: Date.now },
 });
 
