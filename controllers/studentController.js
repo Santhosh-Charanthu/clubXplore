@@ -627,6 +627,415 @@ module.exports.handleEventRegistration = async (req, res) => {
   }
 };
 
+// // ================================
+// // Show Edit Registration Form
+// // ================================
+// module.exports.showEditRegistration = async (req, res) => {
+//   try {
+//     if (!req.user) {
+//       req.flash("error", "You must be logged in to edit registration.");
+//       return res.redirect("/login");
+//     }
+
+//     const { clubName, eventId, registrationId } = req.params;
+//     const decodedClubName = decodeURIComponent(clubName);
+//     const decodedEventId = decodeURIComponent(eventId);
+
+//     const club = await Club.findOne({ ClubName: decodedClubName }).populate(
+//       "events"
+//     );
+//     if (!club) {
+//       req.flash("error", "Club not found");
+//       return res.redirect("/clubRegistration");
+//     }
+
+//     const event = club.events.find((e) => e._id.equals(decodedEventId));
+//     if (!event) {
+//       req.flash("error", "Event not found");
+//       return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
+//     }
+
+//     const registration = await Registration.findById(registrationId);
+//     if (!registration) {
+//       req.flash("error", "Registration not found");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     // Authorization: only leader can edit
+//     if (!registration.studentId.equals(req.user._id)) {
+//       req.flash("error", "You are not authorized to edit this registration.");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     console.log("👉 registration.teamMembers:", registration.teamMembers);
+
+//     res.render("studentDashboard/editRegistrations", {
+//       club,
+//       event,
+//       registration,
+//       user: req.user,
+//     });
+//   } catch (error) {
+//     console.error("Show Edit Registration Error:", error);
+//     req.flash("error", "Failed to load edit form.");
+//     res.redirect("back");
+//   }
+// };
+
+// // ================================
+// // Handle Edit Registration
+// // ================================
+// module.exports.handleEditRegistration = async (req, res) => {
+//   try {
+//     if (!req.user) {
+//       req.flash("error", "You must be logged in to edit registration.");
+//       return res.redirect("/login");
+//     }
+
+//     const { clubName, eventId, registrationId } = req.params;
+//     const decodedClubName = decodeURIComponent(clubName);
+//     const decodedEventId = decodeURIComponent(eventId);
+
+//     const registration = await Registration.findById(registrationId);
+//     if (!registration) {
+//       req.flash("error", "Registration not found");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     // Authorization: only leader can edit
+//     if (!registration.studentId.equals(req.user._id)) {
+//       req.flash("error", "You are not authorized to edit this registration.");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     // Find the event
+//     const event = await Event.findById(decodedEventId);
+//     if (!event) {
+//       req.flash("error", "Event not found");
+//       return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
+//     }
+
+//     // -----------------
+//     // CASE 1: INDIVIDUAL
+//     // -----------------
+//     if (event.participationType === "individual") {
+//       const memberData = {};
+
+//       // Map submitted form data dynamically
+//       event.formFields.forEach((field) => {
+//         const safeLabel = field.label.replace(/[^a-zA-Z0-9]/g, "_");
+//         memberData[safeLabel] = req.body[safeLabel] || "";
+//       });
+
+//       registration.teamMembers = [memberData];
+//       await registration.save();
+
+//       req.flash("success", "Individual registration updated!");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+
+//     // -----------------
+//     // CASE 2: TEAM
+//     // -----------------
+//     if (event.participationType === "team") {
+//       const teamName = req.body.teamName?.trim();
+//       if (!teamName) {
+//         req.flash("error", "Team name is required.");
+//         return res.redirect("back");
+//       }
+
+//       const minSize = event.teamSize.min;
+//       const maxSize = event.teamSize.max;
+
+//       const teamMembersInput = req.body.teamMembers || [];
+
+//       // Validate team size
+//       if (
+//         teamMembersInput.length < minSize ||
+//         teamMembersInput.length > maxSize
+//       ) {
+//         req.flash(
+//           "error",
+//           `Team size must be between ${minSize} and ${maxSize} members.`
+//         );
+//         return res.redirect("back");
+//       }
+
+//       // Build team members dynamically
+//       const updatedMembers = teamMembersInput.map((member) => {
+//         const formattedMember = {};
+//         event.formFields.forEach((field) => {
+//           const safeLabel = field.label.replace(/[^a-zA-Z0-9]/g, "_");
+//           formattedMember[safeLabel] = member[safeLabel] || "";
+//         });
+//         return formattedMember;
+//       });
+
+//       // Save updates
+//       registration.teamName = teamName;
+//       registration.teamMembers = updatedMembers;
+//       await registration.save();
+
+//       // ✅ Invitations (if Email field exists)
+//       await Invitation.deleteMany({ registrationId: registration._id });
+//       for (const member of updatedMembers) {
+//         if (member.Email) {
+//           const email = member.Email.toLowerCase();
+//           const student = await Student.findOne({ email });
+//           await Invitation.create({
+//             eventId: event._id,
+//             registrationId: registration._id,
+//             senderId: req.user._id,
+//             receiverId: student ? student._id : null,
+//             receiverEmail: email,
+//             status: "pending",
+//           });
+//         }
+//       }
+
+//       req.flash("success", "Team registration updated! Invitations resent.");
+//       return res.redirect(
+//         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+//           decodedEventId
+//         )}`
+//       );
+//     }
+//   } catch (error) {
+//     console.error("Edit Registration Error:", error);
+//     req.flash("error", `Failed to edit registration: ${error.message}`);
+//     res.redirect("back");
+//   }
+// };
+
+module.exports.showEditRegistration = async (req, res) => {
+  try {
+    if (!req.user) {
+      req.flash("error", "You must be logged in to edit registration.");
+      return res.redirect("/login");
+    }
+
+    const { clubName, eventId, registrationId } = req.params;
+    const decodedClubName = decodeURIComponent(clubName);
+    const decodedEventId = decodeURIComponent(eventId);
+
+    const club = await Club.findOne({ ClubName: decodedClubName }).populate(
+      "events"
+    );
+    if (!club) {
+      req.flash("error", "Club not found");
+      return res.redirect("/clubRegistration");
+    }
+
+    const event = club.events.find((e) => e._id.equals(decodedEventId));
+    if (!event) {
+      req.flash("error", "Event not found");
+      return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
+    }
+
+    const registration = await Registration.findById(registrationId);
+    if (!registration) {
+      req.flash("error", "Registration not found");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
+    }
+
+    // Authorization: only leader can edit
+    if (!registration.studentId.equals(req.user._id)) {
+      req.flash("error", "You are not authorized to edit this registration.");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
+    }
+
+    console.log("👉 registration.teamMembers:", registration.teamMembers);
+    console.log("👉 event.formFields:", event.formFields);
+
+    res.render("studentDashboard/editRegistrations", {
+      club,
+      event,
+      registration,
+      user: req.user,
+    });
+  } catch (error) {
+    console.error("Show Edit Registration Error:", error);
+    req.flash("error", "Failed to load edit form.");
+    res.redirect("back");
+  }
+};
+
+// ================================
+// Handle Edit Registration
+// ================================
+module.exports.handleEditRegistration = async (req, res) => {
+  try {
+    if (!req.user) {
+      req.flash("error", "You must be logged in to edit registration.");
+      return res.redirect("/login");
+    }
+
+    const { clubName, eventId, registrationId } = req.params;
+    const decodedClubName = decodeURIComponent(clubName);
+    const decodedEventId = decodeURIComponent(eventId);
+
+    const registration = await Registration.findById(registrationId);
+    if (!registration) {
+      req.flash("error", "Registration not found");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
+    }
+
+    // Authorization: only leader can edit
+    if (!registration.studentId.equals(req.user._id)) {
+      req.flash("error", "You are not authorized to edit this registration.");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
+    }
+
+    // Find the event
+    const event = await Event.findById(decodedEventId);
+    if (!event) {
+      req.flash("error", "Event not found");
+      return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
+    }
+
+    console.log("👉 Received form data:", req.body);
+
+    // -----------------
+    // CASE 1: INDIVIDUAL
+    // -----------------
+    if (event.participationType === "individual") {
+      const memberData = {};
+
+      // Map submitted form data dynamically using safe keys
+      event.formFields.forEach((field) => {
+        const safeKey = field.label.replace(/\s+/g, "_");
+        // Store with original label as key for consistency
+        memberData[field.label] = req.body[safeKey] || "";
+      });
+
+      registration.teamMembers = [memberData];
+      await registration.save();
+
+      req.flash("success", "Individual registration updated!");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
+    }
+
+    // -----------------
+    // CASE 2: TEAM
+    // -----------------
+    if (event.participationType === "team") {
+      const teamName = req.body.teamName?.trim();
+      if (!teamName) {
+        req.flash("error", "Team name is required.");
+        return res.redirect("back");
+      }
+
+      const minSize = event.teamSize.min;
+      const maxSize = event.teamSize.max;
+
+      const teamMembersInput = req.body.teamMembers || [];
+
+      // Validate team size
+      if (
+        teamMembersInput.length < minSize ||
+        teamMembersInput.length > maxSize
+      ) {
+        req.flash(
+          "error",
+          `Team size must be between ${minSize} and ${maxSize} members.`
+        );
+        return res.redirect("back");
+      }
+
+      // Build team members dynamically
+      const updatedMembers = teamMembersInput.map((member) => {
+        const formattedMember = {};
+        event.formFields.forEach((field) => {
+          const safeKey = field.label.replace(/\s+/g, "_");
+          // Store with original label as key for consistency
+          formattedMember[field.label] = member[safeKey] || "";
+        });
+        return formattedMember;
+      });
+
+      console.log("👉 Updated members:", updatedMembers);
+
+      // Save updates
+      registration.teamName = teamName;
+      registration.teamMembers = updatedMembers;
+      await registration.save();
+
+      // ✅ Invitations (if Email field exists)
+      await Invitation.deleteMany({ registrationId: registration._id });
+      for (const member of updatedMembers) {
+        // Check for Email field (could be "Email", "email", or "Email Address")
+        const emailField = event.formFields.find((field) =>
+          field.label.toLowerCase().includes("email")
+        );
+
+        if (emailField && member[emailField.label]) {
+          const email = member[emailField.label].toLowerCase();
+          const student = await Student.findOne({ email });
+          await Invitation.create({
+            eventId: event._id,
+            registrationId: registration._id,
+            senderId: req.user._id,
+            receiverId: student ? student._id : null,
+            receiverEmail: email,
+            status: "pending",
+          });
+        }
+      }
+
+      req.flash("success", "Team registration updated! Invitations resent.");
+      return res.redirect(
+        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
+          decodedEventId
+        )}`
+      );
+    }
+  } catch (error) {
+    console.error("Edit Registration Error:", error);
+    req.flash("error", `Failed to edit registration: ${error.message}`);
+    res.redirect("back");
+  }
+};
+
 module.exports.showStudentEvents = async (req, res) => {
   try {
     // Check if user is authenticated
@@ -648,21 +1057,24 @@ module.exports.showStudentEvents = async (req, res) => {
       return res.redirect("/college");
     }
 
-    // Fetch registrations to get team names
+    // Fetch registrations to get team names + map registrations
     const registrations = await Registration.find({
       studentId: req.user._id,
     }).lean();
 
-    // Create a map of eventId to teamName for easy lookup
+    // Create maps
     const teamNameMap = {};
+    const registrationMap = {};
     registrations.forEach((reg) => {
       teamNameMap[reg.eventId.toString()] = reg.teamName;
+      registrationMap[reg.eventId.toString()] = reg; // save full registration object
     });
 
-    // Render the studentEvents template
+    // Render
     res.render("studentDashboard/studentEvents", {
       events: student.registeredEvents || [],
       teamNameMap,
+      registrationMap, // ✅ pass here
       user: req.user,
       error: req.flash("error"),
       success: req.flash("success"),

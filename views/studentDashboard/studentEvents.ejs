@@ -21,7 +21,6 @@
   .event-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
     gap: 30px;
   }
 
@@ -34,8 +33,9 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease;
-    text-decoration: none;
     color: inherit;
+    display: flex;
+    flex-direction: column;
   }
 
   .event-card:hover {
@@ -43,13 +43,14 @@
   }
 
   .event-card img {
-    height: 200px;
     width: 100%;
+    height: 200px;
     object-fit: cover;
   }
 
   .event-card-body {
     padding: 20px;
+    flex: 1;
   }
 
   .event-card-title {
@@ -69,6 +70,26 @@
     color: #2c3e50;
   }
 
+  .edit-button-container {
+    padding: 15px 20px;
+    text-align: center;
+    border-top: 1px solid #eee;
+  }
+
+  .edit-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #1d4ed8;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+
+  .edit-button:hover {
+    background: #2563eb;
+  }
+
   .no-events {
     text-align: center;
     font-size: 1.2rem;
@@ -86,7 +107,6 @@
     .event-card {
       width: 100%;
     }
-
     .page-title {
       font-size: 2rem;
     }
@@ -95,52 +115,6 @@
   @media (max-width: 480px) {
     .page-title {
       font-size: 1.8rem;
-    }
-
-    .container {
-      padding: 20px;
-    }
-  }
-
-  .event-card {
-    width: 30%;
-    min-width: 300px;
-    max-width: 350px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  @media (max-width: 768px) {
-    .event-card {
-      width: 100%;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .event-card {
-      width: 100%;
-      min-width: unset;
-      max-width: 100%;
-      margin: 0 auto; /* center it */
-    }
-
-    .event-card img {
-      width: 100%; /* make images shrink */
-      height: auto; /* keep aspect ratio */
-      object-fit: cover; /* prevent distortion */
-    }
-
-    .event-card .event-body {
-      font-size: 14px; /* shrink text slightly */
-      word-wrap: break-word; /* wrap long text */
-    }
-    .navbar {
-      top: -45px;
     }
   }
 </style>
@@ -155,47 +129,49 @@
   <% } %> <% if (events && events.length > 0) { %>
   <div class="event-container">
     <% events.forEach(event => { %>
-    <a
-      href="/<%= encodeURIComponent(event.author.ClubName) %>/event/<%= encodeURIComponent(event._id) %>"
-      class="event-card"
-    >
-      <img
-        src="<%= event.image && event.image.url ? event.image.url : 'https://via.placeholder.com/300x200' %>"
-        alt="<%= event.eventName %>"
-      />
-      <div class="event-card-body">
-        <h3 class="event-card-title"><%= event.eventName %></h3>
-        <p class="event-card-text">
-          <strong>Start Date:</strong> <%= new
-          Date(event.startDate).toLocaleDateString() %>
-        </p>
-        <p class="event-card-text">
-          <strong>End Date:</strong> <%= new
-          Date(event.endDate).toLocaleDateString() %>
-        </p>
-        <p class="event-card-text">
-          <strong>Mode:</strong> <%= event.mode.charAt(0).toUpperCase() +
-          event.mode.slice(1) %>
-        </p>
-        <% if (event.mode === 'offline' || event.mode === 'hybrid') { %>
-        <p class="event-card-text">
-          <strong>Venue:</strong> <%= event.venue || 'TBD' %>
-        </p>
-        <% } %> <% if (event.mode === 'online' || event.mode === 'hybrid') { %>
-        <p class="event-card-text">
-          <strong>Meeting Link:</strong> <%= event.meetingLink ? `<a
-            href="${event.meetingLink}"
-            target="_blank"
-            >Join</a
-          >` : 'TBD' %>
-        </p>
-        <% } %> <% if (teamNameMap[event._id.toString()]) { %>
-        <p class="event-card-text">
-          <strong>Team Name:</strong> <%= teamNameMap[event._id.toString()] %>
-        </p>
-        <% } %>
-      </div>
-    </a>
+    <div class="event-card">
+      <!-- Event info link -->
+      <a
+        href="/<%= encodeURIComponent(event.author.ClubName) %>/event/<%= encodeURIComponent(event._id) %>"
+      >
+        <img
+          src="<%= event.image?.url || 'https://via.placeholder.com/300x200' %>"
+          alt="<%= event.eventName %>"
+        />
+        <div class="event-card-body">
+          <h3 class="event-card-title"><%= event.eventName %></h3>
+          <p class="event-card-text">
+            <strong>Start Date:</strong> <%= new
+            Date(event.startDate).toLocaleDateString() %>
+          </p>
+          <p class="event-card-text">
+            <strong>End Date:</strong> <%= new
+            Date(event.endDate).toLocaleDateString() %>
+          </p>
+          <p class="event-card-text">
+            <strong>Mode:</strong> <%= event.mode.charAt(0).toUpperCase() +
+            event.mode.slice(1) %>
+          </p>
+          <% if (event.mode === 'offline' || event.mode === 'hybrid') { %>
+          <p class="event-card-text">
+            <strong>Venue:</strong> <%= event.venue || 'TBD' %>
+          </p>
+          <% } %> <% if (event.mode === 'online' || event.mode === 'hybrid') {
+          %>
+          <p class="event-card-text">
+            <strong>Meeting Link:</strong>
+            <% if (event.meetingLink) { %>
+            <a href="<%= event.meetingLink %>" target="_blank">Join</a>
+            <% } else { %> TBD <% } %>
+          </p>
+          <% } %> <% if (teamNameMap[event._id.toString()]) { %>
+          <p class="event-card-text">
+            <strong>Team Name:</strong> <%= teamNameMap[event._id.toString()] %>
+          </p>
+          <% } %>
+        </div>
+      </a>
+    </div>
     <% }) %>
   </div>
   <% } else { %>
