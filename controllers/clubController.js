@@ -8,7 +8,7 @@ const fs = require("fs/promises");
 const cloudinary = require("cloudinary").v2;
 
 module.exports.showRegistrationForm = (req, res) => {
-  res.render("club/clubform.ejs");
+  res.render("club/clubForm.ejs");
 };
 
 module.exports.handleRegistration = async (req, res) => {
