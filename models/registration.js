@@ -9,7 +9,12 @@ const registrationSchema = new Schema({
     {
       id: { type: Schema.Types.ObjectId, ref: "Student" },
       email: String,
-      name: String,
+      fields: { type: Map, of: String },
+      status: {
+        type: String,
+        enum: ["pending", "accepted", "rejected"],
+        default: "pending",
+      }, // store all other form fields
     },
   ],
 

@@ -467,7 +467,7 @@ module.exports.handleEventRegistration = async (req, res) => {
       return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
     }
 
-    // ✅ Check registration deadline
+    // ⏳ Check registration deadline
     if (new Date(event.registrationDeadline) < new Date()) {
       req.flash("error", "Registration for this event has closed");
       return res.redirect(
@@ -477,10 +477,10 @@ module.exports.handleEventRegistration = async (req, res) => {
       );
     }
 
-    // ✅ Prevent duplicate registration
+    // 🚫 Prevent duplicate registration
     const existingRegistration = await Registration.findOne({
       eventId: event._id,
-      studentId: req.user._id,
+      "teamMembers.email": req.user.email, // check in team members too
     });
     if (existingRegistration) {
       req.flash("error", "You are already registered for this event");
@@ -492,9 +492,11 @@ module.exports.handleEventRegistration = async (req, res) => {
     }
 
     // -----------------
-    // ✅ CASE 1: INDIVIDUAL EVENTS
+    // CASE 1: INDIVIDUAL EVENTS
     // -----------------
     if (event.participationType === "individual") {
+      const leaderFields = { ...(req.body.teamMembers?.[0] || {}) };
+
       const registration = new Registration({
         eventId: event._id,
         studentId: req.user._id,
@@ -503,13 +505,13 @@ module.exports.handleEventRegistration = async (req, res) => {
           {
             id: req.user._id,
             email: req.user.email,
-            name: req.user.studentName,
+            fields: leaderFields,
+            status: "accepted",
           },
         ],
       });
       await registration.save();
 
-      // Update references
       event.registeredStudents.push(req.user._id);
       await event.save();
       await Student.findByIdAndUpdate(req.user._id, {
@@ -525,7 +527,7 @@ module.exports.handleEventRegistration = async (req, res) => {
     }
 
     // -----------------
-    // ✅ CASE 2: TEAM EVENTS
+    // CASE 2: TEAM EVENTS
     // -----------------
     if (event.participationType === "team") {
       const teamName = req.body.teamName?.trim();
@@ -540,30 +542,54 @@ module.exports.handleEventRegistration = async (req, res) => {
 
       const minSize = event.teamSize.min;
       const maxSize = event.teamSize.max;
+      const teamMembersInput = req.body.teamMembers || [];
 
-      // req.body.teamMembers will be an array of objects
-      const teamMembers = req.body.teamMembers || [];
-
-      // Extract all emails dynamically
+      // Build members array
+      const teamMembersData = [];
       let emails = [];
-      teamMembers.forEach((member) => {
-        for (let key in member) {
-          if (key.toLowerCase().includes("email") && member[key]) {
-            emails.push(member[key].trim().toLowerCase());
+
+      for (let i = 0; i < teamMembersInput.length; i++) {
+        const memberData = teamMembersInput[i];
+        let email = "";
+        const fields = {};
+
+        for (let key in memberData) {
+          if (key.toLowerCase().includes("email")) {
+            email = memberData[key].trim().toLowerCase();
+          } else {
+            fields[key] = memberData[key];
           }
         }
-      });
 
-      // Remove duplicates, exclude leader’s email
-      emails = [...new Set(emails)].filter(
-        (email) => email && email !== req.user.email
-      );
+        if (i === 0) {
+          // leader
+          teamMembersData.push({
+            id: req.user._id,
+            email: req.user.email,
+            fields,
+            status: "accepted",
+          });
+        } else {
+          if (email && email !== req.user.email) {
+            teamMembersData.push({
+              id: null,
+              email,
+              fields,
+              status: "pending",
+            });
+            emails.push(email);
+          }
+        }
+      }
 
-      // Validate team size (leader + teammates)
-      if (emails.length + 1 < minSize || emails.length + 1 > maxSize) {
+      // Validate team size
+      if (
+        teamMembersData.length < minSize ||
+        teamMembersData.length > maxSize
+      ) {
         req.flash(
           "error",
-          `Team size must be between ${minSize} and ${maxSize} members (including leader).`
+          `Team size must be between ${minSize} and ${maxSize} (including leader).`
         );
         return res.redirect(
           `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
@@ -572,18 +598,12 @@ module.exports.handleEventRegistration = async (req, res) => {
         );
       }
 
-      // Create registration (leader only for now)
+      // Save registration
       const registration = new Registration({
         eventId: event._id,
         studentId: req.user._id,
         teamName,
-        teamMembers: [
-          {
-            id: req.user._id,
-            email: req.user.email,
-            name: req.user.studentName,
-          },
-        ],
+        teamMembers: teamMembersData,
       });
       await registration.save();
 
@@ -594,7 +614,7 @@ module.exports.handleEventRegistration = async (req, res) => {
         $addToSet: { registeredEvents: event._id },
       });
 
-      // Send invitations to teammates
+      // Create invitations
       for (const email of emails) {
         const student = await Student.findOne({ email });
         await Invitation.create({
@@ -1097,7 +1117,10 @@ module.exports.showInvitations = async (req, res) => {
     const invitations = await Invitation.find({
       $or: [{ receiverEmail: req.user.email }, { receiverId: req.user._id }],
     })
-      .populate("eventId")
+      .populate({
+        path: "eventId",
+        populate: { path: "author", select: "ClubName" }, // ✅ populate club name
+      })
       .populate("registrationId", "teamName")
       .populate("senderId", "studentName email");
 
@@ -1125,7 +1148,6 @@ module.exports.showInvitations = async (req, res) => {
   }
 };
 
-// Accept Invitation
 module.exports.acceptInvitation = async (req, res) => {
   try {
     const { invitationId } = req.params;
@@ -1149,35 +1171,58 @@ module.exports.acceptInvitation = async (req, res) => {
     }
 
     if (invitation.receiverEmail !== req.user.email) {
-      // ✅ fixed
       req.flash("error", "This invitation was not sent to your email.");
       return res.redirect("/invitations");
     }
 
-    // ✅ Mark as accepted
+    // Mark as accepted
     invitation.status = "accepted";
     await invitation.save();
 
-    // ✅ Add to registration team
+    // Find registration linked to this invitation
     const registration = await Registration.findById(invitation.registrationId);
     if (!registration) {
       req.flash("error", "Registration not found");
       return res.redirect("/invitations");
     }
 
-    const alreadyMember = registration.teamMembers.some(
+    // Find member inside teamMembers
+    const memberIndex = registration.teamMembers.findIndex(
       (m) => m.email === req.user.email
     );
-    if (!alreadyMember) {
+
+    if (memberIndex !== -1) {
+      // Update status + link studentId
+      registration.teamMembers[memberIndex].id = req.user._id;
+      registration.teamMembers[memberIndex].status = "accepted";
+
+      // ✅ Only update fields if new data is submitted
+      if (req.body && Object.keys(req.body).length > 0) {
+        registration.teamMembers[memberIndex].fields = {
+          ...registration.teamMembers[memberIndex].fields, // keep old fields
+          ...req.body, // merge new fields
+        };
+      }
+    } else {
+      // If not found in teamMembers, add as new
+      const memberFields = {};
+      for (let key in req.body) {
+        if (!key.toLowerCase().includes("email")) {
+          memberFields[key] = req.body[key];
+        }
+      }
+
       registration.teamMembers.push({
         id: req.user._id,
-        name: req.user.studentName,
         email: req.user.email,
+        fields: memberFields,
+        status: "accepted",
       });
-      await registration.save();
     }
 
-    // ✅ Add student to event + student profile
+    await registration.save();
+
+    // Add student to event + student profile
     await Event.findByIdAndUpdate(
       registration.eventId,
       { $addToSet: { registeredStudents: req.user._id } },

@@ -112,7 +112,7 @@ module.exports.handleLogin = async (req, res) => {
 
     if (!ClubName || !password) {
       req.flash("error", "All fields are required!");
-      return res.render("club/clubformLogin.ejs", {
+      return res.render("club/clubFormLogin.ejs", {
         clubName: ClubName,
         error: req.flash("error")[0],
       });
@@ -129,7 +129,7 @@ module.exports.handleLogin = async (req, res) => {
     const { user, error } = await club.authenticate(password);
     if (error || !user) {
       req.flash("error", "Invalid credentials!");
-      return res.render("club/clubformLogin.ejs", {
+      return res.render("club/clubFormLogin.ejs", {
         clubName: ClubName,
         error: req.flash("error")[0],
       });
@@ -801,13 +801,22 @@ module.exports.destroyEvent = async (req, res) => {
   }
 };
 
+const Invitation = require("../models/invitation");
+
 module.exports.showRegistrations = async (req, res) => {
   const user = req.session.club;
+
   try {
+    console.log("➡️ Entered showRegistrations route");
+    console.log("Session club:", req.session.club);
+    console.log("Params:", req.params);
+
     const clubName = decodeURIComponent(req.params.clubName);
     const eventId = decodeURIComponent(req.params.eventId);
+    console.log("Decoded clubName:", clubName, "eventId:", eventId);
 
     if (!req.session.club) {
+      console.log("❌ No session.club found");
       req.flash("error", "You must be logged in to view registrations.");
       return res.redirect("/clubRegistration/login");
     }
@@ -815,26 +824,39 @@ module.exports.showRegistrations = async (req, res) => {
     const club = await Club.findOne({ ClubName: clubName })
       .populate({
         path: "events",
-        populate: {
-          path: "author",
-          select: "ClubName",
-        },
+        populate: { path: "author", select: "ClubName" },
       })
       .exec();
 
     if (!club) {
+      console.log("❌ Club not found:", clubName);
       req.flash("error", "Club not found!");
       return res.redirect("/clubRegistration");
     }
 
-    const event = club.events.find((event) => event._id.equals(eventId));
+    console.log(
+      "✅ Club found:",
+      club.ClubName,
+      "with events:",
+      club.events.length
+    );
 
+    const event = club.events.find((e) => String(e._id) === String(eventId));
     if (!event) {
+      console.log("❌ Event not found:", eventId);
       req.flash("error", "Event not found!");
       return res.redirect(`/${encodeURIComponent(clubName)}/profile`);
     }
 
-    if (!event.author._id.equals(req.session.club._id)) {
+    console.log("✅ Event found:", event.eventName);
+
+    if (String(event.author._id) !== String(req.session.club._id)) {
+      console.log(
+        "❌ Permission denied. Event author:",
+        event.author._id,
+        "Session club:",
+        req.session.club._id
+      );
       req.flash("error", "You do not have permission to view registrations.");
       return res.redirect(
         `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`
@@ -843,18 +865,39 @@ module.exports.showRegistrations = async (req, res) => {
 
     const registrations = await Registration.find({ eventId: event._id })
       .populate("studentId", "studentName")
-      .exec();
+      .lean();
+
+    console.log("✅ Registrations found:", registrations.length);
+
+    const invitations = await Invitation.find({ eventId: event._id }).lean();
+    console.log("✅ Invitations found:", invitations.length);
+
+    const invitationLookup = {};
+    for (const inv of invitations) {
+      if (!inv || !inv.registrationId || !inv.receiverEmail) continue;
+      const key =
+        String(inv.registrationId) +
+        "|" +
+        String(inv.receiverEmail).toLowerCase();
+      invitationLookup[key] = inv.status;
+    }
+
+    console.log(
+      "✅ invitationLookup keys:",
+      Object.keys(invitationLookup).length
+    );
 
     res.render("profile/viewRegistrations", {
       event,
       registrations,
+      invitationLookup,
       clubName,
       encodedClubName: encodeURIComponent(clubName),
       encodedEventId: encodeURIComponent(eventId),
       user,
     });
   } catch (error) {
-    console.error("Error fetching registrations:", error);
+    console.error("🔥 Error in showRegistrations:", error);
     req.flash("error", `Something went wrong: ${error.message}`);
     res.redirect("/clubRegistration/login");
   }
