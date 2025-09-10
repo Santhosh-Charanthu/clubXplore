@@ -171,6 +171,17 @@
           <% } %>
         </div>
       </a>
+
+      <% if (registrationMap && registrationMap[event._id.toString()]) { %>
+      <div class="edit-button-container">
+        <a
+          href="/<%= encodeURIComponent(event.author.ClubName) %>/event/<%= encodeURIComponent(event._id) %>/edit-registration/<%= registrationMap[event._id.toString()]._id %>"
+          class="edit-button"
+        >
+          Edit Registration
+        </a>
+      </div>
+      <% } %>
     </div>
     <% }) %>
   </div>

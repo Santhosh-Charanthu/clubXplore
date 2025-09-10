@@ -36,10 +36,10 @@ router
   .post(studentController.handleEventRegistration);
 
 // ✅ Edit Registration Route
-// router
-//   .route("/:clubName/event/:eventId/edit-registration/:registrationId")
-//   .get(studentController.showEditRegistration)
-//   .post(studentController.handleEditRegistration);
+router
+  .route("/:clubName/event/:eventId/edit-registration/:registrationId")
+  .get(studentController.showEditRegistration)
+  .post(studentController.handleEditRegistration);
 
 router.route("/event-registrations").get(studentController.showStudentEvents);
 

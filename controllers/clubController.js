@@ -8,7 +8,7 @@ const fs = require("fs/promises");
 const cloudinary = require("cloudinary").v2;
 
 module.exports.showRegistrationForm = (req, res) => {
-  res.render("club/clubform.ejs");
+  res.render("club/clubForm.ejs");
 };
 
 module.exports.handleRegistration = async (req, res) => {
@@ -83,7 +83,7 @@ module.exports.handleRegistration = async (req, res) => {
 
 module.exports.showLoginForm = (req, res) => {
   const clubName = req.query.club || ""; // default empty if not provided
-  res.render("club/clubformLogin.ejs", {
+  res.render("club/clubFormLogin.ejs", {
     clubName,
     error: req.flash("error")[0],
   });
@@ -145,7 +145,7 @@ module.exports.handleLogin = async (req, res) => {
   } catch (err) {
     console.log("Error during club login:", err);
     req.flash("error", "Failed to log in club.");
-    return res.render("club/clubformLogin.ejs", {
+    return res.render("club/clubFormLogin.ejs", {
       clubName: ClubName,
       error: req.flash("error")[0],
     });
