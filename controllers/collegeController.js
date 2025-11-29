@@ -50,7 +50,6 @@ module.exports.handleRegistration = async (req, res, next) => {
       res.redirect(`/collegeProfile/${registeredCollege._id}`);
     });
   } catch (e) {
-    console.error("Signup error:", e);
     req.flash("error", "Signup failed. Try again.");
     res.redirect("/collegeRegistration/signup");
   }
@@ -77,7 +76,6 @@ module.exports.logout = async (req, res) => {
   // Destroy session and redirect
   req.session.destroy((err) => {
     if (err) {
-      console.error("Session destroy error:", err);
       return res.redirect("/dashboard");
     }
     res.clearCookie("connect.sid");
@@ -95,7 +93,6 @@ module.exports.handleLogin = async (req, res) => {
     req.flash("success", `Welcome to ${college.college} profile`);
     res.redirect(`/collegeProfile/${req.user._id}`);
   } catch (e) {
-    console.error("Login error:", e);
     req.flash("error", "Something went wrong during login.");
     res.redirect("/login");
   }
@@ -123,7 +120,6 @@ module.exports.showRegistrationLink = async (req, res) => {
     req.flash("success", "Link copied to clipboard!");
     res.redirect(`/collegeProfile/${id}`);
   } catch (err) {
-    console.error("Error in showRegistrationLink:", err);
     req.flash("error", "Failed to generate registration link: " + err.message);
     res.redirect("/login");
   }
@@ -164,7 +160,6 @@ module.exports.showCollegeProfile = async (req, res) => {
       user,
     });
   } catch (err) {
-    console.error("Error in showCollegeProfile:", err);
     req.flash("error", "Something went wrong: " + err.message);
     res.redirect("/login");
   }
@@ -180,7 +175,6 @@ module.exports.showEditForm = async (req, res) => {
     }
     res.render("users/collegeEdit.ejs", { college, user });
   } catch (e) {
-    console.error("Error rendering edit form:", e);
     req.flash("error", "Something went wrong.");
     res.redirect("/collegeIndex/" + req.params.id);
   }

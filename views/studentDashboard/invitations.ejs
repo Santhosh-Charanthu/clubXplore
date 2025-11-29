@@ -108,6 +108,11 @@
     color: #666;
     margin-top: 20px;
   }
+  .removal-warning {
+    color: #d90429;
+    font-weight: bold;
+    margin-top: 6px;
+  }
 
   @media (max-width: 1200px) {
     .event-card {
@@ -140,52 +145,71 @@
   <h1 class="page-title">Your Invitations</h1>
 
   <% if (error && error.length > 0) { %>
-    <div class="alert alert-danger" role="alert"><%= error %></div>
-  <% } %>
-  <% if (success && success.length > 0) { %>
-    <div class="alert alert-success" role="alert"><%= success %></div>
-  <% } %>
+  <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% } %> <% if (success && success.length > 0) { %>
+  <div class="alert alert-success" role="alert"><%= success %></div>
+  <% } %> <% if (invitations && invitations.length > 0) { %>
+  <div class="event-container">
+    <% invitations.forEach(invite => { %>
+    <div
+      class="event-card"
+      onclick="window.location.href='/<%= encodeURIComponent(invite.eventId?.author.ClubName) %>/event/<%= invite.eventId?._id %>'"
+    >
+      <img
+        src="<%= invite.eventId?.image?.url || 'https://via.placeholder.com/300x200' %>"
+        alt="<%= invite.eventId?.eventName || 'Event' %>"
+      />
+      <div class="event-card-body">
+        <h3 class="event-card-title">
+          <%= invite.eventId?.eventName || "Event Deleted" %>
+        </h3>
 
-  <% if (invitations && invitations.length > 0) { %>
-    <div class="event-container">
-      <% invitations.forEach(invite => { %>
-<div class="event-card" onclick="window.location.href='/<%= encodeURIComponent(invite.eventId?.author.ClubName) %>/event/<%= invite.eventId?._id %>'">
-          <img
-            src="<%= invite.eventId?.image?.url || 'https://via.placeholder.com/300x200' %>"
-            alt="<%= invite.eventId?.eventName || 'Event' %>"
-          />
-          <div class="event-card-body">
-            <h3 class="event-card-title">
-              <%= invite.eventId?.eventName || "Event Deleted" %>
-            </h3>
-
-            <p class="event-card-text">
-              <strong>Team Name:</strong> <%= invite.teamName || "Not Provided" %>
-            </p>
-            <p class="event-card-text">
-              <strong>Invited By:</strong> <%= invite.inviterName || "Unknown" %>
-            </p>
-            <p class="event-card-text">
-              <strong>Status:</strong> <%= invite.status %>
-            </p>
-
-            <% if (invite.status === "pending") { %>
-              <div class="event-actions">
-                <form action="/invitation/<%= invite._id %>/accept" method="POST" onClick="event.stopPropagation()">
-                  <input type="hidden" name="redirectTo" value="/events/<%= invite.eventId?._id %>" />
-                  <button type="submit" class="btn btn-accept">Accept</button>
-                </form>
-                <form action="/invitation/<%= invite._id %>/reject" method="POST" onClick="event.stopPropagation()">
-                  <input type="hidden" name="redirectTo" value="/events/<%= invite.eventId?._id %>" />
-                  <button type="submit" class="btn btn-reject">Reject</button>
-                </form>
-              </div>
-            <% } %>
-          </div>
+        <p class="event-card-text">
+          <strong>Team Name:</strong> <%= invite.teamName || "Not Provided" %>
+        </p>
+        <p class="event-card-text">
+          <strong>Invited By:</strong> <%= invite.inviterName || "Unknown" %>
+        </p>
+        <p class="event-card-text">
+          <strong>Status:</strong> <%= invite.status %>
+        </p>
+        <% if (invite.status === "removed") { %>
+        <p class="event-card-text removal-warning">
+          🚫 You were removed from the team by the team leader
+        </p>
+        <% } %> <% if (invite.status === "pending") { %>
+        <div class="event-actions">
+          <form
+            action="/invitation/<%= invite._id %>/accept"
+            method="POST"
+            onClick="event.stopPropagation()"
+          >
+            <input
+              type="hidden"
+              name="redirectTo"
+              value="/events/<%= invite.eventId?._id %>"
+            />
+            <button type="submit" class="btn btn-accept">Accept</button>
+          </form>
+          <form
+            action="/invitation/<%= invite._id %>/reject"
+            method="POST"
+            onClick="event.stopPropagation()"
+          >
+            <input
+              type="hidden"
+              name="redirectTo"
+              value="/events/<%= invite.eventId?._id %>"
+            />
+            <button type="submit" class="btn btn-reject">Reject</button>
+          </form>
         </div>
-      <% }) %>
+        <% } %>
+      </div>
     </div>
+    <% }) %>
+  </div>
   <% } else { %>
-    <p class="no-events">You don’t have any invitations right now.</p>
+  <p class="no-events">You don’t have any invitations right now.</p>
   <% } %>
 </div>

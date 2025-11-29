@@ -14,8 +14,12 @@ const invitationSchema = new Schema({
   receiverEmail: { type: String, required: true }, // email entered by leader
   status: {
     type: String,
-    enum: ["pending", "accepted", "rejected"],
+    enum: ["pending", "accepted", "rejected", "removed"], // added removed!
     default: "pending",
+  },
+  removalNote: {
+    type: String,
+    default: null,
   },
   createdAt: { type: Date, default: Date.now },
 });

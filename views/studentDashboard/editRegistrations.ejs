@@ -3,296 +3,136 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <h2 class="text-center mb-4">
-        Edit Registration - <%= event.eventName %>
-      </h2>
-
-      <% if (error && error.length > 0) { %>
-      <div class="alert alert-danger" role="alert"><%= error %></div>
-      <% } %> <% if (success && success.length > 0) { %>
-      <div class="alert alert-success" role="alert"><%= success %></div>
-      <% } %>
+      <h3 class="text-center mb-4">
+        Edit Registration – <%= event.eventName %>
+      </h3>
 
       <form
         action="/<%= encodeURIComponent(club.ClubName) %>/event/<%= encodeURIComponent(event._id) %>/edit-registration/<%= registration._id %>"
-        method="post"
-        class="needs-validation registration-form event-form shadow p-4 rounded"
-        novalidate
+        method="POST"
+        class="shadow p-4 rounded bg-white"
       >
-        <% if (event.participationType === "team") { %>
+        <% if(event.participationType === "team"){ %>
         <div class="mb-3">
-          <label for="teamName" class="form-label fw-bold">Team Name</label>
+          <label class="form-label fw-bold">Team Name</label>
           <input
             type="text"
-            id="teamName"
             name="teamName"
             class="form-control form-control-sm"
-            value="<%= registration.teamName || '' %>"
+            value="<%= registration.teamName %>"
             required
           />
-          <div class="invalid-feedback">Team name is required.</div>
         </div>
         <% } %>
 
-        <div class="team-member-section">
-          <h4 class="mb-3">
-            <% if (event.participationType === "team") { %> Team Members (Min:
-            <%= event.teamSize.min %>, Max: <%= event.teamSize.max %>) <% } else
-            { %> Your Details <% } %>
-          </h4>
+        <h5 class="mt-4 mb-3">
+          <% if(event.participationType === "team"){ %> Team Members <% } else {
+          %> Your Details <% } %>
+        </h5>
 
-          <div id="teamMembersContainer">
-            <% registration.teamMembers.forEach(function(member, idx) { %>
-            <div class="team-member-card" data-member-index="<%= idx %>">
-              <% if (event.participationType === "team") { %>
-              <div class="member-header mb-2">
-                <span class="member-title fw-bold">Member <%= idx + 1 %></span>
-                <% if (idx > 0) { %>
-                <button
-                  type="button"
-                  class="remove-member"
-                  onclick="removeMember(this)"
-                >
-                  ×
-                </button>
-                <% } %>
-              </div>
-              <% } %> 
-              <% event.formFields.forEach(function(field) { 
-    var safeKey = field.label.replace(/\s+/g, "_"); 
-    var value = member[safeKey] || ""; 
-    var isChecked = value === true || value === "true";
-%>
-  <% if (field.type === "checkbox") { %>
-    <div class="form-check mb-3">
-      <input type="checkbox" 
-        id="member-<%= idx %>-<%= safeKey %>"
-        name="teamMembers[<%= idx %>][<%= safeKey %>]"
-        value="true"
-        class="form-check-input"
-        <%= isChecked ? "checked" : "" %>
-        <%= field.isRequired ? "required" : "" %> />
-      <label class="form-check-label" for="member-<%= idx %>-<%= safeKey %>">
-        <%= field.label %>
-      </label>
-    </div>
-  <% } else { %>
-    <div class="mb-3">
-      <label for="member-<%= idx %>-<%= safeKey %>" class="form-label fw-bold">
-        <%= field.label %>
-      </label>
-      <input type="<%= field.type %>"
-        id="member-<%= idx %>-<%= safeKey %>"
-        name="teamMembers[<%= idx %>][<%= safeKey %>]"
-        placeholder="<%= field.label %>"
-        class="form-control form-control-sm"
-        value="<%- value %>"
-        <%= field.isRequired ? "required" : "" %>
-        <%= field.type === "number" ? 'pattern="[0-9]+"' : "" %>
-        <%= field.type === "email" ? 'pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"' : "" %> />
-      <div class="invalid-feedback">This field is required.</div>
-    </div>
-  <% } %>
-<% }) %>
+        <div id="teamMembersContainer">
+          <% registration.teamMembers.forEach((member, idx) => { %>
 
+          <div class="border rounded p-3 mb-3 team-member-card">
+            <% if(event.participationType === "team"){ %>
+            <div class="d-flex justify-content-between mb-2">
+              <strong>Member <%= idx + 1 %></strong>
+              <% if(idx > 0){ %>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                onclick="removeMember(this)"
+              >
+                Remove
+              </button>
+              <% } %>
             </div>
+            <% } %> <% event.formFields.forEach(field => { %> <% const safeKey =
+            field.label.replace(/\s+/g, "_"); let value = ""; if (field.type ===
+            "email" || field.label.toLowerCase().includes("email")) { value =
+            member.email || ""; } else if (member.fields) { const fieldKeys =
+            Array.from( member.fields instanceof Map ? member.fields.keys() :
+            Object.keys(member.fields) ); const matchKey = fieldKeys.find(k =>
+            k.toLowerCase() === field.label.toLowerCase() || k.toLowerCase() ===
+            safeKey.toLowerCase() ); if (matchKey) { value = member.fields.get ?
+            member.fields.get(matchKey) : member.fields[matchKey]; } } %>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold"><%= field.label %></label>
+              <input type="<%= field.type %>" class="form-control
+              form-control-sm" name="teamMembers[<%= idx %>][<%= safeKey %>]"
+              value="<%- value %>" <%= field.isRequired ? "required" : "" %> />
+            </div>
+
             <% }) %>
           </div>
 
-          <% if (event.participationType === "team" && event.teamSize.max > 1) {
-          %>
-          <button
-            type="button"
-            id="addMemberBtn"
-            class="btn btn-outline-primary btn-sm mt-3"
-          >
-            <i class="fas fa-plus me-2"></i>Add Team Member
-          </button>
-          <% } %>
-
-          <div
-            class="invalid-feedback"
-            id="teamSizeError"
-            style="display: none"
-          >
-            Please add between <%= event.teamSize.min %> and <%=
-            event.teamSize.max %> members.
-          </div>
+          <% }) %>
         </div>
 
-        <div class="text-center mt-4">
-          <button type="submit" class="btn btn-success btn-lg w-100">
-            Update Registration
-          </button>
-        </div>
+        <% if(event.participationType === "team"){ %>
+        <button
+          type="button"
+          id="addMemberBtn"
+          class="btn btn-outline-primary btn-sm"
+        >
+          + Add Member
+        </button>
+        <% } %>
+
+        <button type="submit" class="btn btn-success w-100 mt-4">
+          Update Registration
+        </button>
       </form>
     </div>
   </div>
 </div>
 
-<script id="formFieldsData" type="application/json">
-  <%- JSON.stringify(event.formFields || []) %>
-</script>
-
 <script>
-  const formFields = JSON.parse(
-    document.getElementById("formFieldsData").textContent
-  );
-  console.log("FormFields in browser:", formFields);
-  const minTeamSize = parseInt("<%= event.teamSize.min || 1 %>");
-  const maxTeamSize = parseInt("<%= event.teamSize.max || 1 %>");
-  const isTeamEvent =
-    "<%= event.participationType === 'team' ? 'true' : 'false' %>";
-  let memberCount = Number("<%= registration.teamMembers.length %>");
+  const formFields = <%- JSON.stringify(event.formFields) %>;
+  let memberCount = <%= registration.teamMembers.length %>;
+  const minMembers = <%= event.teamSize?.min || 1 %>;
+  const maxMembers = <%= event.teamSize?.max || 1 %>;
 
-  function addMember() {
-    if (memberCount >= maxTeamSize) {
-      alert(`Maximum team size is ${maxTeamSize}`);
-      return;
-    }
-
-    const container = document.getElementById("teamMembersContainer");
-    const newMemberIndex = memberCount++;
-    const newMemberDiv = document.createElement("div");
-    newMemberDiv.className = "team-member-card";
-    newMemberDiv.dataset.memberIndex = newMemberIndex;
-
-    let html = `
-    <div class="member-header">
-      <span class="member-title">Member ${newMemberIndex + 1}</span>
-      <button type="button" class="remove-member" onclick="removeMember(this)">×</button>
-    </div>
-  `;
-
-    // Use the JSON data from formFields
-    formFields.forEach((field) => {
-      const safeKey = field.label.replace(/\s+/g, "_");
-      if (field.type === "checkbox") {
-        html += `
-        <div class="mb-3">
-          <div class="form-check">
-            <input type="checkbox" 
-              id="member-${newMemberIndex}-${safeKey}"
-              name="teamMembers[${newMemberIndex}][${safeKey}]"
-              value="true"
-              class="form-check-input"
-              ${field.isRequired ? "required" : ""} />
-            <label class="form-check-label" for="member-${newMemberIndex}-${safeKey}">
-              ${field.label}
-            </label>
-          </div>
-        </div>
-      `;
-      } else {
-        html += `
-        <div class="mb-3">
-          <label for="member-${newMemberIndex}-${safeKey}" class="form-label fw-bold">${
-          field.label
-        }</label>
-          <input type="${field.type}"
-            id="member-${newMemberIndex}-${safeKey}"
-            name="teamMembers[${newMemberIndex}][${safeKey}]"
-            placeholder="${field.label}"
-            class="form-control form-control-sm"
-            ${field.isRequired ? "required" : ""}
-            ${field.type === "number" ? 'pattern="[0-9]+"' : ""}
-            ${
-              field.type === "email"
-                ? 'pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"'
-                : ""
-            } />
-          <div class="invalid-feedback">This field is required.</div>
-        </div>
-      `;
-      }
-    });
-
-    newMemberDiv.innerHTML = html;
-    container.appendChild(newMemberDiv);
-    updateAddButtonState();
-  }
-
-  function removeMember(button) {
-    if (memberCount <= minTeamSize) {
-      alert(`Minimum team size is ${minTeamSize}. Cannot remove more members.`);
+  function removeMember(button){
+    if(memberCount <= minMembers){
+      alert("You must have at least " + minMembers + " members");
       return;
     }
     button.closest(".team-member-card").remove();
     memberCount--;
-    reindexMembers();
-    updateAddButtonState();
   }
 
-  function reindexMembers() {
-    const members = document.querySelectorAll(".team-member-card");
-    members.forEach((card, index) => {
-      card.dataset.memberIndex = index;
-      card.querySelector(".member-title").textContent = `Member ${index + 1}`;
-      const inputs = card.querySelectorAll("input");
-      inputs.forEach((input) => {
-        const oldName = input.name;
-        const fieldPart = oldName.substring(
-          oldName.indexOf("][") + 2,
-          oldName.lastIndexOf("]")
-        );
-        input.name = `teamMembers[${index}][${fieldPart}]`;
-
-        const oldId = input.id;
-        const fieldIdPart = oldId.substring(oldId.lastIndexOf("-") + 1);
-        input.id = `member-${index}-${fieldIdPart}`;
-
-        // Update associated label
-        const label = card.querySelector(`label[for="${oldId}"]`);
-        if (label) {
-          label.setAttribute("for", input.id);
-        }
-      });
-    });
-  }
-
-  function updateAddButtonState() {
-    const addButton = document.getElementById("addMemberBtn");
-    if (addButton) {
-      addButton.disabled = memberCount >= maxTeamSize;
+  document.getElementById("addMemberBtn")?.addEventListener("click", () => {
+    if(memberCount >= maxMembers){
+      alert("Maximum team size reached!");
+      return;
     }
-  }
 
-  if (isTeamEvent === "true") {
-    document
-      .getElementById("addMemberBtn")
-      ?.addEventListener("click", addMember);
-  }
+    const idx = memberCount++;
+    let html = `
+      <div class="border rounded p-3 mb-3 team-member-card">
+        <div class="d-flex justify-content-between mb-2">
+          <strong>Member ${idx + 1}</strong>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeMember(this)">Remove</button>
+        </div>`;
 
-  // Form validation
-  (function () {
-    "use strict";
-    const form = document.querySelector(".needs-validation");
-    const teamSizeError = document.getElementById("teamSizeError");
+    formFields.forEach(field => {
+      const safeKey = field.label.replace(/\s+/g, "_");
+      html += `
+        <div class="mb-3">
+          <label class="form-label fw-bold">${field.label}</label>
+          <input
+            type="${field.type}"
+            class="form-control form-control-sm"
+            name="teamMembers[${idx}][${safeKey}]"
+            ${field.isRequired ? "required" : ""}
+          />
+        </div>`;
+    });
 
-    form?.addEventListener(
-      "submit",
-      (event) => {
-        const memberCount =
-          document.querySelectorAll(".team-member-card").length;
-        let isValid = form.checkValidity();
+    html += `</div>`;
 
-        if (
-          isTeamEvent === "true" &&
-          (memberCount < minTeamSize || memberCount > maxTeamSize)
-        ) {
-          isValid = false;
-          teamSizeError.style.display = "block";
-        } else {
-          teamSizeError.style.display = "none";
-        }
-
-        if (!isValid) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add("was-validated");
-      },
-      false
-    );
-  })();
+    document.getElementById("teamMembersContainer").insertAdjacentHTML("beforeend", html);
+  });
 </script>

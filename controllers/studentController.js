@@ -895,6 +895,15 @@ module.exports.showEditRegistration = async (req, res) => {
     console.log("👉 registration.teamMembers:", registration.teamMembers);
     console.log("👉 event.formFields:", event.formFields);
 
+    // Convert Map fields to plain objects so EJS can read them
+    registration.teamMembers = registration.teamMembers.map((member) => ({
+      ...member.toObject(),
+      fields:
+        member.fields instanceof Map
+          ? Object.fromEntries(member.fields)
+          : member.fields || {},
+    }));
+
     res.render("studentDashboard/editRegistrations", {
       club,
       event,
@@ -914,145 +923,164 @@ module.exports.showEditRegistration = async (req, res) => {
 module.exports.handleEditRegistration = async (req, res) => {
   try {
     if (!req.user) {
-      req.flash("error", "You must be logged in to edit registration.");
+      req.flash("error", "You must be logged in to update registration.");
       return res.redirect("/login");
     }
 
-    const { clubName, eventId, registrationId } = req.params;
-    const decodedClubName = decodeURIComponent(clubName);
-    const decodedEventId = decodeURIComponent(eventId);
-
+    const { registrationId } = req.params;
     const registration = await Registration.findById(registrationId);
+
     if (!registration) {
-      req.flash("error", "Registration not found");
-      return res.redirect(
-        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
-      );
+      req.flash("error", "Registration not found.");
+      return res.redirect("/invitations");
     }
 
-    // Authorization: only leader can edit
-    if (!registration.studentId.equals(req.user._id)) {
-      req.flash("error", "You are not authorized to edit this registration.");
-      return res.redirect(
-        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
-      );
-    }
-
-    // Find the event
-    const event = await Event.findById(decodedEventId);
+    const event = await Event.findById(registration.eventId);
     if (!event) {
-      req.flash("error", "Event not found");
-      return res.redirect(`/${encodeURIComponent(decodedClubName)}/profile`);
+      req.flash("error", "Event not found.");
+      return res.redirect("/invitations");
     }
 
-    console.log("👉 Received form data:", req.body);
+    const isLeader = registration.studentId.equals(req.user._id);
+    const emailFieldLabel = event.formFields.find((f) =>
+      f.label.toLowerCase().includes("email")
+    )?.label;
 
-    // -----------------
-    // CASE 1: INDIVIDUAL
-    // -----------------
-    if (event.participationType === "individual") {
-      const memberData = {};
-
-      // Map submitted form data dynamically using safe keys
-      event.formFields.forEach((field) => {
-        const safeKey = field.label.replace(/\s+/g, "_");
-        // Store with original label as key for consistency
-        memberData[field.label] = req.body[safeKey] || "";
-      });
-
-      registration.teamMembers = [memberData];
-      await registration.save();
-
-      req.flash("success", "Individual registration updated!");
-      return res.redirect(
-        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+    if (!isLeader) {
+      const memberExists = registration.teamMembers.some(
+        (m) => m.email?.toLowerCase() === req.user.email.toLowerCase()
       );
-    }
 
-    // -----------------
-    // CASE 2: TEAM
-    // -----------------
-    if (event.participationType === "team") {
-      const teamName = req.body.teamName?.trim();
-      if (!teamName) {
-        req.flash("error", "Team name is required.");
-        return res.redirect("back");
-      }
-
-      const minSize = event.teamSize.min;
-      const maxSize = event.teamSize.max;
-
-      const teamMembersInput = req.body.teamMembers || [];
-
-      // Validate team size
-      if (
-        teamMembersInput.length < minSize ||
-        teamMembersInput.length > maxSize
-      ) {
+      if (!memberExists) {
         req.flash(
           "error",
-          `Team size must be between ${minSize} and ${maxSize} members.`
+          "You are not authorized to update this registration."
         );
-        return res.redirect("back");
+        return res.redirect("/invitations");
       }
+    }
 
-      // Build team members dynamically
-      const updatedMembers = teamMembersInput.map((member) => {
-        const formattedMember = {};
-        event.formFields.forEach((field) => {
-          const safeKey = field.label.replace(/\s+/g, "_");
-          // Store with original label as key for consistency
-          formattedMember[field.label] = member[safeKey] || "";
-        });
-        return formattedMember;
+    const previousMembers = registration.teamMembers.map((m) => m.email);
+
+    if (isLeader && req.body.teamName) {
+      registration.teamName = req.body.teamName.trim();
+    }
+
+    const teamMembersInput = req.body.teamMembers || [];
+    const newMembers = [];
+
+    for (const memberData of teamMembersInput) {
+      const safeEmailKey = emailFieldLabel.replace(/\s+/g, "_");
+
+      const email = memberData[safeEmailKey]?.trim().toLowerCase();
+      if (!email) continue;
+
+      const student = await Student.findOne({ email });
+      const isExisting = previousMembers.includes(email);
+
+      const fields = {};
+      event.formFields.forEach((f) => {
+        const safeKey = f.label.replace(/\s+/g, "_");
+        if (!f.label.toLowerCase().includes("email")) {
+          fields[f.label] = memberData[safeKey] || "";
+        }
       });
 
-      console.log("👉 Updated members:", updatedMembers);
+      newMembers.push({
+        id: student ? student._id : null,
+        email,
+        fields,
+        status: isExisting ? "accepted" : "pending",
+      });
+    }
 
-      // Save updates
-      registration.teamName = teamName;
-      registration.teamMembers = updatedMembers;
-      await registration.save();
+    const min = event.teamSize.min;
+    const max = event.teamSize.max;
+    if (newMembers.length < min || newMembers.length > max) {
+      req.flash("error", `Team size must be ${min} - ${max} members.`);
+      return res.redirect("back");
+    }
 
-      // ✅ Invitations (if Email field exists)
-      await Invitation.deleteMany({ registrationId: registration._id });
-      for (const member of updatedMembers) {
-        // Check for Email field (could be "Email", "email", or "Email Address")
-        const emailField = event.formFields.find((field) =>
-          field.label.toLowerCase().includes("email")
-        );
+    const removedMembers = previousMembers.filter(
+      (email) => !newMembers.some((m) => m.email === email)
+    );
 
-        if (emailField && member[emailField.label]) {
-          const email = member[emailField.label].toLowerCase();
+    registration.teamMembers = newMembers;
+    await registration.save();
+
+    // Remove removed members history
+    // 🆕 Handle removed members properly
+    for (const email of removedMembers) {
+      const oldInvitation = await Invitation.findOne({
+        registrationId: registration._id,
+        receiverEmail: email,
+      });
+
+      if (oldInvitation) {
+        if (oldInvitation.status === "pending") {
+          // Pending → delete completely
+          await Invitation.deleteOne({ _id: oldInvitation._id });
+        } else if (oldInvitation.status === "accepted") {
+          // Accepted → mark removed (DO NOT delete)
+          oldInvitation.status = "removed";
+          oldInvitation.removalNote =
+            "You were removed from the team by the team leader.";
+          await oldInvitation.save();
+
+          // Remove student-event mapping (if exists)
           const student = await Student.findOne({ email });
-          await Invitation.create({
-            eventId: event._id,
-            registrationId: registration._id,
-            senderId: req.user._id,
-            receiverId: student ? student._id : null,
-            receiverEmail: email,
-            status: "pending",
-          });
+          if (student) {
+            await Event.findByIdAndUpdate(event._id, {
+              $pull: { registeredStudents: student._id },
+            });
+            await Student.findByIdAndUpdate(student._id, {
+              $pull: { registeredEvents: event._id },
+            });
+          }
         }
       }
-
-      req.flash("success", "Team registration updated! Invitations resent.");
-      return res.redirect(
-        `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
-      );
     }
-  } catch (error) {
-    console.error("Edit Registration Error:", error);
-    req.flash("error", `Failed to edit registration: ${error.message}`);
-    res.redirect("back");
+
+    // Add invitations only for newly added
+    // Invitations for newly added members (Avoid duplicates)
+    for (const member of newMembers) {
+      const isNew = !previousMembers.includes(member.email);
+      if (!isNew) continue;
+
+      // Check if an invitation already exists for this registration + member
+      let existing = await Invitation.findOne({
+        registrationId: registration._id,
+        receiverEmail: member.email,
+      });
+
+      if (existing) {
+        // If previously removed or rejected → reactivate the same invitation
+        existing.status = "pending";
+        existing.removalNote = null;
+        await existing.save();
+      } else {
+        // Otherwise create a new invitation
+        await Invitation.create({
+          eventId: event._id,
+          registrationId: registration._id,
+          senderId: registration.studentId,
+          receiverId: member.id || null,
+          receiverEmail: member.email,
+          status: "pending",
+        });
+      }
+    }
+
+    req.flash("success", "Team registration updated successfully!");
+    return res.redirect(
+      `/${encodeURIComponent(req.params.clubName)}/event/${encodeURIComponent(
+        registration.eventId
+      )}`
+    );
+  } catch (err) {
+    console.error("❌ Update Registration Error:", err);
+    req.flash("error", "Failed to update registration.");
+    return res.redirect("back");
   }
 };
 
@@ -1177,6 +1205,11 @@ module.exports.acceptInvitation = async (req, res) => {
 
     // Mark as accepted
     invitation.status = "accepted";
+    await Invitation.updateOne(
+      { _id: invitationId },
+      { $set: { status: "accepted" } }
+    );
+
     await invitation.save();
 
     // Find registration linked to this invitation
@@ -1188,7 +1221,7 @@ module.exports.acceptInvitation = async (req, res) => {
 
     // Find member inside teamMembers
     const memberIndex = registration.teamMembers.findIndex(
-      (m) => m.email === req.user.email
+      (m) => m.email.toLowerCase() === req.user.email.toLowerCase()
     );
 
     if (memberIndex !== -1) {
@@ -1197,12 +1230,15 @@ module.exports.acceptInvitation = async (req, res) => {
       registration.teamMembers[memberIndex].status = "accepted";
 
       // ✅ Only update fields if new data is submitted
-      if (req.body && Object.keys(req.body).length > 0) {
-        registration.teamMembers[memberIndex].fields = {
-          ...registration.teamMembers[memberIndex].fields, // keep old fields
-          ...req.body, // merge new fields
-        };
-      }
+      //---------
+      // Checking
+      //---------
+      // if (req.body && Object.keys(req.body).length > 0) {
+      //   registration.teamMembers[memberIndex].fields = {
+      //     ...registration.teamMembers[memberIndex].fields, // keep old fields
+      //     ...req.body, // merge new fields
+      //   };
+      // }
     } else {
       // If not found in teamMembers, add as new
       const memberFields = {};
@@ -1212,17 +1248,20 @@ module.exports.acceptInvitation = async (req, res) => {
         }
       }
 
-      registration.teamMembers.push({
-        id: req.user._id,
-        email: req.user.email,
-        fields: memberFields,
-        status: "accepted",
-      });
+      registration.teamMembers
+        .push({
+          id: req.user._id,
+          email: req.user.email,
+          fields: memberFields,
+          status: "accepted",
+        })
+        .then(() => {
+          console.log("added to registrations!");
+        });
     }
 
     await registration.save();
 
-    // Add student to event + student profile
     await Event.findByIdAndUpdate(
       registration.eventId,
       { $addToSet: { registeredStudents: req.user._id } },
