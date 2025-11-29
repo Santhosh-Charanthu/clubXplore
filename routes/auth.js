@@ -22,7 +22,6 @@ router.post("/send-otp", async (req, res) => {
 
     res.json({ success: true, message: "OTP sent to your email" });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ success: false, message: "Failed to send OTP" });
   }
 });
@@ -31,7 +30,6 @@ router.post("/send-otp", async (req, res) => {
 router.post("/verify-otp", (req, res) => {
   const { email, otp } = req.body;
   const stored = otpStore[email];
-  console.log(req.body);
 
   if (!stored) {
     return res

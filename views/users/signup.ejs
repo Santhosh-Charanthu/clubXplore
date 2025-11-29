@@ -272,7 +272,6 @@
       const data = await res.json();
       showMessage("email-message", data.message, res.ok);
     } catch (err) {
-      console.error(err);
       showMessage("email-message", "Error sending OTP", false);
     }
   }
@@ -310,7 +309,6 @@
         showMessage("email-otp-message", data.message, false);
       }
     } catch (err) {
-      console.error(err);
       showMessage("email-otp-message", "Error verifying OTP", false);
     }
   }

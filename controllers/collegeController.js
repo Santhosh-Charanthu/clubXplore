@@ -234,7 +234,6 @@ module.exports.updateProfile = async (req, res) => {
     req.flash("success", "College details updated successfully!");
     res.redirect(`/collegeProfile/${id}`);
   } catch (e) {
-    console.error("Error updating college:", e);
     req.flash("error", "Failed to update college details.");
     res.redirect(`/college/edit/${id}`);
   }
@@ -269,7 +268,6 @@ module.exports.deleteCollege = async (req, res) => {
     req.flash("success", "College and associated data deleted successfully!");
     res.redirect("/login");
   } catch (err) {
-    console.error(err);
     req.flash("error", "Something went wrong while deleting the college.");
     res.redirect("/colleges");
   }
