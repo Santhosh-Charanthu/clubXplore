@@ -93,8 +93,10 @@ ClubXplore/
 ---
 ## 🛠️ Installation & Setup
 
-### Clone this repository
+### 📌 Clone this repository
+```bash
 git clone <repo-url>
+```
 
 ### Navigate into the project folder
 cd ClubXplore
