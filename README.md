@@ -104,12 +104,19 @@ npm install
 
 # Setup environment file (.env)
 CLOUD_NAME=<your_cloud_name>
+
 CLOUD_API_KEY=<cloud_api_key>
+
 CLOUD_API_SECRET=<cloud_api_secret>
+
 DB_URL=<your_mongodb_uri>
+
 SECRET=<your_secret>
+
 EMAIL_USER=<your_gmail>
+
 EMAIL_PASS=<your_app_password>
+
 
 # Start the server
 nodemon app.js
