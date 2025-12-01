@@ -87,3 +87,32 @@ ClubXplore/
 ├── public/        # Static Files (CSS, Images, JS)
 ├── controllers/   # Business Logic
 └── app.js         # Main Application File
+
+```
+
+---
+## 🛠️ Installation & Setup
+
+# Clone this repository
+git clone <repo-url>
+
+# Navigate into the project folder
+cd ClubXplore
+
+# Install dependencies
+npm install
+
+# Setup environment file (.env)
+CLOUD_NAME=<your_cloud_name>
+CLOUD_API_KEY=<cloud_api_key>
+CLOUD_API_SECRET=<cloud_api_secret>
+DB_URL=<your_mongodb_uri>
+SECRET=<your_secret>
+EMAIL_USER=<your_gmail>
+EMAIL_PASS=<your_app_password>
+
+# Start the server
+nodemon app.js
+
+Server runs on:
+👉 http://localhost:8080
