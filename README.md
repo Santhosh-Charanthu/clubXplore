@@ -68,6 +68,7 @@ ClubXplore is a full-stack web application designed to streamline the way colleg
 > A realistic event and club management ecosystem — just like major college fests operate!
 
 It simplifies:
+
 ✔ Communication  
 ✔ Collaboration  
 ✔ Participation  
