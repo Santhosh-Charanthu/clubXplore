@@ -6,24 +6,13 @@ ClubXplore is a full-stack web application designed to streamline the way colleg
 
 ## 🚀 Tech Stack
 
-**Frontend & Templating**
-- EJS
-- CSS / Bootstrap
-
-**Backend**
-- Node.js
-- Express.js
-
-**Database**
-- MongoDB
-
-**Authentication**
-- Passport.js (Session-based)
-
-**Other Integrations**
-- Multer (Image Uploads)
-- Nodemailer with Gmail (OTP Email Verification)
-
+| Area | Technologies |
+|------|--------------|
+| Backend | Node.js, Express.js |
+| Frontend | EJS |
+| Database | MongoDB |
+| Authentication | Passport.js (Session-Based Auth), OTP Verification via Gmail |
+| Others | Multer (Image Uploads), Nodemailer |
 ---
 
 ## 🔐 Role-based Access
