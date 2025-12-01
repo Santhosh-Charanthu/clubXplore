@@ -102,21 +102,17 @@ cd ClubXplore
 ### Install dependencies
 npm install
 
-### Setup environment file (.env)
-CLOUD_NAME=<your_cloud_name>
+### 🔐 Environment Variables
 
-CLOUD_API_KEY=<cloud_api_key>
-
-CLOUD_API_SECRET=<cloud_api_secret>
-
-DB_URL=<your_mongodb_uri>
-
-SECRET=<your_secret>
-
-EMAIL_USER=<your_gmail>
-
-EMAIL_PASS=<your_app_password>
-
+| Variable Name      | Description |
+|-------------------|-------------|
+| `CLOUD_NAME`      | Cloudinary cloud name |
+| `CLOUD_API_KEY`   | Cloudinary API key |
+| `CLOUD_API_SECRET`| Cloudinary API secret |
+| `DB_URL`          | MongoDB connection string |
+| `SECRET`          | Session secret key |
+| `EMAIL_USER`      | Gmail account for OTP verification |
+| `EMAIL_PASS`      | App password for Gmail |
 
 ### Start the server
 nodemon app.js
