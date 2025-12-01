@@ -99,10 +99,14 @@ git clone <repo-url>
 ```
 
 ### Navigate into the project folder
+```bash
 cd ClubXplore
+```
 
 ### Install dependencies
+```bash
 npm install
+```
 
 ### 🔐 Environment Variables
 
