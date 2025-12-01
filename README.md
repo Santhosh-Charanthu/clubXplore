@@ -131,6 +131,7 @@ Server runs on:
 
 ## 👨‍💻 Developers
 Santhosh Charanthu, Nagasai Bole
+
 📬 [Connect on LinkedIn](https://www.linkedin.com/in/santhosh-charanthu-bb6102300/)
 
 📩 Feel free to reach out for collaboration!
