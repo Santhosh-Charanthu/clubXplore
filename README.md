@@ -38,7 +38,7 @@ ClubXplore is a full-stack web application designed to streamline the way colleg
 
 ### 🔹 Event Management
 - Clubs can **create, update, and manage events**
-- **Custom registration form fields** for each event (e.g., team size, roll no, etc.)
+- **Custom registration form fields** for each event (e.g., name, roll no, etc.)
 - **Real-time participant tracking** in a tabular view
 
 ### 🔹 Event Visibility Modes
