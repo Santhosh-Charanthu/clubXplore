@@ -123,3 +123,15 @@ nodemon app.js
 
 Server runs on:
 👉 http://localhost:8080
+
+## Screenshots
+
+
+## 👨‍💻 Developers
+Santhosh Charanthu, Nagasai Bole
+
+📩 Feel free to reach out for collaboration!
+
+## 📜 License
+
+This project is licensed under the MIT License.
