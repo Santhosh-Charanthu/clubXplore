@@ -144,11 +144,7 @@
 <div class="container">
   <h1 class="page-title">Your Invitations</h1>
 
-  <% if (error && error.length > 0) { %>
-  <div class="alert alert-danger" role="alert"><%= error %></div>
-  <% } %> <% if (success && success.length > 0) { %>
-  <div class="alert alert-success" role="alert"><%= success %></div>
-  <% } %> <% if (invitations && invitations.length > 0) { %>
+  <% if (invitations && invitations.length > 0) { %>
   <div class="event-container">
     <% invitations.forEach(invite => { %>
     <div

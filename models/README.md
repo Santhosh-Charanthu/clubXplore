@@ -1,109 +1,152 @@
-# 🎓 ClubXplore – College Club Management System
+# 🎓 ClubXplore – Centralized College Club & Event Management Platform
 
-**ClubXplore** is a full-featured, centralized platform that simplifies the management and promotion of college clubs and their events. Built for colleges, clubs, and students, it enables seamless creation, editing, and registration of events, while supporting media uploads, user authentication, and detailed club profiles.
-
-## 🚀 Features
-
-### 🔐 Authentication
-- College & Club-based login system
-- Secure password storage and session handling with `express-session` & `passport.js`
-
-### 🏫 College Module
-- Register/Login as a college
-- View and edit college profile
-- Manage registered clubs and events
-
-### 🎉 Club Module
-- Register/Login as a club
-- Create, edit, or delete club profile
-- Add/edit:
-  - Faculty & student coordinators
-  - Social media links
-  - Club descriptions, logos, and files
-
-### 📅 Event Management
-- Club can:
-  - Create new events
-  - Edit/update event details
-  - Delete events
-  - View event registrations
-- Events include:
-  - Title, description, poster/image, date & time, visibility (public/private)
-
-### 🧾 Event Registration
-- Public users can view and register for visible events
-- Event data is securely stored and viewable by respective club owners
-
-### 📂 File Uploads
-- Poster & logo upload with `Multer`
-- Upload validations for size and type
-
-### 📑 Pages
-- Over 10 dynamic pages (EJS templating)
-- Forms for login, club/event registration, profile editing
-- Error handling and success messages
-
-### 💾 Backend
-- Node.js + Express
-- MongoDB with Mongoose
-- Structured using Routers and Controllers
+ClubXplore is a full-stack web application designed to streamline the way colleges manage clubs, events, and participants. It enables students, club admins, and college officials to interact seamlessly — from discovering events to managing registrations and sending team invitations!
 
 ---
 
-## 🛠 Tech Stack
+## 🚀 Tech Stack
 
-| Layer       | Technology                          |
-|-------------|--------------------------------------|
-| **Frontend**| HTML, CSS, EJS                       |
-| **Backend** | Node.js, Express.js                 |
-| **Database**| MongoDB Atlas + Mongoose            |
-| **Authentication** | Passport.js + express-session |
-| **File Uploads**| Multer                           |
-| **Templating**| EJS                               |
+| Area           | Technologies                                                 |
+| -------------- | ------------------------------------------------------------ |
+| Backend        | Node.js, Express.js                                          |
+| Frontend       | EJS                                                          |
+| Database       | MongoDB                                                      |
+| Authentication | Passport.js (Session-Based Auth), OTP Verification via Gmail |
+| Others         | Multer (Image Uploads), Nodemailer                           |
 
 ---
 
-## ⚙️ Setup Instructions
+## 🔐 Role-based Access
 
-### 1. Clone the repo
+- **College**
+  - Manage college information
+  - View & verify clubs affiliated with the college
+- **Club**
+  - Create & manage club profile
+  - Create events, handle registrations, and manage invitations
+- **Student**
+  - Register for events
+  - Receive and manage invitations from teammates
+
+---
+
+## ✨ Features
+
+### 🔹 Authentication & Security
+
+- OTP verification via Gmail at signup
+- Secure login with session handling
+- Role-based authorization to control access
+
+### 🔹 Event Management
+
+- Clubs can **create, update, and manage events**
+- **Custom registration form fields** for each event (e.g., name, roll no, etc.)
+- **Real-time participant tracking** in a tabular view
+
+### 🔹 Event Visibility Modes
+
+| Mode                  | Who Can Participate              |
+| --------------------- | -------------------------------- |
+| **College Exclusive** | Only students from that college  |
+| **Open to All**       | Students from other colleges too |
+
+### 🔹 Team Management & Invitations
+
+- Students can **invite teammates** after registering for an event
+- Teammates can **Accept / Reject** invitations
+- If rejected by mistake → **“Invite Again”** button to resend invites
+- Invitation status is always visible and trackable
+
+### 🔹 Discoverability
+
+- Students can **search other colleges**
+- View their clubs and **events that are Open to All**
+- Register directly for those events
+
+### 📸 Media Support
+
+- Event & club **image uploads** using Multer
+
+---
+
+## 🎯 Why ClubXplore?
+
+> A realistic event and club management ecosystem — just like major college fests operate!
+
+It simplifies:
+
+✔ Communication  
+✔ Collaboration  
+✔ Participation  
+✔ Management
+
+---
+
+## 🧩 Project Structure
 
 ```bash
-git clone https: https://github.com/Santhosh-Charanthu/Clubs
+ClubXplore/
+│
+├── models/        # Mongoose Models
+├── routes/        # Express Routes
+├── views/         # EJS Templates
+├── public/        # Static Files (CSS, Images, JS)
+├── controllers/   # Business Logic
+└── app.js         # Main Application File
 
 ```
 
-## Install dependencies
+---
 
+## 🛠️ Installation & Setup
+
+### 📌 Clone this repository
+
+```bash
+git clone <repo-url>
+```
+
+### Navigate into the project folder
+
+```bash
+cd ClubXplore
+```
+
+### Install dependencies
+
+```bash
 npm install
+```
 
-## Add .env file
+### 🔐 Environment Variables
 
-MONGO_URI=your_mongodb_connection
+| Variable Name      | Description                        |
+| ------------------ | ---------------------------------- |
+| `CLOUD_NAME`       | Cloudinary cloud name              |
+| `CLOUD_API_KEY`    | Cloudinary API key                 |
+| `CLOUD_API_SECRET` | Cloudinary API secret              |
+| `DB_URL`           | MongoDB connection string          |
+| `SECRET`           | Session secret key                 |
+| `EMAIL_USER`       | Gmail account for OTP verification |
+| `EMAIL_PASS`       | App password for Gmail             |
 
-SESSION_SECRET=your_secret
+### Start the server
 
-## Run the app
+nodemon app.js
 
-node app.js
-App runs on http://localhost:8080 by default
+Server runs on:
+👉 http://localhost:8080
 
-## 🧠 Future Enhancements
+## Screenshots
 
-- 🧾 Admin dashboard with analytics  
-- 📧 Notification/email system for event reminders  
-- ⚛️ React.js frontend version  
-- 🎟️ QR-based event check-in system  
+## 👨‍💻 Developers
 
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change or improve.
-
----
-
-## 👨‍💻 Author
-
-**Santhosh Charanthu**  
-Full-Stack Developer | Passionate about building scalable college platforms  
+Santhosh Charanthu, Nagasai Bole
 📬 [Connect on LinkedIn](https://www.linkedin.com/in/santhosh-charanthu-bb6102300/)
+
+📩 Feel free to reach out for collaboration!
+
+## 📜 License
+
+This project is licensed under the MIT License.

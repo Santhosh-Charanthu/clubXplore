@@ -522,11 +522,11 @@ module.exports.handleEditRegistration = async (req, res) => {
       }
     }
 
-    const previousMembers = registration.teamMembers.map((m) => m.email);
-
-    if (isLeader && req.body.teamName) {
-      registration.teamName = req.body.teamName.trim();
-    }
+    // Map existing members by email (normalized)
+    const existingMembersMap = new Map(
+      registration.teamMembers.map((m) => [m.email.toLowerCase(), m])
+    );
+    const previousMembers = Array.from(existingMembersMap.keys());
 
     const teamMembersInput = req.body.teamMembers || [];
     const newMembers = [];
@@ -534,11 +534,12 @@ module.exports.handleEditRegistration = async (req, res) => {
     for (const memberData of teamMembersInput) {
       const safeEmailKey = emailFieldLabel.replace(/\s+/g, "_");
 
-      const email = memberData[safeEmailKey]?.trim().toLowerCase();
+      let email = memberData[safeEmailKey]?.trim();
       if (!email) continue;
 
+      email = email.toLowerCase();
+
       const student = await Student.findOne({ email });
-      const isExisting = previousMembers.includes(email);
 
       const fields = {};
       event.formFields.forEach((f) => {
@@ -548,11 +549,14 @@ module.exports.handleEditRegistration = async (req, res) => {
         }
       });
 
+      const existingMember = existingMembersMap.get(email);
+
       newMembers.push({
-        id: student ? student._id : null,
+        id: student ? student._id : existingMember?.id || null,
         email,
         fields,
-        status: isExisting ? "accepted" : "pending",
+        // ✅ Preserve old status if they already existed
+        status: existingMember ? existingMember.status : "pending",
       });
     }
 
@@ -726,8 +730,6 @@ module.exports.showInvitations = async (req, res) => {
     res.render("studentDashboard/invitations", {
       invitations: formattedInvites,
       user: req.user,
-      error: req.flash("error"),
-      success: req.flash("success"),
     });
   } catch (error) {
     req.flash("error", "Unable to fetch invitations.");
@@ -759,6 +761,34 @@ module.exports.acceptInvitation = async (req, res) => {
 
     if (invitation.receiverEmail !== req.user.email) {
       req.flash("error", "This invitation was not sent to your email.");
+      return res.redirect("/invitations");
+    }
+
+    // 🚫 Prevent accepting invite for event where user is already part of another team
+    const alreadyRegistered = await Registration.findOne({
+      eventId: invitation.eventId._id,
+      _id: { $ne: invitation.registrationId }, // ignore the registration of this invitation
+      $or: [
+        { studentId: req.user._id }, // Team leader of another team ❌ block
+        {
+          teamMembers: {
+            $elemMatch: {
+              email: { $regex: "^" + req.user.email + "$", $options: "i" },
+              status: "accepted", // Already accepted as teammate ❌ block
+            },
+          },
+        },
+      ],
+    });
+
+    if (alreadyRegistered) {
+      console.log("Triggered");
+      req.flash(
+        "error",
+        "You are already registered for this event. You cannot join another team."
+      );
+      console.log("FLASH ERROR: ", req.flash("error"));
+
       return res.redirect("/invitations");
     }
 
@@ -867,6 +897,15 @@ module.exports.rejectInvitation = async (req, res) => {
       req.flash("error", "This invitation was not sent to your email.");
       return res.redirect("/invitations");
     }
+    const user = req.user;
+    const registrationId = invitation.registrationId;
+    const registration = await Registration.findById(registrationId);
+    for (const member of registration.teamMembers) {
+      if (member.email === user.email) {
+        member.status = "rejected";
+      }
+    }
+    await registration.save();
 
     invitation.status = "rejected";
     await invitation.save();
@@ -876,5 +915,87 @@ module.exports.rejectInvitation = async (req, res) => {
   } catch (error) {
     req.flash("error", "Failed to reject invitation.");
     return res.redirect("/invitations");
+  }
+};
+
+module.exports.friendsStatus = async (req, res) => {
+  const { eventId } = req.params;
+  const studentId = req.user._id;
+
+  const registration = await Registration.findOne({ eventId, studentId });
+
+  if (!registration) {
+    req.flash("error", "No registration found!");
+    return res.redirect("/dashboard");
+  }
+
+  const event = await Event.findById(eventId);
+
+  res.render("studentDashboard/friendsStatus", {
+    user: req.user,
+    event,
+    registration,
+  });
+};
+
+module.exports.inviteAgain = async (req, res) => {
+  try {
+    const { registrationId, email } = req.params;
+    const studentEmail = email.toLowerCase();
+
+    const registration = await Registration.findById(registrationId);
+    if (!registration) {
+      req.flash("error", "Registration not found.");
+      return res.redirect("back");
+    }
+
+    // Only leader can re-invite
+    if (!registration.studentId.equals(req.user._id)) {
+      req.flash("error", "You are not the team leader!");
+      return res.redirect("back");
+    }
+
+    // Find member in registration
+    const member = registration.teamMembers.find(
+      (m) => m.email === studentEmail
+    );
+    if (!member) {
+      req.flash("error", "Team member not found.");
+      return res.redirect("back");
+    }
+
+    // Update Registration member status => pending
+    member.status = "pending";
+    await registration.save();
+
+    // Find invitation related to this member
+    let invitation = await Invitation.findOne({
+      registrationId,
+      receiverEmail: studentEmail,
+    });
+
+    if (invitation) {
+      // revive invitation
+      invitation.status = "pending";
+      invitation.removalNote = null;
+      await invitation.save();
+    } else {
+      // Create a new invitation
+      await Invitation.create({
+        eventId: registration.eventId,
+        registrationId,
+        senderId: registration.studentId,
+        receiverEmail: studentEmail,
+        receiverId: member.id || null,
+        status: "pending",
+      });
+    }
+
+    req.flash("success", "Invitation resent successfully!");
+    res.redirect("back");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Failed to resend invitation.");
+    res.redirect("back");
   }
 };

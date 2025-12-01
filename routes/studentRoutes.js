@@ -54,4 +54,17 @@ router.post(
   "/invitation/:invitationId/reject",
   studentController.rejectInvitation
 );
+
+router.get(
+  "/:club/event/:eventId/friends",
+  isLoggedIn,
+  studentController.friendsStatus
+);
+
+router.post(
+  "/invite-again/:registrationId/:email",
+  isLoggedIn,
+  studentController.inviteAgain
+);
+
 module.exports = router;

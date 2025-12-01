@@ -1,0 +1,152 @@
+<%- include("../layouts/boilerplate") %>
+
+<style>
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  th,
+  td {
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  th {
+    background: #111827;
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  tr:nth-child(even) {
+    background: #f9fafb;
+  }
+
+  .badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .badge-accepted {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  .badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .badge-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .badge-leader {
+    background: #bfdbfe;
+    color: #1e3a8a;
+    font-weight: 700;
+  }
+
+  .title {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #1f2937;
+  }
+
+  .status-col {
+    width: 120px;
+  }
+
+  .action-btn {
+    background: #1d4ed8;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .action-btn:hover {
+    background: #2563eb;
+  }
+</style>
+
+<div class="container">
+  <h2 class="title">Team Status - <%= event.eventName %></h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (!registration || !registration.teamMembers ||
+        registration.teamMembers.length === 0) { %>
+        <tr>
+          <td colspan="5" class="no-data">No teammates available.</td>
+        </tr>
+        <% } else { registration.teamMembers.forEach((member, index) => { %>
+
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= member.email %></td>
+
+          <td>
+            <span class="badge badge-<%= member.status %>">
+              <%= member.status.charAt(0).toUpperCase() + member.status.slice(1)
+              %>
+            </span>
+          </td>
+
+          <td>
+            <% if (member.id?.toString() == registration.studentId.toString()) {
+            %>
+            <span class="badge badge-leader">Leader</span>
+            <% } else { %> Member <% } %>
+          </td>
+
+          <td>
+            <% if ( member.status === "rejected" &&
+            registration.studentId.toString() === user._id.toString() ) { %>
+
+            <form
+              action="/invite-again/<%= registration._id %>/<%= member.email %>"
+              method="POST"
+            >
+              <button type="submit" class="action-btn">Invite Again</button>
+            </form>
+
+            <% } else { %> - <% } %>
+          </td>
+        </tr>
+        <% }) } %>
+      </tbody>
+    </table>
+  </div>
+</div>

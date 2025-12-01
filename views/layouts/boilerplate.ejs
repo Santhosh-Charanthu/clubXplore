@@ -37,6 +37,14 @@
   <body>
     <div class="container mt-4"><%- include("../includes/flash") %></div>
     <nav class="navbar bg-body-tertiary">
+      <button class="back-button" onclick="history.back()">
+  <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 12H5"></path>
+    <path d="M12 19l-7-7 7-7"></path>
+  </svg>
+  <span class="back-text">Back</span>
+</button>
+
         <% if(user && user.role != "student") {%>
           <a href="/logout">
           <div class="button-container flex gap-4 items-center">
