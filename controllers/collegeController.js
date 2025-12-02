@@ -113,7 +113,7 @@ module.exports.showRegistrationLink = async (req, res) => {
       );
     }
 
-    const registrationLink = `http://localhost:8080/college/${id}/studentRegistration/signup`;
+    const registrationLink = `https://clubxplore.onrender.com/college/${id}/studentRegistration/signup`;
 
     // Store the link and success message in flash
     req.flash("registrationLink", registrationLink);
