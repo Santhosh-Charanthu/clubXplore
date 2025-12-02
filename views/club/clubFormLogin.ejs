@@ -1,4 +1,9 @@
 <%- include("../layouts/boilerplateWN") %>
+<style>
+  p {
+    text-align: center;
+  }
+</style>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -52,6 +57,9 @@
           Not registered?
           <a href="/clubRegistration">Create a club</a>
         </p>
+        <% if(clubName === "vidyantrik"){ %>
+        <p>password: aiml</p>
+        <% } %>
       </form>
     </div>
   </div>
