@@ -126,9 +126,9 @@ app.use("/", studentRouter);
 app.use("/", authRoutes);
 app.use("/", authenticateRoutes);
 
-// app.get("/interface", async (req, res) => {
-//   res.render("profile/interface");
-// });
+app.use((req, res) => {
+  res.status(404).render("page-not-found.ejs");
+});
 
 app.listen(8080, () => {
   console.log("Listening to port http://localhost:8080/login");
