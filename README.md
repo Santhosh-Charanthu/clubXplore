@@ -127,6 +127,19 @@ Server runs on:
 👉 http://localhost:8080
 
 ## Screenshots
+<img width="1919" height="858" alt="image" src="https://github.com/user-attachments/assets/50528849-eba4-4621-a473-d9674d8b4b53" />
+<img width="1588" height="1135" alt="image" src="https://github.com/user-attachments/assets/4a3d0880-5b5f-4af6-a35f-dfc3d24867fa" />
+<img width="1430" height="1536" alt="image" src="https://github.com/user-attachments/assets/9d75a825-14a3-49cc-9680-0900985d5ee0" />
+<img width="1919" height="864" alt="image" src="https://github.com/user-attachments/assets/92e42daa-9f94-441e-a34f-19eb7458aac9" />
+<img width="1588" height="1234" alt="image" src="https://github.com/user-attachments/assets/78c8075a-fd93-4f8a-86bb-5d6d622d3eb3" />
+<img width="1280" height="2490" alt="image" src="https://github.com/user-attachments/assets/37d2a06d-cd60-407f-98b2-110e51166cfb" />
+<img width="1280" height="1555" alt="image" src="https://github.com/user-attachments/assets/43622bad-1d9f-454f-b711-e68c7e40d00d" />
+<img width="1606" height="869" alt="image" src="https://github.com/user-attachments/assets/7f00c170-fffd-478b-b27b-4a69b176a76f" />
+<img width="1588" height="1135" alt="image" src="https://github.com/user-attachments/assets/5a33a23f-4da1-4951-b089-a9fbb3825e97" />
+<img width="1919" height="867" alt="image" src="https://github.com/user-attachments/assets/98e1c109-9c45-4f15-ab5a-cab24bb70cc9" />
+<img width="1588" height="900" alt="image" src="https://github.com/user-attachments/assets/62d5a206-af44-45bf-99e9-2b3f47f4375e" />
+<img width="1606" height="869" alt="image" src="https://github.com/user-attachments/assets/b3e2a4db-4a9e-40ea-b051-8f8386b8580f" />
+<img width="1919" height="869" alt="image" src="https://github.com/user-attachments/assets/fa44493a-6e14-48f8-bd2a-80cff46017a8" />
 
 
 ## 👨‍💻 Developers
