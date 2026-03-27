@@ -122,6 +122,10 @@ app.get("/t", (req, res) => {
   res.send(`Response from server PID: ${process.pid}`);
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "landing.html"));
+});
+
 app.use("/", collegeRouter);
 app.use("/", clubRouter);
 app.use("/", studentRouter);
@@ -131,6 +135,10 @@ app.use("/", authenticateRoutes);
 // app.use((req, res) => {
 //   res.status(404).render("page-not-found.ejs");
 // });
+
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
 
 async function startServer() {
   try {

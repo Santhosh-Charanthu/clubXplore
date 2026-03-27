@@ -1,141 +1,103 @@
 <%- include("../layouts/boilerplateWN") %>
+<link rel="stylesheet" href="/css/auth.css" />
+<script>document.body.classList.add('auth-bg');</script>
 
-<style>
-  .event-form {
-    background: #fff;
-    border: 1px solid #ddd;
-    transition: box-shadow 0.3s ease;
-  }
-  .event-form:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  .error-border {
-    border: 2px solid red !important;
-  }
-  .form-control:focus {
-    border-color: #007bff !important;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
-  }
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-  }
-  .btn-success:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-  }
-</style>
+<div class="auth-page">
+  <div class="auth-card">
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-      <h3 class="text-center mb-4">Login</h3>
+    <a href="/" class="auth-brand">
+      <div class="auth-brand__icon"><i class="bi bi-stars"></i></div>
+      ClubXplore
+    </a>
 
-      <form
-        id="loginForm"
-        method="post"
-        action="/login"
-        novalidate
-        class="needs-validation event-form shadow p-4 rounded"
-      >
-        <!-- Role Dropdown -->
-        <div class="mb-4">
-          <label for="role" class="form-label fw-bold">Login as</label>
-          <select
-            id="role"
-            name="role"
-            class="form-control form-control-lg"
-            required
-          >
-            <option value="">-- Select Role --</option>
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Sign in to your account to continue</p>
+
+    <form id="loginForm" method="post" action="/login" novalidate class="auth-form needs-validation">
+
+      <div class="auth-field">
+        <label class="auth-label" for="role">Login as</label>
+        <div class="auth-select-wrap">
+          <i class="bi bi-person-badge auth-field__icon"></i>
+          <select id="role" name="role" class="auth-select" required>
+            <option value="">Select role</option>
             <option value="college">College</option>
             <option value="student">Student</option>
           </select>
-          <div class="invalid-feedback">Please select a role.</div>
+          <i class="bi bi-chevron-down auth-select__arrow"></i>
         </div>
+        <div class="auth-invalid">Please select a role.</div>
+      </div>
 
-        <!-- Email -->
-        <div class="mb-4">
-          <label for="email" class="form-label fw-bold">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Enter your email"
-            class="form-control form-control-lg"
-            required
-          />
-          <div class="invalid-feedback">Please enter a valid email.</div>
+      <div class="auth-field">
+        <label class="auth-label" for="email">Email address</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-envelope auth-field__icon"></i>
+          <input type="email" id="email" name="email" class="auth-input"
+            placeholder="you@example.com" required autocomplete="email" />
         </div>
+        <div class="auth-invalid">Please enter a valid email.</div>
+      </div>
 
-        <!-- Password -->
-        <div class="mb-4">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter password"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Password is required.</div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-lg w-100">
-            Login
+      <div class="auth-field">
+        <label class="auth-label" for="password">Password</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-lock auth-field__icon"></i>
+          <input type="password" id="password" name="password" class="auth-input"
+            placeholder="Enter your password" required autocomplete="current-password" />
+          <button type="button" class="auth-eye" aria-label="Toggle password" onclick="togglePwd('password',this)">
+            <i class="bi bi-eye"></i>
           </button>
         </div>
-        <br />
-        <p class="signup-link text-center">
-          No account? <a href="/collegeRegistration/signup">Sign up</a>
-        </p>
-        <div id="demoDetails" class="mt-3 text-center"></div>
-      </form>
-    </div>
+        <div class="auth-invalid">Password is required.</div>
+      </div>
+
+      <div id="demoHint" class="auth-demo" style="display:none"></div>
+
+      <button type="submit" class="auth-submit" id="loginBtn">
+        <span class="auth-submit__text">Sign in</span>
+        <span class="auth-submit__spinner"></span>
+      </button>
+
+    </form>
+
+    <p class="auth-footer-link">No account? <a href="/collegeRegistration/signup">Create one</a></p>
+    <div class="auth-divider"><span>or</span></div>
+    <a href="/clubRegistration/login" class="auth-alt-btn">
+      <i class="bi bi-trophy"></i> Sign in as a Club
+    </a>
+
   </div>
 </div>
 
 <script>
-  const roleSelect = document.getElementById("role");
-  const demoDetails = document.getElementById("demoDetails");
-
-  roleSelect.addEventListener("change", function () {
-    if (this.value === "college") {
-      demoDetails.innerHTML = `
-        <p><strong>Demo College:</strong> vishnu@gmail.com</p>
-        <p><strong>Password:</strong> vit</p>
-      `;
-    } else if (this.value === "student") {
-      demoDetails.innerHTML = `
-        <p><strong>Demo Student:</strong> santhosh@gmail.com</p>
-        <p><strong>Password:</strong> santhosh</p>
-      `;
+  document.getElementById('role').addEventListener('change', function () {
+    const hint = document.getElementById('demoHint');
+    const demos = {
+      college: { label: 'Demo College', user: 'vishnu@gmail.com', pass: 'vit' },
+      student: { label: 'Demo Student', user: 'santhosh@gmail.com', pass: 'santhosh' }
+    };
+    const d = demos[this.value];
+    if (d) {
+      hint.innerHTML = `<i class="bi bi-info-circle"></i>&nbsp;<strong>${d.label}:</strong>&nbsp;${d.user}&nbsp;/&nbsp;${d.pass}`;
+      hint.style.display = 'flex';
     } else {
-      demoDetails.innerHTML = ""; // Clear if no role selected
+      hint.style.display = 'none';
     }
   });
 
-  (() => {
-    "use strict";
-    const forms = document.querySelectorAll(".needs-validation");
+  function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    const ico = btn.querySelector('i');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+  }
 
-    Array.from(forms).forEach((form) => {
-      form.addEventListener(
-        "submit",
-        (event) => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add("was-validated");
-        },
-        false
-      );
-    });
-  })();
+  document.getElementById('loginForm').addEventListener('submit', function () {
+    if (this.checkValidity()) {
+      const btn = document.getElementById('loginBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+    }
+  });
 </script>

@@ -1,140 +1,79 @@
 <%- include("../layouts/boilerplateWN") %>
-<style>
-  p {
-    text-align: center;
-  }
-</style>
+<link rel="stylesheet" href="/css/auth.css" />
+<script>document.body.classList.add('auth-bg');</script>
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-      <h3 class="text-center mb-4">Log in to Your Club</h3>
+<div class="auth-page">
+  <div class="auth-card">
 
-      <form
-        id="clubLoginForm"
-        method="post"
-        action="/clubRegistration/login"
-        novalidate
-        class="needs-validation event-form shadow p-4 rounded"
-      >
-        <!-- Club Name -->
-        <div class="mb-4">
-          <label for="ClubName" class="form-label fw-bold">Club Name</label>
-          <input
-            type="text"
-            id="ClubName"
-            name="ClubName"
-            placeholder="Enter Club Name"
-            class="form-control form-control-lg"
-            value="<%= clubName %>"
-            required
-          />
-          <div class="invalid-feedback">Please enter a valid club name.</div>
+    <a href="/" class="auth-brand">
+      <div class="auth-brand__icon auth-brand__icon--club"><i class="bi bi-trophy"></i></div>
+      ClubXplore
+    </a>
+
+    <h1 class="auth-title">Club sign in</h1>
+    <p class="auth-sub">Access your club dashboard</p>
+
+    <form id="clubLoginForm" method="post" action="/clubRegistration/login" novalidate class="auth-form needs-validation">
+
+      <div class="auth-field">
+        <label class="auth-label" for="ClubName">Club name</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-trophy auth-field__icon"></i>
+          <input type="text" id="ClubName" name="ClubName" class="auth-input"
+            placeholder="Enter your club name" value="<%= clubName %>"
+            required autocomplete="username" />
         </div>
+        <div class="auth-invalid">Please enter your club name.</div>
+      </div>
 
-        <!-- Password -->
-        <div class="mb-4">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter Password"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Please enter a valid password</div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-lg w-100">
-            Login
+      <div class="auth-field">
+        <label class="auth-label" for="password">Password</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-lock auth-field__icon"></i>
+          <input type="password" id="password" name="password" class="auth-input"
+            placeholder="Enter your password" required autocomplete="current-password" />
+          <button type="button" class="auth-eye" aria-label="Toggle password" onclick="togglePwd('password',this)">
+            <i class="bi bi-eye"></i>
           </button>
         </div>
-        <br />
-        <p class="signup-link">
-          Not registered?
-          <a href="/clubRegistration">Create a club</a>
-        </p>
-        <% if(clubName === "vidyantrik"){ %>
-        <p>password: aiml</p>
-        <% } %>
-      </form>
-    </div>
+        <div class="auth-invalid">Password is required.</div>
+      </div>
+
+      <% if(clubName === "vidyantrik"){ %>
+      <div class="auth-demo" style="display:flex">
+        <i class="bi bi-info-circle"></i>&nbsp;<strong>Demo:</strong>&nbsp;vidyantrik&nbsp;/&nbsp;aiml
+      </div>
+      <% } %>
+
+      <button type="submit" class="auth-submit auth-submit--club" id="clubBtn">
+        <span class="auth-submit__text">Sign in</span>
+        <span class="auth-submit__spinner"></span>
+      </button>
+
+    </form>
+
+    <p class="auth-footer-link">Not registered? <a href="/clubRegistration">Create a club</a></p>
+    <div class="auth-divider"><span>or</span></div>
+    <a href="/login" class="auth-alt-btn">
+      <i class="bi bi-building"></i> Sign in as College / Student
+    </a>
+
   </div>
 </div>
 
-<style>
-  .event-form {
-    background: #fff;
-    border: 1px solid #ddd;
-    transition: box-shadow 0.3s ease;
-  }
-
-  .event-form:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Red Border for Invalid Inputs */
-  .error-border {
-    border: 2px solid red !important;
-  }
-
-  /* Blue Border on Focus */
-  .form-control:focus {
-    border-color: #007bff !important; /* Blue border on focus */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important; /* Blue glow */
-  }
-
-  .error-message {
-    color: red;
-    font-size: 0.875rem;
-    margin-top: 5px;
-  }
-
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-  }
-
-  .btn-success:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  @media (max-width: 768px) {
-    .event-form {
-      padding: 15px;
-    }
-    .btn-lg {
-      padding: 10px;
-    }
-  }
-</style>
-
 <script>
-  (() => {
-    "use strict";
-    const forms = document.querySelectorAll(".needs-validation");
-    Array.from(forms).forEach((form) => {
-      form.addEventListener(
-        "submit",
-        (event) => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add("was-validated");
-        },
-        false
-      );
-    });
-  })();
+  function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    const ico = btn.querySelector('i');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+  }
+
+  document.getElementById('clubLoginForm').addEventListener('submit', function () {
+    if (this.checkValidity()) {
+      const btn = document.getElementById('clubBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+    }
+  });
 </script>

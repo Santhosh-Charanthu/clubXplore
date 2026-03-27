@@ -1,445 +1,185 @@
-<%- include("../layouts/boilerplateWN") %>
+﻿<%- include("../layouts/boilerplateWN") %>
+<link rel="stylesheet" href="/css/auth.css" />
+<script>document.body.classList.add('auth-bg');</script>
 
-<style>
-  .event-form {
-    background: #fff;
-    border: 1px solid #ddd;
-    transition: box-shadow 0.3s ease;
-  }
+<div class="auth-page auth-page--wide">
+  <div class="auth-card">
 
-  .event-form:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
+    <a href="/" class="auth-brand">
+      <div class="auth-brand__icon auth-brand__icon--club"><i class="bi bi-trophy"></i></div>
+      ClubXplore
+    </a>
 
-  /* Red Border for Invalid Inputs */
-  .error-border {
-    border: 2px solid red !important;
-  }
+    <h1 class="auth-title">Create a new club</h1>
+    <p class="auth-sub">Register your club under your college</p>
 
-  /* Blue Border on Focus */
-  .form-control:focus {
-    border-color: #007bff !important; /* Blue border on focus */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important; /* Blue glow */
-  }
+    <form id="clubRegistrationForm" method="post" action="/clubRegistration"
+      enctype="multipart/form-data" class="auth-form needs-validation" novalidate>
 
-  .error-message {
-    color: red;
-    font-size: 0.875rem;
-    margin-top: 5px;
-  }
+      <div class="auth-section-label">Club info</div>
 
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-  }
-
-  .btn-success:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  @media (max-width: 768px) {
-    .event-form {
-      padding: 15px;
-    }
-    .btn-lg {
-      padding: 10px;
-    }
-  }
-
-  @media (max-width: 590px) {
-    .faculty-entry,
-    .student-entry,
-    .social-entry {
-      flex-direction: column !important;
-    }
-
-    .faculty-entry .col,
-    .student-entry .col,
-    .social-entry .col {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    .faculty-entry .col-auto,
-    .student-entry .col-auto,
-    .social-entry .col-auto {
-      align-self: flex-start; /* keep the remove button aligned left */
-    }
-  }
-</style>
-
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <h3 class="text-center mb-4">Create a New Club</h3>
-
-      <form
-        id="clubRegistrationForm"
-        method="post"
-        action="/clubRegistration"
-        enctype="multipart/form-data"
-        class="needs-validation event-form shadow p-4 rounded"
-        novalidate
-      >
-        <!-- Club Name -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Club Name</label>
-          <input type="text" name="ClubName" class="form-control" required />
-          <div class="invalid-feedback">Please enter a valid club name.</div>
+      <div class="auth-field">
+        <label class="auth-label">Club name</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-trophy auth-field__icon"></i>
+          <input type="text" name="ClubName" class="auth-input" placeholder="e.g. Robotics Club" required />
         </div>
+        <div class="auth-invalid">Club name is required.</div>
+      </div>
 
-        <!-- Branch Name -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Branch Name</label>
-          <input type="text" name="branchName" class="form-control" required />
-          <div class="invalid-feedback">Please enter a valid branch name.</div>
+      <div class="auth-field">
+        <label class="auth-label">Branch name</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-diagram-2 auth-field__icon"></i>
+          <input type="text" name="branchName" class="auth-input" placeholder="e.g. CSE, ECE" required />
         </div>
+        <div class="auth-invalid">Branch name is required.</div>
+      </div>
 
-        <!-- Password -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Password</label>
-          <input
-            type="password"
-            name="password"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">
-            Password must be at least 6 characters.
-          </div>
+      <div class="auth-field">
+        <label class="auth-label">Club description</label>
+        <div class="auth-input-wrap" style="align-items:flex-start">
+          <i class="bi bi-text-paragraph auth-field__icon" style="top:.85rem;position:absolute"></i>
+          <textarea name="clubDescription" class="auth-input" rows="3"
+            style="padding-top:.75rem;resize:vertical;min-height:80px" placeholder="What does your club do?" required></textarea>
         </div>
+        <div class="auth-invalid">Description is required.</div>
+      </div>
 
-        <!-- Club Description -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Club Description</label>
-          <textarea
-            name="clubDescription"
-            class="form-control"
-            rows="3"
-            required
-          ></textarea>
-          <div class="invalid-feedback">Please enter the Club Description</div>
+      <div class="auth-field">
+        <label class="auth-label">Established year</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-calendar auth-field__icon"></i>
+          <input type="text" name="establishedYear" class="auth-input" placeholder="e.g. 2015" required />
         </div>
+        <div class="auth-invalid">Established year is required.</div>
+      </div>
 
-        <!-- Logo Upload -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Club Logo</label>
-          <input type="file" name="ClubLogo" class="form-control" required />
-          <div class="invalid-feedback">Please upload the club logo.</div>
+      <div class="auth-field">
+        <label class="auth-label">Club logo</label>
+        <div class="auth-file-wrap">
+          <label class="auth-file-label" for="ClubLogo">
+            <i class="bi bi-cloud-upload"></i>
+            <span id="clubLogoText">Click to upload logo</span>
+          </label>
+          <input id="ClubLogo" name="ClubLogo" type="file" class="auth-file-input"
+            accept="image/*" required onchange="updateFileName('ClubLogo','clubLogoText')" />
         </div>
+        <div class="auth-invalid">Please upload the club logo.</div>
+      </div>
 
-        <!-- Faculty Coordinators -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Faculty Coordinators</label>
-          <div id="facultyCoordinatorsList">
-            <div class="row mb-2 align-items-end faculty-entry">
-              <div class="col">
-                <input
-                  type="text"
-                  name="facultyCoordinators[0][name]"
-                  class="form-control"
-                  placeholder="Name"
-                  required
-                />
-              </div>
-              <div class="col">
-                <input
-                  type="email"
-                  name="facultyCoordinators[0][email]"
-                  class="form-control"
-                  placeholder="Email"
-                  required
-                />
-              </div>
-              <div class="col">
-                <input
-                  type="text"
-                  name="facultyCoordinators[0][phoneNumber]"
-                  class="form-control"
-                  placeholder="Phone"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-primary"
-            onclick="addFacultyCoordinator()"
-          >
-            + Add Faculty
-          </button>
+      <div class="auth-field">
+        <label class="auth-label">Achievements <span style="color:#94a3b8;font-weight:400">(optional)</span></label>
+        <div class="auth-input-wrap" style="align-items:flex-start">
+          <i class="bi bi-award auth-field__icon" style="top:.85rem;position:absolute"></i>
+          <textarea name="Achievements" class="auth-input" rows="2"
+            style="padding-top:.75rem;resize:vertical" placeholder="Notable achievements..."></textarea>
         </div>
+      </div>
 
-        <!-- Student Coordinators -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Student Coordinators</label>
-          <div id="studentCoordinatorsList">
-            <div class="row mb-2 align-items-end student-entry">
-              <div class="col">
-                <input
-                  type="text"
-                  name="studentCoordinators[0][name]"
-                  class="form-control"
-                  placeholder="Name"
-                  required
-                />
-              </div>
-              <div class="col">
-                <input
-                  type="email"
-                  name="studentCoordinators[0][email]"
-                  class="form-control"
-                  placeholder="Email"
-                  required
-                />
-              </div>
-              <div class="col">
-                <input
-                  type="text"
-                  name="studentCoordinators[0][phoneNumber]"
-                  class="form-control"
-                  placeholder="Phone"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-primary"
-            onclick="addStudentCoordinator()"
-          >
-            + Add Student
-          </button>
+      <!-- Faculty Coordinators -->
+      <div class="auth-section-label" style="margin-top:.5rem">Faculty coordinators</div>
+      <div id="facultyList">
+        <div class="auth-list-row faculty-entry">
+          <input type="text" name="facultyCoordinators[0][name]" class="auth-input" placeholder="Name" required />
+          <input type="email" name="facultyCoordinators[0][email]" class="auth-input" placeholder="Email" required />
+          <input type="text" name="facultyCoordinators[0][phoneNumber]" class="auth-input" placeholder="Phone" required />
         </div>
+      </div>
+      <button type="button" class="auth-add-btn" onclick="addRow('faculty')"><i class="bi bi-plus"></i> Add faculty</button>
 
-        <!-- Social Media Links -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Social Media Links</label>
-          <div id="socialMediaLinksList">
-            <div class="row mb-2 align-items-end social-entry">
-              <div class="col">
-                <input
-                  type="text"
-                  name="socialMediaLink[0][name]"
-                  class="form-control"
-                  placeholder="Platform"
-                  required
-                />
-              </div>
-              <div class="col">
-                <input
-                  type="url"
-                  name="socialMediaLink[0][link]"
-                  class="form-control"
-                  placeholder="URL"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-primary"
-            onclick="addSocialLink()"
-          >
-            + Add Link
-          </button>
+      <!-- Student Coordinators -->
+      <div class="auth-section-label" style="margin-top:.5rem">Student coordinators</div>
+      <div id="studentList">
+        <div class="auth-list-row student-entry">
+          <input type="text" name="studentCoordinators[0][name]" class="auth-input" placeholder="Name" required />
+          <input type="email" name="studentCoordinators[0][email]" class="auth-input" placeholder="Email" required />
+          <input type="text" name="studentCoordinators[0][phoneNumber]" class="auth-input" placeholder="Phone" required />
         </div>
+      </div>
+      <button type="button" class="auth-add-btn" onclick="addRow('student')"><i class="bi bi-plus"></i> Add student</button>
 
-        <!-- Established Year -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Established Year</label>
-          <input
-            type="text"
-            name="establishedYear"
-            class="form-control"
-            placeholder="e.g. 2015"
-            required
-          />
-          <div class="invalid-feedback">
-            Please enter the established year of the club.
-          </div>
+      <!-- Social Links -->
+      <div class="auth-section-label" style="margin-top:.5rem">Social media links</div>
+      <div id="socialList">
+        <div class="auth-list-row auth-list-row--2col social-entry">
+          <input type="text" name="socialMediaLink[0][name]" class="auth-input" placeholder="Platform" required />
+          <input type="url" name="socialMediaLink[0][link]" class="auth-input" placeholder="URL" required />
         </div>
+      </div>
+      <button type="button" class="auth-add-btn" onclick="addRow('social')"><i class="bi bi-plus"></i> Add link</button>
 
-        <!-- Achievements -->
-        <div class="mb-4">
-          <label class="form-label fw-bold">Achievements</label>
-          <textarea
-            name="Achievements"
-            class="form-control"
-            rows="3"
-          ></textarea>
+      <!-- Password -->
+      <div class="auth-section-label" style="margin-top:.5rem">Account</div>
+      <div class="auth-field">
+        <label class="auth-label" for="password">Password</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-lock auth-field__icon"></i>
+          <input id="password" name="password" type="password" class="auth-input"
+            placeholder="Set a password" required autocomplete="new-password" />
+          <button type="button" class="auth-eye" onclick="togglePwd('password',this)"><i class="bi bi-eye"></i></button>
         </div>
+        <div class="auth-invalid">Password is required.</div>
+      </div>
 
-        <!-- Submit -->
-        <div class="mb-4 text-center">
-          <button type="submit" class="btn btn-success btn-lg w-100">
-            Create Club
-          </button>
-          <p class="mt-2">
-            Already registered? <a href="/clubRegistration/login">Login</a>
-          </p>
-        </div>
-      </form>
-    </div>
+      <button type="submit" class="auth-submit auth-submit--club" id="clubCreateBtn">
+        <span class="auth-submit__text">Create club</span>
+        <span class="auth-submit__spinner"></span>
+      </button>
+
+    </form>
+
+    <p class="auth-footer-link">Already registered? <a href="/clubRegistration/login">Sign in</a></p>
+
   </div>
 </div>
 
 <script>
-  document
-    .getElementById("clubRegistrationForm")
-    .addEventListener("submit", function (event) {
-      let isValid = true;
+  let fi = 1, si = 1, soi = 1;
 
-      // Get input fields
-      const clubNameInput = document.getElementById("ClubName");
-      const branchNameInput = document.getElementById("branchName");
-      const passwordInput = document.getElementById("password");
-      const clubLogoInput = document.getElementById("ClubLogo");
-
-      // Get error message elements
-      const clubNameError = document.getElementById("ClubNameError");
-      const branchNameError = document.getElementById("branchNameError");
-      const passwordError = document.getElementById("passwordError");
-      const clubLogoError = document.getElementById("ClubLogoError");
-
-      // Reset errors and styles
-      clubNameError.textContent = "";
-      branchNameError.textContent = "";
-      passwordError.textContent = "";
-      clubLogoError.textContent = "";
-      clubNameInput.classList.remove("error-border");
-      branchNameInput.classList.remove("error-border");
-      passwordInput.classList.remove("error-border");
-      clubLogoInput.classList.remove("error-border");
-
-      // Validate Club Name
-      if (clubNameInput.value.trim() === "") {
-        clubNameError.textContent = "Club name is required.";
-        clubNameInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Branch Name
-      if (branchNameInput.value.trim() === "") {
-        branchNameError.textContent = "Branch name is required.";
-        branchNameInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Password
-      if (passwordInput.value.trim() === "") {
-        passwordError.textContent = "Password is required.";
-        passwordInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      // Validate Club Logo
-      if (clubLogoInput.files.length === 0) {
-        clubLogoError.textContent = "Please upload a logo.";
-        clubLogoInput.classList.add("error-border");
-        isValid = false;
-      }
-
-      if (!isValid) {
-        event.preventDefault();
-      }
+  function addRow(type) {
+    const configs = {
+      faculty: { id: 'facultyList', cls: 'faculty-entry', prefix: 'facultyCoordinators', idx: () => fi++, cols: 3 },
+      student: { id: 'studentList', cls: 'student-entry', prefix: 'studentCoordinators', idx: () => si++, cols: 3 },
+      social:  { id: 'socialList',  cls: 'social-entry auth-list-row--2col', prefix: 'socialMediaLink', idx: () => soi++, cols: 2 }
+    };
+    const c = configs[type];
+    const i = c.idx();
+    const div = document.createElement('div');
+    div.className = 'auth-list-row ' + c.cls;
+    const fields = type === 'social'
+      ? [['text','name','Platform'],['url','link','URL']]
+      : [['text','name','Name'],['email','email','Email'],['text','phoneNumber','Phone']];
+    fields.forEach(([t, key, ph]) => {
+      const inp = document.createElement('input');
+      inp.type = t; inp.name = c.prefix + '[' + i + '][' + key + ']';
+      inp.className = 'auth-input'; inp.placeholder = ph; inp.required = true;
+      div.appendChild(inp);
     });
+    const rmBtn = document.createElement('button');
+    rmBtn.type = 'button'; rmBtn.className = 'auth-remove-btn';
+    rmBtn.innerHTML = '<i class="bi bi-x"></i>';
+    rmBtn.onclick = function() { div.remove(); };
+    div.appendChild(rmBtn);
+    document.getElementById(c.id).appendChild(div);
+  }
 
-  // Real-time Validation - Remove Error on Input
-  document.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", function () {
-      if (this.type === "file") {
-        // File input validation
-        if (this.files.length > 0) {
-          this.classList.remove("error-border");
-          document.getElementById(this.id + "Error").textContent = "";
-        }
-      } else {
-        // Text input validation
-        if (this.value.trim() !== "") {
-          this.classList.remove("error-border");
-          document.getElementById(this.id + "Error").textContent = "";
-        }
-      }
-    });
+  function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    const ico = btn.querySelector('i');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+  }
+
+  function updateFileName(inputId, labelId) {
+    const f = document.getElementById(inputId).files[0];
+    if (f) document.getElementById(labelId).textContent = f.name;
+  }
+
+  document.getElementById('clubRegistrationForm').addEventListener('submit', function() {
+    if (this.checkValidity()) {
+      const btn = document.getElementById('clubCreateBtn');
+      btn.classList.add('loading'); btn.disabled = true;
+    }
   });
-
-  let facultyIndex = 1;
-  let studentIndex = 1;
-  let socialIndex = 1;
-
-  function addFacultyCoordinator() {
-    const container = document.getElementById("facultyCoordinatorsList");
-    const div = document.createElement("div");
-    div.classList.add("row", "mb-2", "align-items-end", "faculty-entry");
-    div.innerHTML = `
-      <div class="col"><input type="text" name="facultyCoordinators[${facultyIndex}][name]" class="form-control" placeholder="Name" required /></div>
-      <div class="col"><input type="email" name="facultyCoordinators[${facultyIndex}][email]" class="form-control" placeholder="Email" required /></div>
-      <div class="col"><input type="text" name="facultyCoordinators[${facultyIndex}][phoneNumber]" class="form-control" placeholder="Phone" required /></div>
-      <div class="col-auto">
-        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.faculty-entry').remove()">Remove</button>
-      </div>
-    `;
-    container.appendChild(div);
-    facultyIndex++;
-  }
-
-  function addStudentCoordinator() {
-    const container = document.getElementById("studentCoordinatorsList");
-    const div = document.createElement("div");
-    div.classList.add("row", "mb-2", "align-items-end", "student-entry");
-    div.innerHTML = `
-      <div class="col"><input type="text" name="studentCoordinators[${studentIndex}][name]" class="form-control" placeholder="Name" required /></div>
-      <div class="col"><input type="email" name="studentCoordinators[${studentIndex}][email]" class="form-control" placeholder="Email" required /></div>
-      <div class="col"><input type="text" name="studentCoordinators[${studentIndex}][phoneNumber]" class="form-control" placeholder="Phone" required /></div>
-      <div class="col-auto">
-        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.student-entry').remove()">Remove</button>
-      </div>
-    `;
-    container.appendChild(div);
-    studentIndex++;
-  }
-
-  function addSocialLink() {
-    const container = document.getElementById("socialMediaLinksList");
-    const div = document.createElement("div");
-    div.classList.add("row", "mb-2", "align-items-end", "social-entry");
-    div.innerHTML = `
-      <div class="col"><input type="text" name="socialMediaLink[${socialIndex}][name]" class="form-control" placeholder="Platform" required /></div>
-      <div class="col"><input type="url" name="socialMediaLink[${socialIndex}][link]" class="form-control" placeholder="URL" required /></div>
-      <div class="col-auto">
-        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.social-entry').remove()">Remove</button>
-      </div>
-    `;
-    container.appendChild(div);
-    socialIndex++;
-  }
-
-  (() => {
-    "use strict";
-    const forms = document.querySelectorAll(".needs-validation");
-    Array.from(forms).forEach((form) => {
-      form.addEventListener(
-        "submit",
-        (event) => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add("was-validated");
-        },
-        false
-      );
-    });
-  })();
 </script>

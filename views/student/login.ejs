@@ -1,156 +1,71 @@
 <%- include("../layouts/boilerplateWN") %>
+<link rel="stylesheet" href="/css/auth.css" />
+<script>document.body.classList.add('auth-bg');</script>
 
-<style>
-  .stu-login-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 25px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
+<div class="auth-page">
+  <div class="auth-card">
 
-  .form-title {
-    font-size: 1.5rem;
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 25px;
-  }
+    <a href="/" class="auth-brand">
+      <div class="auth-brand__icon auth-brand__icon--student"><i class="bi bi-mortarboard"></i></div>
+      ClubXplore
+    </a>
 
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+    <h1 class="auth-title">Student sign in</h1>
+    <p class="auth-sub">Access your student dashboard</p>
 
-  .input-container {
-    position: relative;
-  }
+    <form id="studentLoginForm" method="post" action="/studentRegistration/login" novalidate class="auth-form needs-validation">
 
-  .input-container input {
-    width: 100%;
-    padding: 12px 40px 12px 12px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    transition: border-color 0.3s ease;
-  }
-
-  .input-container input:focus {
-    border-color: #007bff !important;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    outline: none;
-  }
-
-  .input-container span {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #999;
-  }
-
-  .submit {
-    background-color: #28a745;
-    border: none;
-    color: white;
-    padding: 12px;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-  }
-
-  .submit:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-  }
-
-  .signup-link {
-    text-align: center;
-    font-size: 0.95rem;
-    margin-top: 15px;
-  }
-
-  .signup-link a {
-    color: #007bff;
-    text-decoration: none;
-  }
-
-  .signup-link a:hover {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 768px) {
-    .stu-login-container {
-      padding: 15px;
-    }
-    .submit {
-      padding: 10px;
-    }
-  }
-
-  .btn-success-bright {
-    background-color: #28a745 !important;
-    border: none;
-  }
-
-  .btn-success-bright:hover {
-    background-color: #198754 !important;
-  }
-</style>
-
-<h1>Student Registration</h1>
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-      <form
-        id="studentLoginForm"
-        method="post"
-        action="/studentRegistration/login"
-        novalidate
-        class="needs-validation event-form shadow p-4 rounded"
-      >
-        <!-- Registration Number -->
-        <div class="mb-4">
-          <label for="regNo" class="form-label fw-bold">Student Email</label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            placeholder="Enter Registration Number"
-            class="form-control form-control-lg"
-            required
-          />
-          <div class="error-message" id="regNoError"></div>
+      <div class="auth-field">
+        <label class="auth-label" for="email">Email address</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-envelope auth-field__icon"></i>
+          <input type="email" id="email" name="email" class="auth-input"
+            placeholder="you@example.com" required autocomplete="email" />
         </div>
+        <div class="auth-invalid">Please enter a valid email.</div>
+      </div>
 
-        <!-- Password -->
-        <div class="mb-4">
-          <label for="password" class="form-label fw-bold">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter Password"
-            class="form-control"
-            required
-          />
-          <div class="error-message" id="passwordError"></div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="mb-5 text-center">
-          <button
-            type="submit"
-            class="btn btn-success btn-lg w-100 btn-success-bright"
-          >
-            Login
+      <div class="auth-field">
+        <label class="auth-label" for="password">Password</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-lock auth-field__icon"></i>
+          <input type="password" id="password" name="password" class="auth-input"
+            placeholder="Enter your password" required autocomplete="current-password" />
+          <button type="button" class="auth-eye" aria-label="Toggle password" onclick="togglePwd('password',this)">
+            <i class="bi bi-eye"></i>
           </button>
         </div>
-      </form>
-    </div>
+        <div class="auth-invalid">Password is required.</div>
+      </div>
+
+      <button type="submit" class="auth-submit auth-submit--student" id="studentBtn">
+        <span class="auth-submit__text">Sign in</span>
+        <span class="auth-submit__spinner"></span>
+      </button>
+
+    </form>
+
+    <div class="auth-divider"><span>or</span></div>
+    <a href="/login" class="auth-alt-btn">
+      <i class="bi bi-building"></i> Sign in as College
+    </a>
+
   </div>
 </div>
+
+<script>
+  function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    const ico = btn.querySelector('i');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+  }
+
+  document.getElementById('studentLoginForm').addEventListener('submit', function () {
+    if (this.checkValidity()) {
+      const btn = document.getElementById('studentBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+    }
+  });
+</script>

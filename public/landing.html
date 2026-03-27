@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClubXplore – College Club & Event Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="/css/landing.css" />
+  </head>
+  <body>
+
+    <!-- NAV -->
+    <nav class="lp-nav">
+      <div class="lp-nav__inner">
+        <a href="/" class="lp-logo">
+          <span class="lp-logo__icon"><i class="bi bi-stars"></i></span>
+          ClubXplore
+        </a>
+        <div class="lp-nav__links">
+          <a href="#features">Features</a>
+          <a href="#roles">Who's it for</a>
+          <a href="#how">How it works</a>
+        </div>
+        <div class="lp-nav__cta">
+          <a href="/login" class="lp-btn lp-btn--ghost">Log in</a>
+          <a href="/collegeRegistration/signup" class="lp-btn lp-btn--primary">Get started</a>
+        </div>
+        <button class="lp-nav__burger" id="burger" aria-label="Menu">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+      <div class="lp-nav__mobile" id="mobileMenu">
+        <a href="#features">Features</a>
+        <a href="#roles">Who's it for</a>
+        <a href="#how">How it works</a>
+        <a href="/login">Log in</a>
+        <a href="/collegeRegistration/signup" class="lp-btn lp-btn--primary">Get started</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="lp-hero">
+      <div class="lp-hero__glow"></div>
+      <div class="lp-hero__grid-bg"></div>
+      <div class="lp-container lp-hero__inner">
+        <div class="lp-badge"><i class="bi bi-lightning-charge-fill"></i> Built for college ecosystems</div>
+        <h1 class="lp-hero__title">
+          One platform for every<br />
+          <span class="lp-gradient-text">club, event & student</span>
+        </h1>
+        <p class="lp-hero__sub">
+          ClubXplore connects colleges, clubs, and students — from creating events and managing registrations to sending team invitations and tracking participation.
+        </p>
+        <div class="lp-hero__actions">
+          <a href="/collegeRegistration/signup" class="lp-btn lp-btn--primary lp-btn--lg">
+            Register your college <i class="bi bi-arrow-right"></i>
+          </a>
+          <a href="/login" class="lp-btn lp-btn--outline lp-btn--lg">Sign in</a>
+        </div>
+        <div class="lp-hero__stats">
+          <div class="lp-stat"><span>3</span> User roles</div>
+          <div class="lp-stat-divider"></div>
+          <div class="lp-stat"><span>OTP</span> Verified signup</div>
+          <div class="lp-stat-divider"></div>
+          <div class="lp-stat"><span>Real-time</span> Participant tracking</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="lp-section" id="features">
+      <div class="lp-container">
+        <div class="lp-section__header">
+          <div class="lp-badge">Features</div>
+          <h2>Everything you need, nothing you don't</h2>
+          <p>A complete toolkit for managing the full lifecycle of college clubs and events.</p>
+        </div>
+        <div class="lp-features-grid">
+
+          <div class="lp-feature-card">
+            <div class="lp-feature-card__icon lp-icon--emerald">
+              <i class="bi bi-calendar-event"></i>
+            </div>
+            <h3>Event Management</h3>
+            <p>Create, update, and manage events with custom registration form fields, deadlines, and participant limits.</p>
+          </div>
+
+          <div class="lp-feature-card">
+            <div class="lp-feature-card__icon lp-icon--blue">
+              <i class="bi bi-people"></i>
+            </div>
+            <h3>Team Invitations</h3>
+            <p>Students invite teammates after registering. Accept, reject, or re-invite — with full status visibility at all times.</p>
+          </div>
+
+          <div class="lp-feature-card">
+            <div class="lp-feature-card__icon lp-icon--violet">
+              <i class="bi bi-shield-lock"></i>
+            </div>
+            <h3>Role-based Access</h3>
+            <p>Separate dashboards and permissions for colleges, clubs, and students. Everyone sees exactly what they need.</p>
+          </div>
+
+          <div class="lp-feature-card">
+            <div class="lp-feature-card__icon lp-icon--amber">
+              <i class="bi bi-globe2"></i>
+            </div>
+            <h3>Event Visibility Modes</h3>
+            <p>Set events as College Exclusive or Open to All — letting students from other colleges discover and register too.</p>
+          </div>
+
+          <div class="lp-feature-card">
+            <div class="lp-feature-card__icon lp-icon--rose">
+              <i class="bi bi-envelope-check"></i>
+            </div>
+            <h3>OTP Verification</h3>
+            <p>Secure signup with OTP sent via Gmail. No fake accounts, no clutter — just verified users.</p>
+          </div>
+
+          <div class="lp-feature-card">
+            <div class="lp-feature-card__icon lp-icon--teal">
+              <i class="bi bi-bar-chart-line"></i>
+            </div>
+            <h3>Participant Tracking</h3>
+            <p>Real-time tabular view of all registered students per event. Export-ready and always up to date.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ROLES -->
+    <section class="lp-section lp-section--alt" id="roles">
+      <div class="lp-container">
+        <div class="lp-section__header">
+          <div class="lp-badge">Who's it for</div>
+          <h2>Three roles, one platform</h2>
+          <p>ClubXplore is designed around how colleges actually work.</p>
+        </div>
+        <div class="lp-roles">
+
+          <div class="lp-role-card">
+            <div class="lp-role-card__top lp-role--college">
+              <i class="bi bi-building"></i>
+              <h3>College</h3>
+            </div>
+            <ul>
+              <li><i class="bi bi-check2"></i> Manage college profile & logo</li>
+              <li><i class="bi bi-check2"></i> View all affiliated clubs</li>
+              <li><i class="bi bi-check2"></i> Generate student registration links</li>
+              <li><i class="bi bi-check2"></i> Monitor club activity</li>
+            </ul>
+            <div class="lp-role-card__btn-wrap">
+              <a href="/collegeRegistration/signup" class="lp-btn lp-btn--outline">Register college</a>
+            </div>
+          </div>
+
+          <div class="lp-role-card lp-role-card--featured">
+            <div class="lp-role-card__top lp-role--club">
+              <i class="bi bi-trophy"></i>
+              <h3>Club</h3>
+            </div>
+            <ul>
+              <li><i class="bi bi-check2"></i> Create & manage club profile</li>
+              <li><i class="bi bi-check2"></i> Create events with custom fields</li>
+              <li><i class="bi bi-check2"></i> Track registrations in real time</li>
+              <li><i class="bi bi-check2"></i> Manage team invitations</li>
+              <li><i class="bi bi-check2"></i> Announce event winners</li>
+            </ul>
+            <div class="lp-role-card__btn-wrap">
+              <a href="/clubRegistration/login" class="lp-btn lp-btn--primary">Login club</a>
+            </div>
+          </div>
+
+          <div class="lp-role-card">
+            <div class="lp-role-card__top lp-role--student">
+              <i class="bi bi-mortarboard"></i>
+              <h3>Student</h3>
+            </div>
+            <ul>
+              <li><i class="bi bi-check2"></i> Discover events across colleges</li>
+              <li><i class="bi bi-check2"></i> Register for events</li>
+              <li><i class="bi bi-check2"></i> Invite & manage teammates</li>
+              <li><i class="bi bi-check2"></i> Track all registrations</li>
+            </ul>
+            <div class="lp-role-card__btn-wrap">
+              <a href="/login" class="lp-btn lp-btn--outline">Student login</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="lp-section" id="how">
+      <div class="lp-container">
+        <div class="lp-section__header">
+          <div class="lp-badge">How it works</div>
+          <h2>Up and running in minutes</h2>
+          <p>No complex setup. Just register, create, and go.</p>
+        </div>
+        <div class="lp-steps">
+          <div class="lp-step">
+            <div class="lp-step__num">1</div>
+            <h4>College registers</h4>
+            <p>A college admin signs up, verifies via OTP, and sets up the college profile.</p>
+          </div>
+          <div class="lp-step__arrow"><i class="bi bi-arrow-right"></i></div>
+          <div class="lp-step">
+            <div class="lp-step__num">2</div>
+            <h4>Clubs are created</h4>
+            <p>Club admins register under the college and set up their club page with coordinators and social links.</p>
+          </div>
+          <div class="lp-step__arrow"><i class="bi bi-arrow-right"></i></div>
+          <div class="lp-step">
+            <div class="lp-step__num">3</div>
+            <h4>Events go live</h4>
+            <p>Clubs create events with custom forms, deadlines, and visibility settings.</p>
+          </div>
+          <div class="lp-step__arrow"><i class="bi bi-arrow-right"></i></div>
+          <div class="lp-step">
+            <div class="lp-step__num">4</div>
+            <h4>Students participate</h4>
+            <p>Students register, form teams, and track everything from their dashboard.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="lp-cta">
+      <div class="lp-cta__glow"></div>
+      <div class="lp-container lp-cta__inner">
+        <h2>Ready to bring your college clubs online?</h2>
+        <p>Join ClubXplore and give your students a better way to connect, compete, and collaborate.</p>
+        <div class="lp-hero__actions">
+          <a href="/collegeRegistration/signup" class="lp-btn lp-btn--white lp-btn--lg">
+            Get started for free <i class="bi bi-arrow-right"></i>
+          </a>
+          <a href="/login" class="lp-btn lp-btn--outline-white lp-btn--lg">Sign in</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="lp-footer">
+      <div class="lp-container lp-footer__inner">
+        <div class="lp-footer__brand">
+          <a href="/" class="lp-logo">
+            <span class="lp-logo__icon"><i class="bi bi-stars"></i></span>
+            ClubXplore
+          </a>
+          <p>Centralized college club & event management platform.</p>
+        </div>
+        <div class="lp-footer__links">
+          <div>
+            <h5>Platform</h5>
+            <a href="#features">Features</a>
+            <a href="#roles">Roles</a>
+            <a href="#how">How it works</a>
+          </div>
+          <div>
+            <h5>Access</h5>
+            <a href="/login">College login</a>
+            <a href="/clubRegistration/login">Club login</a>
+            <a href="/login">Student login</a>
+          </div>
+          <div>
+            <h5>Developers</h5>
+            <a href="https://www.linkedin.com/in/santhosh-charanthu-bb6102300/" target="_blank" rel="noopener">Santhosh Charanthu</a>
+            <a href="https://www.linkedin.com/in/nagasai-bole-ba47942b5/" target="_blank" rel="noopener">Nagasai Bole</a>
+            <a href="https://github.com/Santhosh-Charanthu/clubXplore" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="lp-footer__bottom">
+        <p>&copy; 2026 ClubXplore. MIT License.</p>
+      </div>
+    </footer>
+
+    <script>
+      const burger = document.getElementById('burger');
+      const menu = document.getElementById('mobileMenu');
+      burger.addEventListener('click', () => menu.classList.toggle('open'));
+      menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+    </script>
+  </body>
+</html>

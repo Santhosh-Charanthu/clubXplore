@@ -1,334 +1,231 @@
 <%- include("../layouts/boilerplateWN") %>
+<link rel="stylesheet" href="/css/auth.css" />
+<script>document.body.classList.add('auth-bg');</script>
 
-<style>
-  .event-form {
-    background: #fff;
-    border: 1px solid #ddd;
-    transition: box-shadow 0.3s ease;
-  }
+<div class="auth-page auth-page--wide">
+  <div class="auth-card">
 
-  .event-form:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
+    <a href="/" class="auth-brand">
+      <div class="auth-brand__icon"><i class="bi bi-stars"></i></div>
+      ClubXplore
+    </a>
 
-  .form-label {
-    font-weight: 600;
-  }
+    <h1 class="auth-title">Register your college</h1>
+    <p class="auth-sub">Set up your college profile to get started</p>
 
-  .form-control:focus {
-    border-color: #007bff !important;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
-  }
+    <form class="auth-form needs-validation" action="/collegeRegistration/signup"
+      method="post" enctype="multipart/form-data" novalidate id="collegeSignupForm">
 
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-  }
+      <div class="auth-section-label">College details</div>
 
-  .btn-success:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  .btn-sm {
-    margin-bottom: 10px;
-  }
-
-  @media (max-width: 768px) {
-    .event-form {
-      padding: 15px;
-    }
-
-    .btn-lg {
-      padding: 10px;
-    }
-  }
-</style>
-
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <h3 class="text-center mb-4">College Registration</h3>
-
-      <form
-        class="event-form shadow p-4 rounded needs-validation"
-        action="/collegeRegistration/signup"
-        method="post"
-        enctype="multipart/form-data"
-        novalidate
-      >
-        <!-- College Name -->
-        <div class="mb-3">
-          <label class="form-label">College Name</label>
-          <input
-            placeholder="Register your college"
-            name="college"
-            type="text"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">College name is required.</div>
+      <div class="auth-field">
+        <label class="auth-label">College name</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-building auth-field__icon"></i>
+          <input name="college" type="text" class="auth-input" placeholder="e.g. Vishnu Institute of Technology" required />
         </div>
+        <div class="auth-invalid">College name is required.</div>
+      </div>
 
-        <!-- College ID -->
-        <div class="mb-3">
-          <label class="form-label">College ID</label>
-          <input
-            placeholder="College ID"
-            name="collegeId"
-            type="text"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">College ID is required.</div>
+      <div class="auth-field">
+        <label class="auth-label">College ID</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-hash auth-field__icon"></i>
+          <input name="collegeId" type="text" class="auth-input" placeholder="Unique college identifier" required />
         </div>
+        <div class="auth-invalid">College ID is required.</div>
+      </div>
 
-        <!-- Principal Name -->
-        <div class="mb-3">
-          <label class="form-label">Principal Name</label>
-          <input
-            placeholder="Principal Name"
-            name="principalName"
-            type="text"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Principal name is required.</div>
+      <div class="auth-field">
+        <label class="auth-label">Principal name</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-person auth-field__icon"></i>
+          <input name="principalName" type="text" class="auth-input" placeholder="Full name" required />
         </div>
+        <div class="auth-invalid">Principal name is required.</div>
+      </div>
 
-        <!-- Email -->
-        <div class="mb-3">
-          <label class="form-label">Official Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Valid official email is required.</div>
+      <div class="auth-field">
+        <label class="auth-label">Established year</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-calendar auth-field__icon"></i>
+          <input name="establishedYear" type="number" min="1800" class="auth-input" placeholder="e.g. 1990" required />
         </div>
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          onclick="sendOtp()"
-        >
-          Send OTP
-        </button>
-        <div id="email-message" class="email-message"></div>
+        <div class="auth-invalid">Enter a valid year.</div>
+      </div>
 
-        <!-- OTP -->
-        <div class="mb-3">
-          <label class="form-label">Enter OTP</label>
-          <input
-            id="otp"
-            name="otp"
-            type="text"
-            class="form-control"
-            required
-            maxlength="6"
-            pattern="\d{6}"
-            inputmode="numeric"
-          />
-          <div class="invalid-feedback">Enter the 6-digit OTP.</div>
+      <div class="auth-field">
+        <label class="auth-label">Address</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-geo-alt auth-field__icon"></i>
+          <input name="address" type="text" class="auth-input" placeholder="College address" required />
         </div>
+        <div class="auth-invalid">Address is required.</div>
+      </div>
 
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          onclick="verifyOtpBeforeSubmit()"
-        >
-          Verify OTP
-        </button>
-        <div id="email-otp-message" class="email-otp-message"></div>
-
-        <!-- Established Year -->
-        <div class="mb-3">
-          <label class="form-label">Established Year</label>
-          <input
-            placeholder="e.g. 1990"
-            name="establishedYear"
-            type="number"
-            min="1800"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Enter a valid established year.</div>
-        </div>
-
-        <!-- Address -->
-        <div class="mb-3">
-          <label class="form-label">College Address</label>
-          <input
-            placeholder="Address"
-            name="address"
-            type="text"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Address is required.</div>
-        </div>
-
-        <!-- College Type -->
-        <div class="mb-3">
-          <label class="form-label">College Type</label>
-          <select name="collegeType" class="form-control" required>
-            <option value="" disabled selected>
-              -- Select College Type --
-            </option>
+      <div class="auth-field">
+        <label class="auth-label">College type</label>
+        <div class="auth-select-wrap">
+          <i class="bi bi-diagram-3 auth-field__icon"></i>
+          <select name="collegeType" class="auth-select" required>
+            <option value="" disabled selected>Select type</option>
             <option value="Government">Government</option>
             <option value="Private">Private</option>
             <option value="Autonomous">Autonomous</option>
           </select>
-          <div class="invalid-feedback">Please select a college type.</div>
+          <i class="bi bi-chevron-down auth-select__arrow"></i>
         </div>
+        <div class="auth-invalid">Please select a college type.</div>
+      </div>
 
-        <!-- Affiliated University -->
-        <div class="mb-3">
-          <label class="form-label">Affiliated University (Optional)</label>
-          <input
-            name="affiliatedUniversity"
-            type="text"
-            placeholder="Affiliated University"
-            class="form-control"
-          />
+      <div class="auth-field">
+        <label class="auth-label">Affiliated university <span style="color:#94a3b8;font-weight:400">(optional)</span></label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-mortarboard auth-field__icon"></i>
+          <input name="affiliatedUniversity" type="text" class="auth-input" placeholder="e.g. JNTU" />
         </div>
+      </div>
 
-        <!-- College Logo -->
-        <div class="mb-3">
-          <label class="form-label">College Logo</label>
-          <input
-            id="collegeLogo"
-            name="collegeLogo"
-            type="file"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Please upload the college logo.</div>
+      <div class="auth-section-label" style="margin-top:.5rem">Account</div>
+
+      <div class="auth-field">
+        <label class="auth-label" for="email">Official email</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-envelope auth-field__icon"></i>
+          <input id="email" name="email" type="email" class="auth-input" placeholder="admin@college.edu" required autocomplete="email" />
         </div>
+        <div class="auth-invalid">Valid email is required.</div>
+      </div>
 
-        <!-- Password -->
-        <div class="mb-4">
-          <label class="form-label">Set Password</label>
-          <input
-            placeholder="Password"
-            name="password"
-            type="password"
-            class="form-control"
-            required
-          />
-          <div class="invalid-feedback">Password is required.</div>
+
+      <div class="auth-otp-row">
+        <div class="auth-field" style="flex:1">
+          <label class="auth-label" for="otp">OTP</label>
+          <div class="auth-input-wrap">
+            <i class="bi bi-shield-lock auth-field__icon"></i>
+            <input id="otp" name="otp" type="text" class="auth-input"
+              placeholder="6-digit code" required maxlength="6" pattern="\d{6}" inputmode="numeric" />
+          </div>
         </div>
-
-        <!-- Hidden Role -->
-        <input type="hidden" name="role" value="collegeAdmin" />
-
-        <!-- Submit Button -->
-        <div class="mb-4 text-center">
-          <button class="btn btn-success btn-lg w-100" type="submit">
-            Sign Up
-          </button>
-          <p class="mt-2">Already registered? <a href="/login">Sign In</a></p>
+        <div style="display:flex;flex-direction:column;gap:.32rem">
+          <label class="auth-label" style="visibility:hidden">.</label>
+          <button type="button" class="auth-otp-btn" id="sendOtpBtn" onclick="sendOtp()">Send OTP</button>
         </div>
-      </form>
-    </div>
+      </div>
+      <div id="email-message" class="auth-msg"></div>
+
+      <button type="button" class="auth-otp-btn" id="verifyOtpBtn" onclick="verifyOtpBeforeSubmit()" style="width:100%;height:42px">
+        Verify OTP
+      </button>
+      <div id="email-otp-message" class="auth-msg"></div>
+
+      <div class="auth-field">
+        <label class="auth-label">College logo</label>
+        <div class="auth-file-wrap">
+          <label class="auth-file-label" for="collegeLogo">
+            <i class="bi bi-cloud-upload"></i>
+            <span id="logoText">Click to upload logo</span>
+          </label>
+          <input id="collegeLogo" name="collegeLogo" type="file" class="auth-file-input"
+            accept="image/*" required onchange="updateFileName('collegeLogo','logoText')" />
+        </div>
+        <div class="auth-invalid">Please upload the college logo.</div>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label" for="password">Password</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-lock auth-field__icon"></i>
+          <input id="password" name="password" type="password" class="auth-input"
+            placeholder="Set a strong password" required autocomplete="new-password" />
+          <button type="button" class="auth-eye" onclick="togglePwd('password',this)"><i class="bi bi-eye"></i></button>
+        </div>
+        <div class="auth-invalid">Password is required.</div>
+      </div>
+
+      <input type="hidden" name="role" value="collegeAdmin" />
+
+      <button type="submit" class="auth-submit" id="signupBtn">
+        <span class="auth-submit__text">Create account</span>
+        <span class="auth-submit__spinner"></span>
+      </button>
+
+    </form>
+
+    <p class="auth-footer-link">Already registered? <a href="/login">Sign in</a></p>
+
   </div>
 </div>
 
 <script>
-  const apiBase = "http://localhost:8080";
+  var apiBase = window.location.origin;
 
-  function showMessage(id, message, isSuccess = true) {
-    const el = document.getElementById(id);
-    el.textContent = message;
-    el.className = `message ${isSuccess ? "success-message" : "error-message"}`;
-    el.style.display = "block";
-
-    setTimeout(() => {
-      el.style.display = "none";
-    }, 4000); // auto-hide after 4s
+  function showMsg(id, msg, ok) {
+    var el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'auth-msg show ' + (ok ? 'auth-msg--success' : 'auth-msg--error');
+    setTimeout(function() { el.classList.remove('show'); }, 4000);
   }
 
   async function sendOtp() {
-    const email = document.getElementById("email").value;
-    if (!email) {
-      showMessage("email-message", "Please enter email first", false);
-      return;
-    }
-
+    var email = document.getElementById('email').value;
+    if (!email) { showMsg('email-message', 'Enter your email first', false); return; }
+    var btn = document.getElementById('sendOtpBtn');
+    btn.disabled = true; btn.textContent = 'Sending...';
     try {
-      const res = await fetch(`${apiBase}/send-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      var res = await fetch(apiBase + '/send-otp', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
       });
-
-      const data = await res.json();
-      showMessage("email-message", data.message, res.ok);
-    } catch (err) {
-      showMessage("email-message", "Error sending OTP", false);
-    }
+      var data = await res.json();
+      showMsg('email-message', data.message, res.ok);
+    } catch(e) { showMsg('email-message', 'Error sending OTP', false); }
+    finally { btn.disabled = false; btn.textContent = 'Send OTP'; }
   }
 
   async function verifyOtpBeforeSubmit() {
-    const email = document.getElementById("email").value;
-    const otp = document.getElementById("otp").value;
-    const otpInput = document.getElementById("otp");
-    const otpBtn = document.querySelector(
-      "button[onclick='verifyOtpBeforeSubmit()']"
-    );
-
-    if (!otp) {
-      showMessage("email-otp-message", "Please enter the OTP", false);
-      return;
-    }
-
+    var email = document.getElementById('email').value;
+    var otp = document.getElementById('otp').value;
+    if (!otp) { showMsg('email-otp-message', 'Enter the OTP first', false); return; }
     try {
-      const res = await fetch(`${apiBase}/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
+      var res = await fetch(apiBase + '/verify-otp', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, otp: otp })
       });
-
-      const data = await res.json();
-
+      var data = await res.json();
       if (data.success) {
-        showMessage("email-otp-message", "OTP verified ✅", true);
-
-        // Disable OTP input & button
-        otpInput.disabled = true;
-        otpBtn.disabled = true;
-        otpBtn.textContent = "Verified ✅";
+        showMsg('email-otp-message', 'OTP verified', true);
+        document.getElementById('otp').disabled = true;
+        var vBtn = document.getElementById('verifyOtpBtn');
+        vBtn.disabled = true; vBtn.textContent = 'Verified';
       } else {
-        showMessage("email-otp-message", data.message, false);
+        showMsg('email-otp-message', data.message, false);
       }
-    } catch (err) {
-      showMessage("email-otp-message", "Error verifying OTP", false);
-    }
+    } catch(e) { showMsg('email-otp-message', 'Error verifying OTP', false); }
   }
 
-  // Bootstrap validation
-  (() => {
-    "use strict";
-    const forms = document.querySelectorAll(".needs-validation");
-    Array.from(forms).forEach((form) => {
-      form.addEventListener(
-        "submit",
-        (event) => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add("was-validated");
-        },
-        false
-      );
-    });
-  })();
+  function togglePwd(id, btn) {
+    var inp = document.getElementById(id);
+    var ico = btn.querySelector('i');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+  }
+
+  function updateFileName(inputId, labelId) {
+    var f = document.getElementById(inputId).files[0];
+    if (f) document.getElementById(labelId).textContent = f.name;
+  }
+
+  document.getElementById('collegeSignupForm').addEventListener('submit', function(e) {
+    var vBtn = document.getElementById('verifyOtpBtn');
+    if (!vBtn.disabled) {
+      e.preventDefault();
+      showMsg('email-otp-message', 'Please verify OTP before submitting', false);
+      return;
+    }
+    if (this.checkValidity()) {
+      var btn = document.getElementById('signupBtn');
+      btn.classList.add('loading'); btn.disabled = true;
+    }
+  });
 </script>
