@@ -3,85 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>404 - Not Found</title>
+    <title>404 – Page Not Found · ClubXplore</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="/css/404.css" />
   </head>
   <body>
-    <div class="main_wrapper">
-      <div class="main">
-        <div class="antenna">
-          <div class="antenna_shadow"></div>
-          <div class="a1"></div>
-          <div class="a1d"></div>
-          <div class="a2"></div>
-          <div class="a2d"></div>
-          <div class="a_base"></div>
-        </div>
-        <div class="tv">
-          <div class="cruve">
-            <svg
-              class="curve_svg"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 189.929 189.929"
-              xml:space="preserve"
-            >
-              <path
-                d="M70.343,70.343c-30.554,30.553-44.806,72.7-39.102,115.635l-29.738,3.951C-5.442,137.659,11.917,86.34,49.129,49.13
-        C86.34,11.918,137.664-5.445,189.928,1.502l-3.95,29.738C143.041,25.54,100.895,39.789,70.343,70.343z"
-              ></path>
-            </svg>
-          </div>
-          <div class="display_div">
-            <div class="screen_out">
-              <div class="screen_out1">
-                <div class="screen">
-                  <span class="notfound_text"> NOT FOUND</span>
-                </div>
-                <div class="screenM">
-                  <span class="notfound_text"> NOT FOUND</span>
-                </div>
+
+    <div class="nf-page">
+      <!-- background blobs -->
+      <div class="nf-blob nf-blob--1"></div>
+      <div class="nf-blob nf-blob--2"></div>
+
+      <div class="nf-card">
+
+        <!-- TV illustration -->
+        <div class="nf-tv-wrap">
+          <div class="nf-tv">
+            <!-- antenna -->
+            <div class="nf-antenna">
+              <div class="nf-ant-left"></div>
+              <div class="nf-ant-right"></div>
+              <div class="nf-ant-base"></div>
+            </div>
+            <!-- screen -->
+            <div class="nf-screen-wrap">
+              <div class="nf-screen">
+                <div class="nf-scanlines"></div>
+                <div class="nf-screen-text">NOT FOUND</div>
               </div>
             </div>
-          </div>
-          <div class="lines">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
-          </div>
-          <div class="buttons_div">
-            <div class="b1"><div></div></div>
-            <div class="b2"></div>
-            <div class="speakers">
-              <div class="g1">
-                <div class="g11"></div>
-                <div class="g12"></div>
-                <div class="g13"></div>
+            <!-- controls -->
+            <div class="nf-controls">
+              <div class="nf-knob"></div>
+              <div class="nf-knob nf-knob--sm"></div>
+              <div class="nf-vents">
+                <span></span><span></span><span></span>
               </div>
-              <div class="g"></div>
-              <div class="g"></div>
+            </div>
+            <!-- stand -->
+            <div class="nf-stand">
+              <div class="nf-stand__leg"></div>
+              <div class="nf-stand__base"></div>
+              <div class="nf-stand__leg"></div>
             </div>
           </div>
         </div>
-        <div class="bottom">
-          <div class="base1"></div>
-          <div class="base2"></div>
-          <div class="base3"></div>
+
+        <!-- text -->
+        <div class="nf-code">404</div>
+        <h1 class="nf-title">Page not found</h1>
+        <p class="nf-sub">The page you're looking for doesn't exist or has been moved.</p>
+
+        <!-- actions -->
+        <div class="nf-actions">
+          <a href="/" class="nf-btn nf-btn--primary">
+            <i class="bi bi-house"></i> Go home
+          </a>
+          <button onclick="history.back()" class="nf-btn nf-btn--outline">
+            <i class="bi bi-arrow-left"></i> Go back
+          </button>
         </div>
-      </div>
-      <div class="text_404">
-        <div class="text_4041">4</div>
-        <div class="text_4042">0</div>
-        <div class="text_4043">4</div>
+
+        <!-- quick links -->
+        <div class="nf-links">
+          <span>Try:</span>
+          <a href="/login">College login</a>
+          <a href="/clubRegistration/login">Club login</a>
+          <a href="/collegeRegistration/signup">Sign up</a>
+        </div>
+
       </div>
     </div>
-    <div style="position: relative; top: 200px; text-align: center">
-      <a
-        href="/login"
-        style="font-size: 1.2em; text-decoration: none; color: #f27405"
-        >Return Login</a
-      >
-    </div>
+
   </body>
 </html>

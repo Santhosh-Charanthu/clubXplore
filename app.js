@@ -132,12 +132,26 @@ app.use("/", studentRouter);
 app.use("/", authRoutes);
 app.use("/", authenticateRoutes);
 
-// app.use((req, res) => {
-//   res.status(404).render("page-not-found.ejs");
-// });
+app.use((req, res) => {
+  res.status(404).render("page-not-found.ejs");
+});
 
 app.get("/ping", (req, res) => {
   res.send("pong");
+});
+
+const cron = require("node-cron");
+const axios = require("axios");
+
+cron.schedule("*/14 * * * *", async () => {
+  try {
+    const response = await axios.get(`${process.env.BACKEND_URL}/ping`);
+    console.log(
+      `✅ Self-ping successful: ${response.data} at ${new Date().toISOString()}`
+    );
+  } catch (error) {
+    console.error("❌ Self-ping failed:", error.message);
+  }
 });
 
 async function startServer() {
