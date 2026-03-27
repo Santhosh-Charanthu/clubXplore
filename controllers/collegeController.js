@@ -1,4 +1,8 @@
+const { redisClient } = require("../config/redis");
 const College = require("../models/college");
+const Club = require("../models/club");
+const Student = require("../models/student");
+const cloudinary = require("cloudinary").v2;
 
 module.exports.showRegistrationForm = (req, res) => {
   res.render("users/signup.ejs");
@@ -109,7 +113,7 @@ module.exports.showRegistrationLink = async (req, res) => {
     if (!req.user || !req.user._id.equals(college._id)) {
       req.flash("error", "You are not authorized to generate this link!");
       return res.redirect(
-        req.user ? `/collegeProfile/${req.user._id}` : "/login"
+        req.user ? `/collegeProfile/${req.user._id}` : "/login",
       );
     }
 
@@ -129,19 +133,29 @@ module.exports.showCollegeProfile = async (req, res) => {
   try {
     const user = req.user;
     const { id } = req.params;
-    const college = await College.findById(id).populate("clubs");
-    if (!college) {
-      req.flash("error", "College not found!");
-      return res.redirect("/login");
+    const cacheKey = `college:profile:${id}`;
+    let college;
+    const cachedCollege = await redisClient.get(cacheKey);
+    if (cachedCollege) {
+      console.log("CACHE HIT");
+      college = JSON.parse(cachedCollege);
+    } else {
+      console.log("CACHE MISS");
+      college = await College.findById(id).populate("clubs").lean();
+      if (!college) {
+        req.flash("error", "College not found!");
+        return res.redirect("/login");
+      }
+      await redisClient.setEx(cacheKey, 300, JSON.stringify(college));
     }
 
     if (!req.user || !req.user._id.equals(college._id)) {
       req.flash(
         "error",
-        "You are not authorized to view this college profile!"
+        "You are not authorized to view this college profile!",
       );
       return res.redirect(
-        req.user ? `/collegeProfile/${req.user._id}` : "/login"
+        req.user ? `/collegeProfile/${req.user._id}` : "/login",
       );
     }
 
@@ -231,6 +245,9 @@ module.exports.updateProfile = async (req, res) => {
 
     // Save updated college
     await collegeDoc.save();
+    const cacheKey = `college:profile:${id}`;
+    await redisClient.del(cacheKey);
+    console.log("Cache invalidated: ", cacheKey);
     req.flash("success", "College details updated successfully!");
     res.redirect(`/collegeProfile/${id}`);
   } catch (e) {
@@ -264,6 +281,9 @@ module.exports.deleteCollege = async (req, res) => {
 
     // Finally, delete the college
     await College.findByIdAndDelete(id);
+    const cacheKey = `college:profile:${id}`;
+    await redisClient.del(cacheKey);
+    console.log("Cache invalidated: ", cacheKey);
 
     req.flash("success", "College and associated data deleted successfully!");
     res.redirect("/login");

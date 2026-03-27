@@ -78,7 +78,6 @@ module.exports.showCollegeProfile = async (req, res) => {
     if (!req.user) {
       return res.redirect("/login");
     }
-
     let college;
 
     if (searchedCollege) {
@@ -196,7 +195,7 @@ module.exports.showEventRegistration = async (req, res) => {
   if (new Date(event.registrationDeadline) < new Date()) {
     req.flash("error", "Registration for this event has closed");
     return res.redirect(
-      `/${encodeURIComponent(clubName)}/event${encodeURIComponent(eventId)}`
+      `/${encodeURIComponent(clubName)}/event${encodeURIComponent(eventId)}`,
     );
   }
 
@@ -221,7 +220,7 @@ module.exports.handleEventRegistration = async (req, res) => {
     const decodedEventId = decodeURIComponent(eventId);
 
     const club = await Club.findOne({ ClubName: decodedClubName }).populate(
-      "events"
+      "events",
     );
     if (!club) {
       req.flash("error", "Club not found");
@@ -239,8 +238,8 @@ module.exports.handleEventRegistration = async (req, res) => {
       req.flash("error", "Registration for this event has closed");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+          decodedEventId,
+        )}`,
       );
     }
 
@@ -253,8 +252,8 @@ module.exports.handleEventRegistration = async (req, res) => {
       req.flash("error", "You are already registered for this event");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+          decodedEventId,
+        )}`,
       );
     }
 
@@ -288,8 +287,8 @@ module.exports.handleEventRegistration = async (req, res) => {
       req.flash("success", "Registered successfully for individual event!");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+          decodedEventId,
+        )}`,
       );
     }
 
@@ -302,8 +301,8 @@ module.exports.handleEventRegistration = async (req, res) => {
         req.flash("error", "Team name is required");
         return res.redirect(
           `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-            decodedEventId
-          )}/register`
+            decodedEventId,
+          )}/register`,
         );
       }
 
@@ -356,12 +355,12 @@ module.exports.handleEventRegistration = async (req, res) => {
       ) {
         req.flash(
           "error",
-          `Team size must be between ${minSize} and ${maxSize} (including leader).`
+          `Team size must be between ${minSize} and ${maxSize} (including leader).`,
         );
         return res.redirect(
           `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-            decodedEventId
-          )}/register`
+            decodedEventId,
+          )}/register`,
         );
       }
 
@@ -397,18 +396,18 @@ module.exports.handleEventRegistration = async (req, res) => {
       req.flash("success", "Team registered! Invitations sent to teammates.");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+          decodedEventId,
+        )}`,
       );
     }
   } catch (error) {
     req.flash("error", `Failed to complete registration: ${error.message}`);
     return res.redirect(
       `/${encodeURIComponent(
-        decodeURIComponent(req.params.clubName)
+        decodeURIComponent(req.params.clubName),
       )}/event/${encodeURIComponent(
-        decodeURIComponent(req.params.eventId)
-      )}/register`
+        decodeURIComponent(req.params.eventId),
+      )}/register`,
     );
   }
 };
@@ -425,7 +424,7 @@ module.exports.showEditRegistration = async (req, res) => {
     const decodedEventId = decodeURIComponent(eventId);
 
     const club = await Club.findOne({ ClubName: decodedClubName }).populate(
-      "events"
+      "events",
     );
     if (!club) {
       req.flash("error", "Club not found");
@@ -443,8 +442,8 @@ module.exports.showEditRegistration = async (req, res) => {
       req.flash("error", "Registration not found");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+          decodedEventId,
+        )}`,
       );
     }
 
@@ -453,8 +452,8 @@ module.exports.showEditRegistration = async (req, res) => {
       req.flash("error", "You are not authorized to edit this registration.");
       return res.redirect(
         `/${encodeURIComponent(decodedClubName)}/event/${encodeURIComponent(
-          decodedEventId
-        )}`
+          decodedEventId,
+        )}`,
       );
     }
 
@@ -505,18 +504,18 @@ module.exports.handleEditRegistration = async (req, res) => {
 
     const isLeader = registration.studentId.equals(req.user._id);
     const emailFieldLabel = event.formFields.find((f) =>
-      f.label.toLowerCase().includes("email")
+      f.label.toLowerCase().includes("email"),
     )?.label;
 
     if (!isLeader) {
       const memberExists = registration.teamMembers.some(
-        (m) => m.email?.toLowerCase() === req.user.email.toLowerCase()
+        (m) => m.email?.toLowerCase() === req.user.email.toLowerCase(),
       );
 
       if (!memberExists) {
         req.flash(
           "error",
-          "You are not authorized to update this registration."
+          "You are not authorized to update this registration.",
         );
         return res.redirect("/invitations");
       }
@@ -524,7 +523,7 @@ module.exports.handleEditRegistration = async (req, res) => {
 
     // Map existing members by email (normalized)
     const existingMembersMap = new Map(
-      registration.teamMembers.map((m) => [m.email.toLowerCase(), m])
+      registration.teamMembers.map((m) => [m.email.toLowerCase(), m]),
     );
     const previousMembers = Array.from(existingMembersMap.keys());
 
@@ -568,7 +567,7 @@ module.exports.handleEditRegistration = async (req, res) => {
     }
 
     const removedMembers = previousMembers.filter(
-      (email) => !newMembers.some((m) => m.email === email)
+      (email) => !newMembers.some((m) => m.email === email),
     );
 
     registration.teamMembers = newMembers;
@@ -640,8 +639,8 @@ module.exports.handleEditRegistration = async (req, res) => {
     req.flash("success", "Team registration updated successfully!");
     return res.redirect(
       `/${encodeURIComponent(req.params.clubName)}/event/${encodeURIComponent(
-        registration.eventId
-      )}`
+        registration.eventId,
+      )}`,
     );
   } catch (err) {
     req.flash("error", "Failed to update registration.");
@@ -655,7 +654,7 @@ module.exports.showStudentEvents = async (req, res) => {
     if (!req.user) {
       req.flash(
         "error",
-        "You must be logged in to view your event registrations."
+        "You must be logged in to view your event registrations.",
       );
       return res.redirect("/login");
     }
@@ -746,9 +745,8 @@ module.exports.acceptInvitation = async (req, res) => {
       return res.redirect("/login");
     }
 
-    const invitation = await Invitation.findById(invitationId).populate(
-      "eventId"
-    );
+    const invitation =
+      await Invitation.findById(invitationId).populate("eventId");
     if (!invitation) {
       req.flash("error", "Invitation not found");
       return res.redirect("/invitations");
@@ -785,7 +783,7 @@ module.exports.acceptInvitation = async (req, res) => {
       console.log("Triggered");
       req.flash(
         "error",
-        "You are already registered for this event. You cannot join another team."
+        "You are already registered for this event. You cannot join another team.",
       );
       console.log("FLASH ERROR: ", req.flash("error"));
 
@@ -796,7 +794,7 @@ module.exports.acceptInvitation = async (req, res) => {
     invitation.status = "accepted";
     await Invitation.updateOne(
       { _id: invitationId },
-      { $set: { status: "accepted" } }
+      { $set: { status: "accepted" } },
     );
 
     await invitation.save();
@@ -810,7 +808,7 @@ module.exports.acceptInvitation = async (req, res) => {
 
     // Find member inside teamMembers
     const memberIndex = registration.teamMembers.findIndex(
-      (m) => m.email.toLowerCase() === req.user.email.toLowerCase()
+      (m) => m.email.toLowerCase() === req.user.email.toLowerCase(),
     );
 
     if (memberIndex !== -1) {
@@ -854,13 +852,13 @@ module.exports.acceptInvitation = async (req, res) => {
     await Event.findByIdAndUpdate(
       registration.eventId,
       { $addToSet: { registeredStudents: req.user._id } },
-      { new: true }
+      { new: true },
     );
 
     await Student.findByIdAndUpdate(
       req.user._id,
       { $addToSet: { registeredEvents: registration.eventId } },
-      { new: true }
+      { new: true },
     );
 
     req.flash("success", "You have successfully joined the team!");
@@ -957,7 +955,7 @@ module.exports.inviteAgain = async (req, res) => {
 
     // Find member in registration
     const member = registration.teamMembers.find(
-      (m) => m.email === studentEmail
+      (m) => m.email === studentEmail,
     );
     if (!member) {
       req.flash("error", "Team member not found.");

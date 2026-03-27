@@ -34,7 +34,9 @@ const clubRouter = require("./routes/clubRoutes.js");
 const studentRouter = require("./routes/studentRoutes.js");
 const authRoutes = require("./routes/auth.js");
 const authenticateRoutes = require("./routes/authenticateRoutes.js");
-const college = require("./models/college");
+const { connectRedis } = require("./config/redis");
+const PORT = process.env.PORT || 3000;
+// const aiRoutes = require("./routes/aiRoutes.js");
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -44,9 +46,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
 
 const sessionOptions = {
-  secret: "supersecretpassword",
+  secret: process.env.SECRET || "supersecretpassword",
   resave: false,
   saveUninitialized: true,
+  store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -63,16 +66,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(
   "college",
-  new LocalStrategy({ usernameField: "email" }, College.authenticate())
+  new LocalStrategy({ usernameField: "email" }, College.authenticate()),
 );
 
 passport.use(
   "club",
-  new LocalStrategy({ usernameField: "ClubName" }, Club.authenticate())
+  new LocalStrategy({ usernameField: "ClubName" }, Club.authenticate()),
 );
 passport.use(
   "student",
-  new LocalStrategy({ usernameField: "email" }, Student.authenticate())
+  new LocalStrategy({ usernameField: "email" }, Student.authenticate()),
 );
 
 //Middleware
@@ -113,12 +116,11 @@ passport.deserializeUser(async (obj, done) => {
   }
 });
 
-dbUrl = process.env.DB_URL;
+// app.use("/api/ai", aiRoutes);
 
-mongoose
-  .connect(dbUrl)
-  .then(() => console.log("Connected to DB"))
-  .catch((err) => console.log("DB Connection Error:", err));
+app.get("/t", (req, res) => {
+  res.send(`Response from server PID: ${process.pid}`);
+});
 
 app.use("/", collegeRouter);
 app.use("/", clubRouter);
@@ -126,10 +128,26 @@ app.use("/", studentRouter);
 app.use("/", authRoutes);
 app.use("/", authenticateRoutes);
 
-app.use((req, res) => {
-  res.status(404).render("page-not-found.ejs");
-});
+// app.use((req, res) => {
+//   res.status(404).render("page-not-found.ejs");
+// });
 
-app.listen(8080, () => {
-  console.log("Listening to port http://localhost:8080/login");
-});
+async function startServer() {
+  try {
+    const dbUrl = process.env.DB_URL;
+
+    mongoose
+      .connect(dbUrl)
+      .then(() => console.log("Connected to DB"))
+      .catch((err) => console.log("DB Connection Error:", err));
+
+    await connectRedis();
+
+    app.listen(PORT, () => {
+      console.log(`Listening to port http://localhost:${PORT}/login`);
+    });
+  } catch (err) {
+    console.error("❌ Startup failed:", err);
+  }
+}
+startServer();

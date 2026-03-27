@@ -2,7 +2,7 @@ let College = require("../models/college");
 let Club = require("../models/club");
 let Event = require("../models/Event");
 let Registration = require("../models/registration");
-const club = require("../models/club");
+const { redisClient } = require("../config/redis");
 const path = require("path");
 const fs = require("fs/promises");
 const cloudinary = require("cloudinary").v2;
@@ -32,7 +32,7 @@ module.exports.handleRegistration = async (req, res) => {
     if (!req.user) {
       req.flash(
         "error",
-        "You must be logged in as a college to register a club."
+        "You must be logged in as a college to register a club.",
       );
       return res.redirect("/collegeRegistration/signup");
     }
@@ -164,17 +164,27 @@ module.exports.handleLogin = async (req, res) => {
 module.exports.showClubProfile = async (req, res) => {
   try {
     const { clubName } = req.params;
-    const club = await Club.findOne({ ClubName: clubName })
-      .populate("author")
-      .populate({
-        path: "events",
-        options: { sort: { createdAt: -1 } },
-        populate: { path: "author" },
-      });
-
-    if (!club) {
-      req.flash("error", "Club not found!");
-      return res.redirect("/clubRegistration");
+    const cacheKey = `club:profile:${clubName}`;
+    let club;
+    const cachedClub = await redisClient.get(cacheKey);
+    if (cachedClub) {
+      console.log("CACHE HIT");
+      club = JSON.parse(cachedClub);
+    } else {
+      console.log("CACHE MISS");
+      club = await Club.findOne({ ClubName: clubName })
+        .populate("author")
+        .populate({
+          path: "events",
+          options: { sort: { createdAt: -1 } },
+          populate: { path: "author" },
+        })
+        .lean();
+      if (!club) {
+        req.flash("error", "Club not found!");
+        return res.redirect("/clubRegistration");
+      }
+      await redisClient.setEx(cacheKey, 300, JSON.stringify(club));
     }
 
     let user = req.session.club || req.user;
@@ -299,7 +309,7 @@ module.exports.handleEventCreation = async (req, res) => {
     if (!formFields) {
       req.flash(
         "error",
-        "You must create the registration form for this event."
+        "You must create the registration form for this event.",
       );
     }
 
@@ -315,8 +325,8 @@ module.exports.handleEventCreation = async (req, res) => {
       const isRequireds = Array.isArray(formFields.isRequired)
         ? formFields.isRequired
         : formFields.isRequired
-        ? [formFields.isRequired]
-        : [];
+          ? [formFields.isRequired]
+          : [];
 
       for (let i = 0; i < labels.length; i++) {
         parsedFormFields.push({
@@ -422,6 +432,9 @@ module.exports.updateClub = async (req, res) => {
     }
 
     await existingClub.save();
+    const cacheKey = `club:profile:${ClubName}`;
+    await redisClient.del(cacheKey);
+    console.log("Cache invalidated: ", cacheKey);
     req.flash("success", "Club details updated successfully!");
     res.redirect(`/${ClubName}/profile`);
   } catch (error) {
@@ -447,7 +460,7 @@ module.exports.destroyClub = async (req, res) => {
           __dirname,
           "..",
           "uploads",
-          event.image.filename
+          event.image.filename,
         );
         try {
           await fs.unlink(imagePath);
@@ -462,10 +475,13 @@ module.exports.destroyClub = async (req, res) => {
 
     await College.updateOne(
       { clubs: club._id },
-      { $pull: { clubs: club._id } }
+      { $pull: { clubs: club._id } },
     );
 
     await club.deleteOne();
+    const cacheKey = `club:profile:${ClubName}`;
+    await redisClient.del(cacheKey);
+    console.log("Cache invalidated: ", cacheKey);
 
     req.flash("success", "Club and all its events deleted successfully.");
     res.redirect("/clubRegistration");
@@ -479,31 +495,31 @@ module.exports.showEventDetails = async (req, res) => {
   if (!req.user) {
     return res.redirect("/login");
   }
-  let { clubName, eventId } = req.params;
-
-  const club = await Club.findOne({ ClubName: clubName })
-    .populate({
-      path: "events",
-      populate: {
-        path: "author",
-        select: "ClubName",
-      },
-    })
-    .exec();
-
-  if (!club) {
-    return res.status(404).send("Club not found");
-  }
-
-  const event = club.events.find((event) => event._id.equals(eventId));
-
-  if (!event) {
-    return res.status(404).send("Event not found");
-  }
-
   let user = req.user;
+  let { clubName, eventId } = req.params;
+  const cacheKey = `event:${eventId}`;
+  try {
+    const cachedEvent = await redisClient.get(cacheKey);
+    if (cachedEvent) {
+      console.log("CACHE HIT");
+      const event = JSON.parse(cachedEvent);
+      return res.render("profile/event", { event, user });
+    }
+    console.log("CACHE MISS");
+    const event = await Event.findById(eventId)
+      .populate("author", "ClubName")
+      .lean();
+    if (!event) {
+      return res.status(404).send("Event not found");
+    }
 
-  res.render("profile/event", { event, user });
+    await redisClient.setEx(cacheKey, 300, JSON.stringify(event));
+
+    res.render("profile/event", { event, user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 };
 
 module.exports.showEventEdit = async (req, res) => {
@@ -653,7 +669,7 @@ module.exports.updateEvent = async (req, res) => {
 
     // Filter out deleted fields
     event.formFields = updatedFormFields.filter(
-      (field) => !deleted.includes(field.label)
+      (field) => !deleted.includes(field.label),
     );
 
     if (participationType === "individual") {
@@ -662,6 +678,9 @@ module.exports.updateEvent = async (req, res) => {
     }
 
     await event.save();
+    const cacheKey = `event:${eventId}`;
+    await redisClient.del(cacheKey);
+    console.log("Cache invalidated: ", cacheKey);
 
     req.flash("success", "Event updated successfully!");
     res.redirect(`/${clubName}/profile`);
@@ -688,7 +707,7 @@ module.exports.destroyEvent = async (req, res) => {
     const club = await Club.findOneAndUpdate(
       { ClubName: new RegExp("^" + clubName + "$", "i") }, // case-insensitive match
       { $pull: { events: event._id } },
-      { new: true }
+      { new: true },
     );
 
     if (!club) {
@@ -710,10 +729,14 @@ module.exports.destroyEvent = async (req, res) => {
       }
     }
 
+    const cacheKey = `event:${eventId}`;
+    await redisClient.del(cacheKey);
+    console.log("Cache invalidated", cacheKey);
+
     // Step 5: Success response
     req.flash(
       "success",
-      `Event "${event.eventName}" deleted successfully from ${clubName}`
+      `Event "${event.eventName}" deleted successfully from ${clubName}`,
     );
     res.redirect(`/${clubName}/profile`);
   } catch (error) {
@@ -723,6 +746,7 @@ module.exports.destroyEvent = async (req, res) => {
 };
 
 const Invitation = require("../models/invitation");
+const { json } = require("stream/consumers");
 
 module.exports.showRegistrations = async (req, res) => {
   const user = req.session.club;
@@ -757,7 +781,7 @@ module.exports.showRegistrations = async (req, res) => {
     if (String(event.author._id) !== String(req.session.club._id)) {
       req.flash("error", "You do not have permission to view registrations.");
       return res.redirect(
-        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`
+        `/${encodeURIComponent(clubName)}/event/${encodeURIComponent(eventId)}`,
       );
     }
 

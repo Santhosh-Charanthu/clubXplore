@@ -625,10 +625,10 @@
   <div class="modal-content">
     <span class="close-btn" onclick="closeWinnerModal()">&times;</span>
     <h2>🏆 Winners</h2>
-    <p>🥇<strong>1st Prize:</strong> <%= event.winners.first %></p>
-    <p>🥈<strong>2nd Prize:</strong> <%= event.winners.second %></p>
-    <p>🥉<strong>3rd Prize:</strong> <%= event.winners.third %></p>
-    <% if (event.winners.announcedAt) { %>
+    <p>🥇<strong>1st Prize:</strong> <%= event.winners?.first || "Not announced" %></p>
+    <p>🥈<strong>2nd Prize:</strong> <%= event.winners?.second || "Not announced" %></p>
+    <p>🥉<strong>3rd Prize:</strong> <%= event.winners?.third || "Not announced" %></p>
+    <% if (event.winners?.announcedAt) { %>
       <p class="timestamp">Announced On: <%= new Date(event.winners.announcedAt).toDateString() %></p>
     <% } %>
   </div>
