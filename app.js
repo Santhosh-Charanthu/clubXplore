@@ -122,6 +122,10 @@ app.get("/t", (req, res) => {
   res.send(`Response from server PID: ${process.pid}`);
 });
 
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "landing.html"));
 });
@@ -136,23 +140,8 @@ app.use((req, res) => {
   res.status(404).render("page-not-found.ejs");
 });
 
-app.get("/ping", (req, res) => {
-  res.send("pong");
-});
-
 const cron = require("node-cron");
 const axios = require("axios");
-
-cron.schedule("*/14 * * * *", async () => {
-  try {
-    const response = await axios.get(`${process.env.BACKEND_URL}/ping`);
-    console.log(
-      `✅ Self-ping successful: ${response.data} at ${new Date().toISOString()}`
-    );
-  } catch (error) {
-    console.error("❌ Self-ping failed:", error.message);
-  }
-});
 
 async function startServer() {
   try {
@@ -167,6 +156,16 @@ async function startServer() {
 
     app.listen(PORT, () => {
       console.log(`Listening to port http://localhost:${PORT}/login`);
+
+      // Start self-ping only after server is up
+      cron.schedule("*/14 * * * *", async () => {
+        try {
+          const response = await axios.get(`${process.env.BACKEND_URL}/ping`);
+          console.log(`✅ Self-ping successful: ${response.data} at ${new Date().toISOString()}`);
+        } catch (error) {
+          console.error("❌ Self-ping failed:", error.message);
+        }
+      });
     });
   } catch (err) {
     console.error("❌ Startup failed:", err);

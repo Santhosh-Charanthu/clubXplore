@@ -499,16 +499,21 @@ module.exports.showEventDetails = async (req, res) => {
   let { clubName, eventId } = req.params;
   const cacheKey = `event:${eventId}`;
   try {
+    const start = Date.now();
     const cachedEvent = await redisClient.get(cacheKey);
     if (cachedEvent) {
       console.log("CACHE HIT");
       const event = JSON.parse(cachedEvent);
+      const end = Date.now();
+      console.log(`Response Time: ${end - start} ms`);
       return res.render("profile/event", { event, user });
     }
     console.log("CACHE MISS");
     const event = await Event.findById(eventId)
       .populate("author", "ClubName")
       .lean();
+    const end = Date.now();
+    console.log(`Response Time: ${end - start} ms`);
     if (!event) {
       return res.status(404).send("Event not found");
     }
